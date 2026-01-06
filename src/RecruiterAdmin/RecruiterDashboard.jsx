@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Pagination from "../components/LandingPage/Pagination";
 import axios from "axios";
+import { baseUrl } from "../utils/ApiConstants";
 
 export default function RecruiterDashboard() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -33,13 +34,13 @@ export default function RecruiterDashboard() {
                     allJdRes,
                     jdByRecruiterRes
                 ] = await Promise.all([
-                    axios.get('http://localhost:4000/api/jd/all-candidates', {
+                    axios.get(`${baseUrl}/api/jd/all-candidates`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get('http://localhost:4000/api/jd/all-jd-hr', {
+                    axios.get(`${baseUrl}/api/jd/all-jd-hr`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get('http://localhost:4000/api/jd/created-by/hr', {
+                    axios.get(`${baseUrl}/api/jd/created-by/hr`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
                 ]);

@@ -3,6 +3,7 @@ import { ChevronDown, X, Copy, Check, Linkedin, Edit3, Save } from 'lucide-react
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import SpinLoader from '../components/SpinLoader';
+import { baseUrl } from '../utils/ApiConstants';
 
 function CreateJD() {
     const location = useLocation();
@@ -73,7 +74,7 @@ function CreateJD() {
         try {
             setCreating(true);
             const response = await axios.post(
-                `http://localhost:4000/api/jd/${formData.offerId}/ai`,
+                `${baseUrl}/api/jd/${formData.offerId}/ai`,
                 {
                     companyName: formData.companyName,
                     keyResponsibilities: formData.keyResponsibilities,
@@ -131,7 +132,7 @@ function CreateJD() {
         try {
             setSaving(true);
             const response = await axios.put(
-                `http://localhost:4000/api/jd/editjd/${generatedJD._id}`,
+                `${baseUrl}/api/jd/editjd/${generatedJD._id}`,
                 {
                     jobSummary: editableJD.jobSummary,
                     responsibilities: editableJD.responsibilities,

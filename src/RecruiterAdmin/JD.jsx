@@ -3,6 +3,7 @@ import { FileText, Filter, X, Eye, MoreVertical, ChevronLeft, ChevronRight, Shar
 import Pagination from '../components/LandingPage/Pagination';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { baseUrl } from '../utils/ApiConstants';
 import SpinLoader from '../components/SpinLoader';
 
 function JD() {
@@ -31,7 +32,7 @@ function JD() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:4000/api/jd//created-by/hr', {
+      const response = await axios.get(`${baseUrl}/api/jd//created-by/hr`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -68,7 +69,7 @@ function JD() {
   const fetchIncomingJDs = async () => {
     try {
       setLoadingIncoming(true);
-      const response = await axios.get('http://localhost:4000/api/jd/assigned-offers/hr', {
+      const response = await axios.get(`${baseUrl}/api/jd/assigned-offers/hr`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

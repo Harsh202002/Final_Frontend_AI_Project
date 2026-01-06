@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useCompany } from '../../Context/companyContext';
+import { baseUrl } from '../../utils/ApiConstants';
 
 function AddNewRecruiter({ onSave, onCancel, editData }) {
     const { companies } = useCompany();
@@ -55,7 +56,7 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
         try {
             if (editData) {
                 const response = await axios.put(
-                    `http://localhost:4000/api/admin/hr/${editData.id}`,
+                    `${baseUrl}/api/admin/hr/${editData.id}`,
                     {
                         name: formData.fullName,
                         phone: formData.phone,
@@ -77,7 +78,7 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
                     });
                 }
             } else {
-                const response = await axios.post('http://localhost:4000/api/admin/hr', {
+                const response = await axios.post(`${baseUrl}/api/admin/hr`, {
                     name: formData.fullName,
                     phone: formData.phone,
                     email: formData.email,

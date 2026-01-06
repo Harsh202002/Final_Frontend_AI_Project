@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, Edit2, Save, X } from "lucide-react";
+import { superAdminBaseUrl } from "../utils/ApiConstants";
 import axios from "axios";
 
 const CompanyDetail = () => {
@@ -90,7 +91,7 @@ const CompanyDetail = () => {
             console.log('Sending data for ID:', company._id);
 
             const response = await axios.put(
-                `http://localhost:5000/api/company/${company._id}`,
+                `${superAdminBaseUrl}/api/company/${company._id}`,
                 formDataToSend,
                 {
                     headers: {

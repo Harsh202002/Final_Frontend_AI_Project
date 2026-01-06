@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Calendar, Download } from "lucide-react";
 import robot from '../../assets/robot.png'
 import axios from 'axios';
+import { baseUrl } from '../../utils/ApiConstants';
 
 export default function RaiseTickets() {
   const [subject, setSubject] = useState("");
@@ -51,7 +52,7 @@ export default function RaiseTickets() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        "http://localhost:4000/api/tickets/raise-ticket-admin",
+        `${baseUrl}/api/tickets/raise-ticket-admin`,
         {
           subject,
           message

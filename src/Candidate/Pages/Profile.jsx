@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { baseUrl } from '../../utils/ApiConstants';
 
 const Profile = () => {
     const [profile, setProfile] = useState({
@@ -18,7 +19,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get('http://localhost:4000/api/auth/me', {
+                const response = await axios.get(`${baseUrl}/api/auth/me`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },

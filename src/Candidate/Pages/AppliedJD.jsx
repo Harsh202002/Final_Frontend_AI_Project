@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Trash2, Search, SlidersHorizontal, X } from 'lucide-react';
 import Pagination from '../../components/LandingPage/Pagination';
 import axios from 'axios';
+import { baseUrl } from '../../utils/ApiConstants';
 
 function AppliedJD() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -14,7 +15,7 @@ function AppliedJD() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:4000/api/candidate/applied-jobs', {
+                const response = await axios.get(`${baseUrl}/api/candidate/applied-jobs`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('candidateToken')}`,
                     },

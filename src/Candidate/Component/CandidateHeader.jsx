@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Search, Bell, MessageCircle, Menu, ChevronDown } from "lucide-react";
 import axios from "axios";
+import { baseUrl } from "../../utils/ApiConstants";
+
 
 const CandidateHeader = ({ onMenuToggle }) => {
     const [user, setUser] = useState(null);
@@ -28,7 +30,7 @@ const CandidateHeader = ({ onMenuToggle }) => {
         const fetchUser = async () => {
             try {
                 const token = localStorage.getItem("candidateToken");
-                const res = await axios.get("http://localhost:4000/api/auth/me", {
+                const res = await axios.get(`${baseUrl}/api/auth/me`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

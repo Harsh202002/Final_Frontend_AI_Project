@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Search, MapPin, SlidersHorizontal, X, Upload } from "lucide-react";
 import Pagination from "../../components/LandingPage/Pagination";
 import axios from "axios";
+import { baseUrl } from "../../utils/ApiConstants";
 
 const AllJDs = () => {
     const [jdData, setJdData] = useState([]);
@@ -25,7 +26,7 @@ const AllJDs = () => {
     useEffect(() => {
         const fetchAppliedJDs = async () => {
             try {
-                const response = await axios.get('http://localhost:4000/api/candidate/applied-jobs', {
+                const response = await axios.get(`${baseUrl}/api/candidate/applied-jobs`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('candidateToken')}`,
                     },
@@ -47,7 +48,7 @@ const AllJDs = () => {
         const fetchJDs = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get('http://localhost:4000/api/jd/all-jd', {
+                const response = await axios.get(`${baseUrl}/api/jd/all-jd`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('candidateToken')}`,
                     }
@@ -177,7 +178,7 @@ const AllJDs = () => {
             });
 
             const response = await axios.post(
-                `http://localhost:4000/api/candidate/apply/${selectedJob._id}`,
+                `${baseUrl}/api/candidate/apply/${selectedJob._id}`,
                 submitData,
                 {
                     headers: {

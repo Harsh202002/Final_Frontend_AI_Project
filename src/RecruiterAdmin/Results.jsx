@@ -3,6 +3,7 @@ import { Search, Eye, Trash2 } from 'lucide-react';
 import Pagination from '../components/LandingPage/Pagination';
 import ViewResults from './ViewResults'; 
 import SpinLoader from '../components/SpinLoader';
+import { baseUrl } from '../utils/ApiConstants';
 
 function Results() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -160,7 +161,7 @@ function Results() {
           let candidate = null;
           if (a && a.candidate_id) {
             try {
-              const r2 = await fetch(`http://localhost:4000/api/candidate/public/${encodeURIComponent(a.cid)}`);
+              const r2 = await fetch(`${baseUrl}/api/candidate/public/${encodeURIComponent(a.cid)}`);
               if (r2.ok) {
                 const cdata = await r2.json();
                 // API may return { success: true, candidate: { ... } } or the candidate object directly

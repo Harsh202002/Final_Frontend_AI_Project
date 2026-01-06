@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Search, Filter, Edit, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Pagination from '../components/LandingPage/Pagination';
+import { superAdminBaseUrl } from '../utils/ApiConstants';
 
 function EnquiryMessages() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -25,7 +26,7 @@ function EnquiryMessages() {
         const fetchTotalEnquiry = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get('http://localhost:5000/api/enquiry/all', {
+                const response = await axios.get(`${superAdminBaseUrl}/api/enquiry/all`, {
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${localStorage.getItem("token")}`

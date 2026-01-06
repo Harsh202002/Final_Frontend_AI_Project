@@ -586,6 +586,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Trash2, Search, SlidersHorizontal, Eye } from 'lucide-react';
 import Pagination from '../../components/LandingPage/Pagination';
 import SpinLoader from '../../components/SpinLoader';
+import { baseUrl } from '../../utils/ApiConstants';
 
 function Report() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -597,14 +598,14 @@ function Report() {
   const [error, setError] = useState(null);
   const mountedRef = useRef(true);
   const itemsPerPage = 5;
-  const CAND_API_BASE = window.REACT_APP_BASE_URL || 'http://localhost:4000';
+  const CAND_API_BASE = window.REACT_APP_BASE_URL || `${baseUrl}`;
 
   const handleDelete = async (attempt) => {
     if (!attempt || !attempt.id) return;
     const ok = window.confirm(`Delete attempt ${attempt.id}? This cannot be undone.`);
     if (!ok) return;
     try {
-      const base = window.REACT_APP_BASE_URL || 'http://localhost:5000';
+      const base = window.REACT_APP_BASE_URL || `${baseUrl}`;
       const res = await fetch(`${base}/api/v1/test/attempts/${encodeURIComponent(attempt.id)}`, { method: 'DELETE' });
       if (!res.ok) {
         const txt = await res.text();
@@ -709,7 +710,7 @@ function Report() {
         // Try to resolve candidate names by calling candidate API route for each candidate_id
         try {
           // Prefer same API base as other calls (backend main API)
-          const CAND_API_BASE = window.REACT_APP_BASE_URL || 'http://localhost:4000';
+          const CAND_API_BASE = window.REACT_APP_BASE_URL || `${baseUrl}`;
           const token = localStorage.getItem('candidateToken') || localStorage.getItem('token') || null;
           console.log("token",token)
 

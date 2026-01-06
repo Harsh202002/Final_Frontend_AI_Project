@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import img from "../assets/CandidateLogin.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { baseUrl } from "../utils/ApiConstants";
 
 const CandidateLogin = () => {
     const [email, setEmail] = useState("");
@@ -29,7 +30,7 @@ const CandidateLogin = () => {
 
         try {
             const { data } = await axios.post(
-                "http://localhost:4000/api/candidate/login",
+                `${baseUrl}/api/candidate/login`,
                 { email, password }
             );
 

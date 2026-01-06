@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useCompany } from '../../Context/companyContext';
+import { baseUrl } from '../../utils/ApiConstants';
 
 function RequirementForm() {
   const { companies } = useCompany();
@@ -40,7 +41,7 @@ function RequirementForm() {
 
   const fetchHRUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/offer/hr", {
+      const response = await axios.get(`${baseUrl}/api/offer/hr`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -101,7 +102,7 @@ function RequirementForm() {
 
       console.log('Submitting data:', submitData);
 
-      const response = await axios.post('http://localhost:4000/api/offer/', submitData, {
+      const response = await axios.post(`${baseUrl}/api/offer/`, submitData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'

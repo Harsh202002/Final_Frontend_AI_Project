@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { baseUrl } from '../../utils/ApiConstants';
 
 const SupportTicketDetail = ({ selectedTicket, getStatusColor }) => {
     const [status, setStatus] = useState('');
@@ -22,7 +23,7 @@ const SupportTicketDetail = ({ selectedTicket, getStatusColor }) => {
             if (assignedTo) updateData.assignedTo = assignedTo;
 
             const res = await axios.put(
-                `http://localhost:4000/api/tickets/${selectedTicket._id}`,
+                `${baseUrl}/api/tickets/${selectedTicket._id}`,
                 updateData,
                 {
                     headers: {

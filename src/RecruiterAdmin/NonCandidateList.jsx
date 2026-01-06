@@ -14,6 +14,7 @@ import Pagination from "../components/LandingPage/Pagination";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import SpinLoader from "../components/SpinLoader"; 
+import { baseUrl } from "../utils/ApiConstants";
 
 export default function NonCandidateList() {
     const [q, setQ] = useState("");
@@ -32,7 +33,7 @@ export default function NonCandidateList() {
         const fetchNonCandidates = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get(`http://localhost:4000/api/jd/all-candidates`, {
+                const res = await axios.get(`${baseUrl}/api/jd/all-candidates`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
@@ -106,7 +107,7 @@ export default function NonCandidateList() {
             setSendingInvites(true);
             const candidateIds = Array.from(selectedIds);
             const res = await axios.post(
-                `http://localhost:4000/api/candidate/send-email/${jdId}`,
+                `${baseUrl}/api/candidate/send-email/${jdId}`,
                 { candidateIds },
                 {
                     headers: {

@@ -4,6 +4,7 @@ import Pagination from '../../components/LandingPage/Pagination';
 import RequirementAddNote from './RequirementAddNote';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { baseUrl } from '../../utils/ApiConstants';
 
 export default function AssignedRecruiters() {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function AssignedRecruiters() {
     useEffect(() => {
         const fetchAllOffer = async () => {
             try {
-                const response = await axios.get('http://localhost:4000/api/offer/overview', {
+                const response = await axios.get(`${baseUrl}/api/offer/overview`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
@@ -46,7 +47,7 @@ export default function AssignedRecruiters() {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this offer?')) {
             try {
-                const response = await axios.delete(`http://localhost:4000/api/offer/${id}`, {
+                const response = await axios.delete(`${baseUrl}/api/offer/${id}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },

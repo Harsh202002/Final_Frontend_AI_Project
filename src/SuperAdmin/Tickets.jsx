@@ -2,6 +2,7 @@ import { Search, Filter, CreditCard as Edit2, Trash2, Edit, X } from 'lucide-rea
 import { useEffect, useState } from 'react';
 import Pagination from '../components/LandingPage/Pagination';
 import axios from 'axios';
+import { superAdminBaseUrl } from '../utils/ApiConstants';
 
 function Tickets() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +22,7 @@ function Tickets() {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/superAdmin/allTickets', {
+        const response = await axios.get(`${superAdminBaseUrl}/api/superAdmin/allTickets`, {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }
@@ -111,7 +112,7 @@ function Tickets() {
     setIsSubmitting(true);
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/superadmin/reply-to-ticket/${selectedTicketId}`,
+        `${superAdminBaseUrl}/api/superadmin/reply-to-ticket/${selectedTicketId}`,
         { message: replyMessage },
         {
           headers: {

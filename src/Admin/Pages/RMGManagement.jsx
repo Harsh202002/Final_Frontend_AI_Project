@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Trash2, Eye, User, SlidersVertical } from 'lucide-react';
 import Pagination from '../../components/LandingPage/Pagination';
 import AddNewRMG from '../Components/AddNewRMG';
+import { baseUrl } from '../../utils/ApiConstants';
 import axios from 'axios';
 
 function RMGManagement() {
@@ -13,7 +14,7 @@ function RMGManagement() {
   useEffect(() => {
     const fetchAllRMG = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/admin/allrmg", {
+        const res = await axios.get(`${baseUrl}/api/admin/allrmg`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -115,7 +116,7 @@ function RMGManagement() {
     try {
       const rmgToDelete = recruiters.find(r => r.id === id);
       
-      const res = await axios.delete(`http://localhost:4000/api/admin/rmg/${id}`, {
+      const res = await axios.delete(`${baseUrl}/api/admin/rmg/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

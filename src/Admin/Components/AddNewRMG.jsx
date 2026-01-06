@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useCompany } from '../../Context/companyContext';
+import { baseUrl } from '../../utils/ApiConstants';
 
 function AddNewRMG({ onSave, onCancel, editData }) {
     const { companies } = useCompany();
@@ -47,7 +48,7 @@ function AddNewRMG({ onSave, onCancel, editData }) {
         try {
             if (editData) {
                 const response = await axios.put(
-                    `http://localhost:4000/api/admin/rmg/${editData.id || editData._id}`,
+                    `${baseUrl}/api/admin/rmg/${editData.id || editData._id}`,
                     {
                         name: formData.fullName,
                         email: formData.email,
@@ -69,7 +70,7 @@ function AddNewRMG({ onSave, onCancel, editData }) {
                 }
             } else {
                 const response = await axios.post(
-                    'http://localhost:4000/api/admin/rmg',
+                    `${baseUrl}/api/admin/rmg`,
                     {
                         name: formData.fullName,
                         email: formData.email,

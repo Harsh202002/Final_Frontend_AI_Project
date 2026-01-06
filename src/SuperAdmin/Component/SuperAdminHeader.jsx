@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Search, Bell, MessageCircle, Menu, ChevronDown } from "lucide-react";
 import axios from "axios";
+import { superAdminBaseUrl } from "../../utils/ApiConstants";
 
 const SuperAdminHeader = ({ onMenuToggle }) => {
     const [user, setUser] = useState(null);
@@ -32,7 +33,7 @@ const SuperAdminHeader = ({ onMenuToggle }) => {
         const fetchProfile = async () => {
             try {
                 const res = await axios.get(
-                    "http://localhost:5000/api/superadmin/profile",
+                    `${superAdminBaseUrl}/api/superadmin/profile`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,

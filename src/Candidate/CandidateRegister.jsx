@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import img from "../assets/CandidateLogin.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { baseUrl } from "../utils/ApiConstants";
 import {
     Upload,
     CheckCircle,
@@ -76,7 +77,7 @@ const CandidateRegister = () => {
         setError("");
 
         try {
-            const { data } = await axios.post("http://localhost:4000/api/candidate/register", {
+            const { data } = await axios.post(`${baseUrl}/api/candidate/register`, {
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,

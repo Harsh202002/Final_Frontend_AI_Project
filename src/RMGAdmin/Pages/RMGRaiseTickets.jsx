@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Search, SlidersHorizontal, Ticket, Clock, FileCheck, Trash2, ChevronDown } from 'lucide-react';
 import Pagination from '../../components/LandingPage/Pagination';
 import axios from 'axios';
+import { baseUrl } from '../../utils/ApiConstants';
 
 const RMGRaiseTickets = () => {
     const [activeTab, setActiveTab] = useState('All');
@@ -16,7 +17,7 @@ const RMGRaiseTickets = () => {
             setLoading(true);
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get("http://localhost:4000/api/tickets/",
+                const res = await axios.get(`${baseUrl}/api/tickets/`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`

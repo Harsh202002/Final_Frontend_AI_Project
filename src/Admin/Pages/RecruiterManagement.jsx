@@ -3,6 +3,7 @@ import { Search, Trash2, Eye, User, SlidersVertical } from 'lucide-react';
 import Pagination from '../../components/LandingPage/Pagination';
 import AddNewRecruiter from '../Components/AddNewRecruiter';
 import axios from 'axios';
+import { baseUrl } from '../../utils/ApiConstants';
 
 function RecruiterManagement() {
   const [recruiters, setRecruiters] = useState([]);
@@ -13,7 +14,7 @@ function RecruiterManagement() {
   useEffect(() => {
     const fetchAllRecruiter = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/admin/allhr", {
+        const res = await axios.get(`${baseUrl}/api/admin/allhr`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -111,7 +112,7 @@ function RecruiterManagement() {
     try {
       const recruiterToDelete = recruiters.find(r => r.id === id);
       
-      const res = await axios.delete(`http://localhost:4000/api/admin/hr/${id}`, {
+      const res = await axios.delete(`${baseUrl}/api/admin/hr/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

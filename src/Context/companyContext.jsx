@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { baseUrl } from "../utils/ApiConstants";
 
 export const CompanyContext = createContext();
 
@@ -10,7 +11,7 @@ export const CompanyProvider = ({ children }) => {
         const fetchCompany = async () => {
             try {
                 const res = await axios.get(
-                    "http://localhost:4000/api/auth/all-companies"
+                    `${baseUrl}/api/auth/all-companies`
                 );
                 setCompanies(res.data);  
             } catch (error) {

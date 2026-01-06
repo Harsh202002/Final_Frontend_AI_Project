@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import img from "../../assets/RMGDashImg1.png";
 import axios from "axios";
+import { baseUrl } from "../../utils/ApiConstants";
 
 const getMonthName = (monthNum) => {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -55,25 +56,25 @@ export default function RMGDashboard() {
                     jdStatusPercentageRes,
                     recruitersClosedRes
                 ] = await Promise.all([
-                    axios.get('http://localhost:4000/api/dashboard/total-offers', {
+                    axios.get(`${baseUrl}/api/dashboard/total-offers`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get('http://localhost:4000/api/dashboard/jobs-recruiters-month-wise', {
+                    axios.get(`${baseUrl}/api/dashboard/jobs-recruiters-month-wise`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get('http://localhost:4000/api/dashboard/count-hr-tickets-month-wise', {
+                    axios.get(`${baseUrl}/api/dashboard/count-hr-tickets-month-wise`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get('http://localhost:4000/api/dashboard/current-offers', {
+                    axios.get(`${baseUrl}/api/dashboard/current-offers`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get('http://localhost:4000/api/dashboard/recent-jobs', {
+                    axios.get(`${baseUrl}/api/dashboard/recent-jobs`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get('http://localhost:4000/api/dashboard/jd-status-percentage', {
+                    axios.get(`${baseUrl}/api/dashboard/jd-status-percentage`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get('http://localhost:4000/api/dashboard/getAll-recruiters-closed', {
+                    axios.get(`${baseUrl}/api/dashboard/getAll-recruiters-closed`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
                 ]);

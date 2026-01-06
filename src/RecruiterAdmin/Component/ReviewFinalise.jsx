@@ -3,6 +3,7 @@ import { Info, Clock, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import AssessmentAPI from '../api/generateAssessmentApi';
+import { baseUrl } from '../../utils/ApiConstants';
 
 
 export default function ReviewFinalise({ formData, questions, onFinalize, onBack, loading }) {
@@ -214,7 +215,7 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
           }
          const token = localStorage.getItem("token");
          await axios.post(
-          `http://localhost:4000/api/candidate/send-email/${jobIdFromLocal}`,
+          `${baseUrl}/api/candidate/send-email/${jobIdFromLocal}`,
           { candidateIds: candidateIdsArray, },
           {
             headers: {

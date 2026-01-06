@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Pagination from '../components/LandingPage/Pagination';
 import { useNavigate } from 'react-router-dom';
+import { superAdminBaseUrl } from '../utils/ApiConstants';
 import axios from 'axios';
 
 function Companies() {
@@ -27,7 +28,7 @@ function Companies() {
 
   const fetchTotalCompanies = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/company/', {
+      const response = await axios.get(`${superAdminBaseUrl}/api/company/`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("token")}`

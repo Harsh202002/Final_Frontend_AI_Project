@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../../utils/ApiConstants";
 
 const CandidateDashboard = () => {
     const [range, setRange] = useState("1 Day");
@@ -35,7 +36,7 @@ const CandidateDashboard = () => {
         const fetchCandidateData = async () => {
             try {
                 const token = localStorage.getItem("candidateToken");
-                const res = await axios.get("http://localhost:4000/api/auth/me", {
+                const res = await axios.get(`${baseUrl}/api/auth/me`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -57,7 +58,7 @@ const CandidateDashboard = () => {
     useEffect(() => {
         const fetchAppliedJobs = async () => {
             try {
-                const res = await axios.get("http://localhost:4000/api/candidate/applied-jobs", {
+                const res = await axios.get(`${baseUrl}/api/candidate/applied-jobs`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("candidateToken")}`,
                     },
@@ -77,7 +78,7 @@ const CandidateDashboard = () => {
     useEffect(() => {
         const fetchjdcounts = async () => {
             try {
-                const res = await axios.get("http://localhost:4000/api/candidate/jd-counts", {
+                const res = await axios.get(`${baseUrl}/api/candidate/jd-counts`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("candidateToken")}`,
                     },
@@ -97,7 +98,7 @@ const CandidateDashboard = () => {
     useEffect(() => {
         const fetchlatestfivejds = async () => {
             try {
-                const res = await axios.get("http://localhost:4000/api/candidate/latest-five-jds", {
+                const res = await axios.get(`${baseUrl}/api/candidate/latest-five-jds`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("candidateToken")}`,
                     },

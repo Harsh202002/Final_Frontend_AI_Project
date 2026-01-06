@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Check } from 'lucide-react';
 import axios from 'axios';
-
+import { superAdminBaseUrl } from '../utils/ApiConstants';
 const RecruiterProfile = () => {
     const [formData, setFormData] = useState({
         name: '',
@@ -14,7 +14,7 @@ const RecruiterProfile = () => {
         const fetchProfileData = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get('http://localhost:5000/api/superadmin/profile', {
+                const response = await axios.get(`${superAdminBaseUrl}/api/superadmin/profile`, {
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${localStorage.getItem("token")}`

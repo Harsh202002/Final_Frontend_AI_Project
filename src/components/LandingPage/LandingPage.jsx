@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { superAdminBaseUrl } from '../../utils/ApiConstants';
 import {
   BrainCircuit,
   Search,
@@ -220,7 +221,7 @@ const LandingPage = () => {
     setSubmitStatus({ type: '', message: '' });
 
     try {
-      const response = await axios.post('http://localhost:5000/api/enquiry/submit', {
+      const response = await axios.post(`${superAdminBaseUrl}/api/enquiry/submit`, {
         companyName: `${formData.firstName} ${formData.lastName}`,
         emailid: formData.email,
         phone: formData.phoneNumber,

@@ -3,6 +3,7 @@ import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import img from "../assets/RecruiterLogin.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { baseUrl } from "../utils/ApiConstants";
 
 const ForgotPassword = () => {
     const [step, setStep] = useState(1);
@@ -49,7 +50,7 @@ const ForgotPassword = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post("http://localhost:4000/api/forgot/forgot-password", { email });
+            const response = await axios.post(`${baseUrl}/api/forgot/forgot-password`, { email });
             console.log("Email:", email);
             setStep(2);
         } catch (err) {
@@ -68,7 +69,7 @@ const ForgotPassword = () => {
         const otpValue = otp.join("");
 
         try {
-            const response = await axios.post("http://localhost:4000/api/forgot/validate-otp", { email, otp: otpValue });
+            const response = await axios.post(`${baseUrl}/api/forgot/validate-otp`, { email, otp: otpValue });
             console.log("OTP:", otpValue);
             setStep(3);
         } catch (err) {
@@ -91,7 +92,7 @@ const ForgotPassword = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post("http://localhost:4000/api/forgot/change-password", { email, newPassword: password });
+            const response = await axios.post(`${baseUrl}/api/forgot/change-password`, { email, newPassword: password });
             console.log("New Password:", password);
             console.log("Confirm Password:", confirmPassword);
             alert("Password Reset Done!");
@@ -109,7 +110,7 @@ const ForgotPassword = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post("http://localhost:4000/api/forgot/forgot-password", { email });
+            const response = await axios.post(`${baseUrl}/api/forgot/forgot-password`, { email });
             setOtp(["", "", "", "", "", ""]);
             alert("OTP resent successfully!");
         } catch (err) {

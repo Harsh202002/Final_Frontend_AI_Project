@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, ChevronDown, Trash2, CheckCircle, AlertCircle, Loader2, Mail, Globe, Key } from 'lucide-react';
 import SpinLoader from '../components/SpinLoader';
+import { superAdminBaseUrl } from '../utils/ApiConstants';
 
 function CompaniesRegister() {
     const [formData, setFormData] = useState({
@@ -131,7 +132,7 @@ function CompaniesRegister() {
 
             console.log('Sending data:', apiData);
 
-            const response = await fetch('http://localhost:5000/api/company/register', {
+            const response = await fetch(`${superAdminBaseUrl}/api/company/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

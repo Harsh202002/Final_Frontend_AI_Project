@@ -5,6 +5,7 @@ import {
   Tooltip, Legend, ResponsiveContainer, AreaChart, Area
 } from 'recharts';
 import Pagination from '../../components/LandingPage/Pagination';
+import { baseUrl } from '../../utils/ApiConstants';
 
 function AdminDashboard() {
   const [loading, setLoading] = useState(true);
@@ -33,19 +34,19 @@ function AdminDashboard() {
         const token = localStorage.getItem("token");
 
         const [allRMG, allHR, allCandidates, allJD, allOffers] = await Promise.all([
-          axios.get('http://localhost:4000/api/admin/allrmg', {
+          axios.get(`${baseUrl}/api/admin/allrmg`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://localhost:4000/api/admin/allhr', {
+          axios.get(`${baseUrl}/api/admin/allhr`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://localhost:4000/api/jd/all-candidates', {
+          axios.get(`${baseUrl}/api/jd/all-candidates`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://localhost:4000/api/jd/all-jd-admin', {
+          axios.get(`${baseUrl}/api/jd/all-jd-admin`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://localhost:4000/api/offer/all-offers', {
+          axios.get(`${baseUrl}/api/offer/all-offers`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
         ]);

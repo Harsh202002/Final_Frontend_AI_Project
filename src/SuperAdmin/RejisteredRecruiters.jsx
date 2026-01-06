@@ -3,7 +3,7 @@ import { Eye, Trash2, Users, SlidersHorizontal, Search } from 'lucide-react';
 import Pagination from '../components/LandingPage/Pagination';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import { superAdminBaseUrl } from '../utils/ApiConstants';
 function RejisteredRecruiters() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRegister, setSelectedRegister] = useState(null);
@@ -25,7 +25,7 @@ function RejisteredRecruiters() {
     useEffect(() => {
       const fetchRegisteredRecruiters = async () => {
         try {
-          const response = await axios.get('http://localhost:5000/api/company/', {
+          const response = await axios.get(`${superAdminBaseUrl}/api/company/`, {
             headers: {
               "Authorization": `Bearer ${localStorage.getItem("token")}`
             }
@@ -78,7 +78,7 @@ function RejisteredRecruiters() {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this company?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/company/${id}`, {
+                await axios.delete(`${superAdminBaseUrl}/api/company/${id}`, {
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("token")}`
                     }

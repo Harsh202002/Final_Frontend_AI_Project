@@ -3,6 +3,7 @@ import { Upload, FileText, Copy, Eye, Trash2, Filter, Search, Trash } from "luci
 import Pagination from "../components/LandingPage/Pagination";
 import ResumeSummary from "./ResumeSummary";
 import { useNavigate, useLocation } from "react-router-dom";
+import { baseUrl } from "../utils/ApiConstants";
 import axios from "axios";
 
 function JDDetails() {
@@ -37,7 +38,7 @@ function JDDetails() {
                     return;
                 }
 
-                const response = await axios.get(`http://localhost:4000/api/jd/${jdId}/candidatess`, {
+                const response = await axios.get(`${baseUrl}/api/jd/${jdId}/candidatess`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     }
@@ -73,7 +74,7 @@ function JDDetails() {
             }
 
             const response = await axios.post(
-                `http://localhost:4000/api/jd/${jdId}/filter-resumes`,
+                `${baseUrl}/api/jd/${jdId}/filter-resumes`,
                 {},
                 {
                     headers: {

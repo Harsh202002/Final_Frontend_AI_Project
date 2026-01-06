@@ -3,6 +3,7 @@ import { Eye, EyeOff } from "lucide-react";
 import img from "../assets/RecruiterLogin.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { baseUrl } from "../utils/ApiConstants";
  
 const UniversalLogin = () => {
     const [email, setEmail] = useState("");
@@ -64,7 +65,7 @@ const UniversalLogin = () => {
  
         try {
             const response = await axios.post(
-                'http://localhost:4000/api/auth/login',
+                `${baseUrl}/api/auth/login`,
                 { email, password },
                 { withCredentials: true }
             );

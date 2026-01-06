@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Calendar } from "lucide-react";
 import robot from '../../assets/robot.png'
 import axios from "axios";
+import { baseUrl } from "../../utils/ApiConstants";
 
 export default function RMGSupportTickets() {
   const [formData, setFormData] = useState({
@@ -33,7 +34,7 @@ export default function RMGSupportTickets() {
     try {
       const token = localStorage.getItem("token");
 
-      const { data } = await axios.post("http://localhost:4000/api/tickets/", formData,
+      const { data } = await axios.post(`${baseUrl}/api/tickets/`, formData,
         {
           headers: {
             Authorization: `Bearer ${token}`

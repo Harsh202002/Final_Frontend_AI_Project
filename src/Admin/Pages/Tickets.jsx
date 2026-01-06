@@ -3,6 +3,7 @@ import { Search, SlidersHorizontal, Ticket, Clock, FileCheck, Trash2, ChevronDow
 import axios from 'axios';
 import Pagination from '../../components/LandingPage/Pagination';
 import SupportTicketDetail from '../Components/SupportTicketsDetail';
+import { baseUrl } from '../../utils/ApiConstants';
 
 const Tickets = () => {
     const [activeTab, setActiveTab] = useState('All');
@@ -21,7 +22,7 @@ const Tickets = () => {
     useEffect(() => {
         const fetchTickets = async () => {
             try {
-                const res = await axios.get("http://localhost:4000/api/tickets/", {
+                const res = await axios.get(`${baseUrl}/api/tickets/`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },

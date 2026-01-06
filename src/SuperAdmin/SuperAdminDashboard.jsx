@@ -7,6 +7,7 @@ import img2 from '../assets/SADashImg1.png'
 import img1 from '../assets/SADashImg2.png'
 import img3 from '../assets/SADashImg3.png'
 import axios from "axios";
+import { superAdminBaseUrl } from "../utils/ApiConstants";
 
 export default function SuperAdminDashboard() {
     const [companies, setCompanies] = useState([]);
@@ -20,10 +21,10 @@ export default function SuperAdminDashboard() {
             try {
                 const token = localStorage.getItem("token");
                 const [allCompany, allEnquiry, allTickets, getAllAdmins] = await Promise.all([
-                    axios.get('http://localhost:5000/api/company/', { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get('http://localhost:5000/api/enquiry/all', { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get('http://localhost:5000/api/superadmin/allTickets', { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get('http://localhost:5000/api/superadmin/getAllAdmins', { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${superAdminBaseUrl}/api/company/`, { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${superAdminBaseUrl}/api/enquiry/all`, { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${superAdminBaseUrl}/api/superadmin/allTickets`, { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${superAdminBaseUrl}/api/superadmin/getAllAdmins`, { headers: { Authorization: `Bearer ${token}` } }),
                 ]);
                 setCompanies(allCompany.data.companies || allCompany.data || []);
                 setEnquiries(allEnquiry.data.data || allEnquiry.data || []);

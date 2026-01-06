@@ -3,6 +3,7 @@ import { Eye, EyeOff } from "lucide-react";
 import img from "../assets/SALogin.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { superAdminBaseUrl } from "../utils/ApiConstants";
 
 const SuperAdminLogin = () => {
     const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ const SuperAdminLogin = () => {
 
         try {
             const response = await axios.post(
-                "http://localhost:5000/api/superadmin/login", 
+                `${superAdminBaseUrl}/api/superadmin/login`, 
                 { 
                     email, 
                     password 
