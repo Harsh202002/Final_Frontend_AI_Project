@@ -4,8 +4,8 @@ import img from "../assets/RecruiterLogin.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../utils/ApiConstants";
-
-const ForgotPassword = () => {
+    
+const CandidateForgotPassword = () => {
     const [step, setStep] = useState(1);
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -44,16 +44,18 @@ const ForgotPassword = () => {
         }
     };
 
+    // Step 1: API Call - forgot (send OTP)
     const handleSendOtp = async (e) => {
         e.preventDefault();
         setError("");
         setLoading(true);
 
         try {
-            const response = await axios.post(`${baseUrl}/api/forgot/forgot-password`, { email });
-            // console.log("Email:", email);
+            const response = await axios.post(`${baseUrl}/api/candidate-forgot/forgot`, { email });
+            // console.log("res:", response.data);
             setStep(2);
         } catch (err) {
+            console.log(err);
             setError(err.response?.data?.message || "Failed to send OTP");
         } finally {
             setLoading(false);
@@ -69,8 +71,9 @@ const ForgotPassword = () => {
         const otpValue = otp.join("");
 
         try {
-            const response = await axios.post(`${baseUrl}/api/forgot/validate-otp`, { email, otp: otpValue });
+            const response = await axios.post(`${baseUrl}/api/candidate-forgot/validate-otp`, { email, otp: otpValue });
             // console.log("OTP:", otpValue);
+            // console.log("res:", response.data);
             setStep(3);
         } catch (err) {
             setError(err.response?.data?.message || "Invalid OTP");
@@ -92,11 +95,12 @@ const ForgotPassword = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post(`${baseUrl}/api/forgot/change-password`, { email, newPassword: password });
+            const response = await axios.post(`${baseUrl}/api/candidate-forgot/change-password`, { email, newPassword: password });
+            // console.log("res:", response.data);
             // console.log("New Password:", password);
             // console.log("Confirm Password:", confirmPassword);
             alert("Password Reset Done!");
-            navigate("/login");
+            navigate("/CandidateLogin");
         } catch (err) {
             setError(err.response?.data?.message || "Failed to change password");
         } finally {
@@ -110,7 +114,7 @@ const ForgotPassword = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post(`${baseUrl}/api/forgot/forgot-password`, { email });
+            const response = await axios.post(`${baseUrl}/api/candidate-forgot/forgot`, { email });
             setOtp(["", "", "", "", "", ""]);
             alert("OTP resent successfully!");
         } catch (err) {
@@ -175,7 +179,7 @@ const ForgotPassword = () => {
 
                                 <button
                                     type="button"
-                                    onClick={() => navigate("/login")}
+                                    onClick={() => navigate("/CandidateLogin")}
                                     className="w-full flex items-center justify-center text-gray-600 hover:text-blue-600"
                                 >
                                     <ArrowLeft className="w-4 h-4 mr-2" />
@@ -297,4 +301,4 @@ const ForgotPassword = () => {
     );
 };
 
-export default ForgotPassword;
+export default CandidateForgotPassword;

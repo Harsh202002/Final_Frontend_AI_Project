@@ -68,6 +68,8 @@ import ForgotPassword from './components/ForgotPassword';
 import ProtectedRoute from './components/ProtectedRoute';
 import { CompanyProvider } from './Context/companyContext';
 import CandidateRegister from './Candidate/CandidateRegister';
+import CandidateForgotPassword from './components/CandidateForgotPassword';
+
 const App = () => {
   return (
 
@@ -77,6 +79,7 @@ const App = () => {
 
           <Route path="/" element={<LandingPage />} />
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
+          <Route path="/CandidateForgotPassword" element={<CandidateForgotPassword />} />
           <Route path="/SuperAdminLogin" element={<SuperAdminLogin />} />
           <Route path="/CandidateLogin" element={<CandidateLogin />} />
           <Route path="/CandidateRegister" element={<CandidateRegister />} />

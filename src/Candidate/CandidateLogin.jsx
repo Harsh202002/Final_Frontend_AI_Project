@@ -98,7 +98,7 @@ const CandidateLogin = () => {
                         />
                     </div>
 
-                    <div className="mb-6">
+                    <div className="mb-2">
                         <label className="block text-gray-800 font-medium mb-1">
                             Password
                         </label>
@@ -109,6 +109,15 @@ const CandidateLogin = () => {
                             placeholder="Enter Password"
                             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
+                    </div>
+
+                    <div className="mb-4 flex flex-row-reverse">
+                        <span
+                            onClick={() => navigate("/CandidateForgotPassword")}
+                            className="text-blue-600 cursor-pointer text-sm hover:underline"
+                        >
+                            Forgot Password?
+                        </span>
                     </div>
 
                     {error && (
@@ -136,7 +145,7 @@ const CandidateLogin = () => {
                     </p>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
