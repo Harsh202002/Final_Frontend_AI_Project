@@ -1,5 +1,6 @@
+// 
 import { useEffect, useState } from 'react';
-import { Trash2, Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import Pagination from '../../components/LandingPage/Pagination';
 import axios from 'axios';
 import { baseUrl } from '../../utils/ApiConstants';
@@ -11,17 +12,22 @@ function AppliedJD() {
     const [selectedSkills, setSelectedSkills] = useState(null);
     const [showSkillsPopup, setShowSkillsPopup] = useState(false);
     const [candidateId, setCandidateId] = useState(null);
+
     const itemsPerPage = 5;
 
+    // Fetch Applied JDs
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${baseUrl}/api/candidate/applied-jds`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('candidateToken')}`,
-                    },
-                });
-                console.log('Applied JDs data:', response.data);
+                const response = await axios.get(
+                    `${baseUrl}/api/candidate/applied-jds`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('candidateToken')}`,
+                        },
+                    }
+                );
+
                 if (response.data.success) {
                     setAppliedJobs(response.data.data);
                 }
@@ -32,33 +38,26 @@ function AppliedJD() {
         fetchData();
     }, []);
 
+    // Get Candidate ID
     useEffect(() => {
-        const getCandidateInfo = () => {
-            const user = JSON.parse(localStorage.getItem("candidate"));
-            console.log("Candidate Info:", user);
-            if (user && user.id) {
-                setCandidateId(user.id);
-            }
-        };
-        getCandidateInfo();
-    }, [])
+        const user = JSON.parse(localStorage.getItem('candidate'));
+        if (user && user.id) {
+            setCandidateId(user.id);
+        }
+    }, []);
 
+    // Get Application Status
     const getApplicationStatus = (job) => {
-        if (!candidateId || !job.appliedCandidates || job.appliedCandidates.length === 0) {
-            return 'pending';
-        }
-        
+        if (!candidateId || !job.appliedCandidates?.length) return 'pending';
+
         const appliedCandidate = job.appliedCandidates.find(
-            (candidate) => candidate.candidate === candidateId
+            (c) => c.candidate === candidateId
         );
-        
-        if (appliedCandidate && appliedCandidate.status) {
-            return appliedCandidate.status;
-        }
-        
-        return 'pending';
+
+        return appliedCandidate?.status || 'pending';
     };
 
+    // Status Badge Color
     const getStatusBadgeClass = (status) => {
         switch (status.toLowerCase()) {
             case 'filtered':
@@ -70,6 +69,7 @@ function AppliedJD() {
         }
     };
 
+    // Skills Popup
     const handleViewSkills = (requirements) => {
         setSelectedSkills(requirements);
         setShowSkillsPopup(true);
@@ -80,132 +80,135 @@ function AppliedJD() {
         setSelectedSkills(null);
     };
 
+    // Date Format
     const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-GB');
+        return new Date(dateString).toLocaleDateString('en-GB');
     };
 
-    const filteredCandidates = appliedJobs.filter((job) =>
-        job.companyName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // 🔥 FILTER + SORT (LATEST DATE FIRST)
+    const filteredCandidates = appliedJobs
+        .filter((job) =>
+            job.companyName
+                ?.toLowerCase()
+                .includes(searchTerm.toLowerCase())
+        )
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+    // Pagination
     const totalPages = Math.ceil(filteredCandidates.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentData = filteredCandidates.slice(startIndex, startIndex + itemsPerPage);
+    const currentData = filteredCandidates.slice(
+        startIndex,
+        startIndex + itemsPerPage
+    );
 
     return (
         <>
-            {/* Skills Popup with Blur Background */}
+            {/* Skills Popup */}
             {showSkillsPopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center">
                     <div
                         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
                         onClick={closeSkillsPopup}
-                    ></div>
+                    />
 
-                    {/* Popup Content */}
-                    <div className="relative bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto z-10">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold text-gray-800">Required Skills</h3>
-                            <button
-                                onClick={closeSkillsPopup}
-                                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                            >
-                                <X size={20} className="text-gray-600" />
+                    <div className="relative bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4 z-10">
+                        <div className="flex justify-between mb-4">
+                            <h3 className="text-lg font-semibold">
+                                Required Skills
+                            </h3>
+                            <button onClick={closeSkillsPopup}>
+                                <X />
                             </button>
                         </div>
 
                         <div className="space-y-2">
-                            {selectedSkills && selectedSkills.length > 0 ? (
-                                selectedSkills.map((skill, index) => (
+                            {selectedSkills?.length ? (
+                                selectedSkills.map((skill, i) => (
                                     <div
-                                        key={index}
+                                        key={i}
                                         className="px-3 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm"
                                     >
                                         {skill}
                                     </div>
                                 ))
                             ) : (
-                                <p className="text-gray-500 text-sm">No skills listed</p>
+                                <p className="text-gray-500 text-sm">
+                                    No skills listed
+                                </p>
                             )}
                         </div>
-
-                        <button
-                            onClick={closeSkillsPopup}
-                            className="mt-6 w-full py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-                        >
-                            Close
-                        </button>
                     </div>
                 </div>
             )}
 
-            <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 md:p-6 mb-8">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                    <div className="relative w-full sm:w-64">
+            {/* Main Table */}
+            <div className="bg-white rounded-xl shadow-md border p-6">
+                <div className="mb-6 flex justify-between">
+                    <div className="relative w-64">
                         <input
                             type="text"
-                            placeholder="Search by Name"
+                            placeholder="Search by Company"
                             value={searchTerm}
                             onChange={(e) => {
                                 setSearchTerm(e.target.value);
                                 setCurrentPage(1);
                             }}
-                            className="w-full pl-3 pr-12 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full pl-3 pr-10 py-2 border rounded-lg"
                         />
-                        <button className="absolute right-0 top-0 h-full px-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
-                            <Search className="w-5 h-5" />
-                        </button>
-                    </div>
-
-                    <div className="flex w-full sm:w-auto sm:justify-end">
-                        {/* <button className="flex items-center justify-center gap-2 px-3 py-2.5 bg-black text-white rounded-lg transition-colors hover:bg-gray-800 w-full sm:w-auto">
-                            <SlidersHorizontal className="w-5 h-5" />
-                            <span className="font-medium text-sm">Filter</span>
-                        </button> */}
+                        <Search className="absolute right-3 top-2.5 text-gray-500" />
                     </div>
                 </div>
 
-                <div className="overflow-x-auto border border-gray-300 shadow-md rounded-2xl">
+                <div className="overflow-x-auto">
                     <table className="w-full min-w-[700px]">
-                        <thead>
-                            <tr className="border-b border-gray-300 bg-gray-50">
-                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">ID</th>
-                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Company Name</th>
-                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Job Title</th>
-                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Applied On</th>
-                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Skills</th>
-                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Status</th>
-
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-4 py-3 text-left">ID</th>
+                                <th className="px-4 py-3 text-left">Company</th>
+                                <th className="px-4 py-3 text-left">Job Title</th>
+                                <th className="px-4 py-3 text-left">Applied On</th>
+                                <th className="px-4 py-3 text-left">Skills</th>
+                                <th className="px-4 py-3 text-left">Status</th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            {currentData.length > 0 ? (
+                            {currentData.length ? (
                                 currentData.map((job, index) => {
                                     const status = getApplicationStatus(job);
                                     return (
-                                        <tr
-                                            key={index}
-                                            className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                                        >
-                                            <td className="py-4 px-4 text-sm text-gray-800">
+                                        <tr key={index} className="border-b">
+                                            <td className="px-4 py-3">
                                                 {startIndex + index + 1}
                                             </td>
-                                            <td className="py-4 px-4 text-sm text-gray-600">{job.companyName}</td>
-                                            <td className="py-4 px-4 text-sm text-gray-600">{job?.offerId?.jobTitle}</td>
-                                            <td className="py-4 px-4 text-sm text-gray-600">
+                                            <td className="px-4 py-3">
+                                                {job.companyName}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                {job?.offerId?.jobTitle}
+                                            </td>
+                                            <td className="px-4 py-3">
                                                 {formatDate(job.createdAt)}
                                             </td>
-                                            <td className="py-4 px-4">
+                                            <td className="px-4 py-3">
                                                 <button
-                                                    onClick={() => handleViewSkills(job.requirements)}
-                                                    className="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium hover:bg-blue-200"
+                                                    onClick={() =>
+                                                        handleViewSkills(
+                                                            job.requirements
+                                                        )
+                                                    }
+                                                    className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full"
                                                 >
                                                     View
                                                 </button>
                                             </td>
-                                            <td className="py-4 px-4">
-                                                <span className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${getStatusBadgeClass(status)}`}>
+                                            <td className="px-4 py-3">
+                                                <span
+                                                    className={`px-3 py-1 rounded-full text-sm ${getStatusBadgeClass(
+                                                        status
+                                                    )}`}
+                                                >
                                                     {status}
                                                 </span>
                                             </td>
@@ -214,7 +217,10 @@ function AppliedJD() {
                                 })
                             ) : (
                                 <tr>
-                                    <td colSpan="6" className="py-6 text-center text-gray-500">
+                                    <td
+                                        colSpan="6"
+                                        className="text-center py-6"
+                                    >
                                         No JDs found
                                     </td>
                                 </tr>
@@ -226,15 +232,13 @@ function AppliedJD() {
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}
-                            onPageChange={(newPage) => {
-                                if (newPage >= 1 && newPage <= totalPages) setCurrentPage(newPage);
-                            }}
+                            onPageChange={setCurrentPage}
                         />
                     )}
                 </div>
             </div>
         </>
-    )
+    );
 }
 
-export default AppliedJD
+export default AppliedJD;

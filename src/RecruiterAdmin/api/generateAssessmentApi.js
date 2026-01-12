@@ -1,6 +1,7 @@
 // API service for Generate Assessment
 // API service for Generate Assessment
-const API_BASE_URL = 'https://python-k0xt.onrender.com/api/v1';
+import { pythonUrl } from "../../utils/ApiConstants";
+const API_BASE_URL = `${pythonUrl}/api/v1`;
 
 class AssessmentAPI {
   /**

@@ -708,8 +708,8 @@ const AllJDs = () => {
                             </div>
 
                             <div>
-                                <span className="font-semibold">Resume:</span>
-                                <div className="mt-1 flex items-center justify-between border border-gray-300 rounded-lg px-3 py-2">
+                                {/* <span className="font-semibold">Resume:</span> */}
+                                {/* <div className="mt-1 flex items-center justify-between border border-gray-300 rounded-lg px-3 py-2">
                                     <span className="truncate">{selectedJob?.resume || "resume_2024.pdf"}</span>
                                     <button
                                         className="text-gray-500 hover:text-black"
@@ -717,7 +717,7 @@ const AllJDs = () => {
                                     >
                                         Copy
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

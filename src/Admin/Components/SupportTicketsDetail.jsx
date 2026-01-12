@@ -134,7 +134,7 @@ const SupportTicketDetail = ({ selectedTicket, getStatusColor }) => {
                                 type="text"
                                 value={assignedTo}
                                 readOnly
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-700"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-700 hidden"
                                 placeholder="Assigned To ID"
                             />
 

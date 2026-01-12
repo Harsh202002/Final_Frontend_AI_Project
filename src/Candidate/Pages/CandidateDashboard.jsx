@@ -366,9 +366,9 @@ const CandidateDashboard = () => {
                 <div className="lg:col-span-2 bg-white shadow-[0px_0px_6px_0px_rgba(0,_0,_0,_0.35)] rounded-xl p-6 overflow-x-auto">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-lg font-semibold text-gray-800">Applications</h2>
-                        <a className="text-indigo-600 text-sm font-medium">
+                        {/* <a className="text-indigo-600 text-sm font-medium">
                             See all
-                        </a>
+                        </a> */}
                     </div>
                     <div className="min-w-[600px]">
                         {currentApplications.length > 0 ? currentApplications.map((job, i) => (

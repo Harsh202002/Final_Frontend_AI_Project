@@ -399,7 +399,7 @@ export default function RecruiterDashboard() {
                                         </div>
                                         <div className="mt-2">
                                             <p className="text-gray-500 text-xs truncate">{city}</p>
-                                            <button className="text-blue-600 text-xs mt-1">View →</button>
+                                            {/* <button className="text-blue-600 text-xs mt-1">View →</button> */}
                                         </div>
                                     </div>
                                 );

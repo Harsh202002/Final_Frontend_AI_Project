@@ -211,7 +211,7 @@ export default function RMGDashboard() {
                     <div className="bg-white shadow-[0px_0px_6px_0px_rgba(0,_0,_0,_0.35)] rounded-2xl p-4 flex items-center justify-between">
                         <div>
                             <h2 className="text-gray-600 text-sm font-medium">Total Jobs</h2>
-                            <p className="text-2xl font-semibold text-gray-800 mt-1">{totalJobs}+</p>
+                            <p className="text-2xl font-semibold text-gray-800 mt-1">{totalJobs}</p>
                         </div>
                         <div className="p-3 bg-purple-100 rounded-full">
                             <svg
@@ -232,7 +232,7 @@ export default function RMGDashboard() {
                     <div className="bg-white shadow-[0px_0px_6px_0px_rgba(0,_0,_0,_0.35)] rounded-2xl p-4 flex items-center justify-between">
                         <div>
                             <h2 className="text-gray-600 text-sm font-medium">Total Offers</h2>
-                            <p className="text-2xl font-semibold text-gray-800 mt-1">{totalOffers}+</p>
+                            <p className="text-2xl font-semibold text-gray-800 mt-1">{totalOffers}</p>
                         </div>
                         <div className="p-3 bg-green-100 rounded-full">
                             <svg

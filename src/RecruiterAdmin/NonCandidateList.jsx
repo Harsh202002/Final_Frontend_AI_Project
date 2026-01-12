@@ -200,9 +200,9 @@ export default function NonCandidateList() {
                                 <th className="px-4 py-4 text-left text-sm font-medium text-gray-600">
                                     Resume
                                 </th>
-                                <th className="px-4 py-4 text-left text-sm font-medium text-gray-600">
+                                {/* <th className="px-4 py-4 text-left text-sm font-medium text-gray-600">
                                     Action
-                                </th>
+                                </th> */}
                             </tr>
                         </thead>
 
@@ -261,7 +261,7 @@ export default function NonCandidateList() {
                                             </a>
                                         </td>
 
-                                        <td className="px-4 py-4">
+                                        {/* <td className="px-4 py-4">
                                             <div className="flex items-center gap-2">
                                                 <button
                                                     onClick={() => setShareFor(c)}
@@ -272,25 +272,25 @@ export default function NonCandidateList() {
                                                     <Share2 size={18} />
                                                 </button>
 
-                                                {/* <button
+                                                <button
                                                     onClick={() => alert("View clicked")}
                                                     aria-label="View"
                                                     title="View"
                                                     className="rounded-lg border border-blue-200 bg-white p-2 text-blue-600 transition hover:bg-blue-50 hover:text-blue-900"
                                                 >
                                                     <Eye size={18} />
-                                                </button> */}
+                                                </button>
 
-                                                {/* <button
+                                                <button
                                                     onClick={() => alert("Delete clicked")}
                                                     aria-label="Delete"
                                                     title="Delete"
                                                     className="rounded-lg border border-red-200 bg-white p-2 text-red-600 transition hover:bg-red-50 hover:text-red-900"
                                                 >
                                                     <Trash2 size={18} />
-                                                </button> */}
+                                                </button>
                                             </div>
-                                        </td>
+                                        </td> */}
                                     </tr>
                                 ))
                             ) : (

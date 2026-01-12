@@ -186,7 +186,7 @@ const SeeHistory = () => {
                             Job Title : <span className="font-normal">{currentJob.title}</span>
                         </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    {/* <div className="flex items-center gap-2">
                         <button
                             onClick={handlePrevious}
                             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -204,7 +204,7 @@ const SeeHistory = () => {
                         >
                             <ChevronRight className="w-5 h-5 cursor-pointer text-gray-600" />
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
@@ -212,9 +212,9 @@ const SeeHistory = () => {
                 <div className="lg:col-span-2 bg-white shadow-[0px_0px_6px_0px_rgba(0,_0,_0,_0.35)] rounded-xl p-5 space-y-2">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <p className="text-gray-700">
+                            {/* <p className="text-gray-700">
                                 JD ID : <span className="font-medium">{currentJob.jdId}</span>
-                            </p>
+                            </p> */}
 
                             <p className="text-gray-700">
                                 Assigned On : <span>{currentJob.assignedOn}</span>
@@ -224,7 +224,7 @@ const SeeHistory = () => {
                                 Due Date : <span>{currentJob.dueDate}</span>
                             </p>
 
-                            <p className="text-gray-700">
+                            {/* <p className="text-gray-700">
                                 Documents :
                                 <span className="text-blue-600 cursor-pointer hover:underline ml-1">
                                     [Download JD.pdf]
@@ -233,7 +233,7 @@ const SeeHistory = () => {
                                 <span className="text-blue-600 cursor-pointer hover:underline ml-1">
                                     [Candidate List.xlsx]
                                 </span>
-                            </p>
+                            </p> */}
                         </div>
 
                         <div>

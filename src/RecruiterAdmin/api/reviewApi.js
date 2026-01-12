@@ -1,7 +1,8 @@
 // File: RecruiterAdmin/api/reviewApi.js
 // API integration for test review and finalization
+import { pythonUrl } from "../../utils/ApiConstants";
 
-const API_BASE_URL = 'https://python-k0xt.onrender.com/api/v1';
+const API_BASE_URL = `${pythonUrl}/api/v1`;
 
 class ReviewAPI {
     /**

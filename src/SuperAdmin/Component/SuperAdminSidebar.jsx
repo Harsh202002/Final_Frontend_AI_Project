@@ -5,7 +5,9 @@ import {
   UserPlus,
   Building2,
   LogOut,
-  X
+  X,
+  MessageSquare,
+  Building
 } from 'lucide-react';
 
 const AdminSidebar = ({ isOpen, onToggle }) => {
@@ -84,7 +86,7 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
                 className={`flex w-full items-center space-x-3 py-2 px-7 rounded transition-colors
                   ${activeNav === 'EnquiryMessages' ? 'bg-white text-black' : 'hover:bg-white hover:text-black'}`}
               >
-                <Home size={20} />
+                <MessageSquare size={20} />
                 <span>Enquiry Messages</span>
               </button>
             </li>
@@ -95,8 +97,8 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
                 className={`flex w-full items-center space-x-3 py-2 px-7 rounded transition-colors
                   ${activeNav === 'RegisteredCompanies' ? 'bg-white text-black' : 'hover:bg-white hover:text-black'}`}
               >
-                <Home size={20} />
-                <span>Register Companies Form</span>
+                <Building size={20} />
+                <span>Register Companies</span>
               </button>
             </li>
 
@@ -120,7 +122,7 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
                   ${activeNav === 'RejisteredRecruiters' ? 'bg-white text-black' : 'hover:bg-white hover:text-black'}`}
               >
                 <Building2 size={20} />
-                <span>Recently Applied Companies</span>
+                <span>Recently Applied</span>
               </button>
             </li>
 

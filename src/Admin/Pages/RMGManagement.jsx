@@ -391,7 +391,7 @@ function RMGManagement() {
 
               <div className="mt-4 text-sm text-gray-700 space-y-1">
                 <p>
-                  <span className="font-medium text-gray-800">ID :</span> {selectedRecruiter.id}
+                  {/* <span className="font-medium text-gray-800">ID :</span> {selectedRecruiter.id} */}
                 </p>
                 <p>
                   <span className="font-medium text-gray-800">Register Date :</span> {selectedRecruiter.registerDate}
@@ -406,7 +406,7 @@ function RMGManagement() {
 
               <hr className="my-4 border-gray-300" />
 
-              <div>
+              {/* <div>
                 <h3 className="font-medium text-gray-800 mb-1">Associate Recruiters</h3>
                 {selectedRecruiter.associates && selectedRecruiter.associates.length > 0 ? (
                   selectedRecruiter.associates.map((associate, index) => (
@@ -415,9 +415,9 @@ function RMGManagement() {
                 ) : (
                   <p className="text-gray-500 text-sm">No associates</p>
                 )}
-              </div>
+              </div> */}
 
-              <hr className="my-4 border-gray-300" />
+              {/* <hr className="my-4 border-gray-300" /> */}
 
               {/* <div>
                 <h3 className="font-medium text-gray-800 mb-2">Performance</h3>

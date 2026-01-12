@@ -587,6 +587,7 @@ import { Trash2, Search, SlidersHorizontal, Eye } from 'lucide-react';
 import Pagination from '../../components/LandingPage/Pagination';
 import SpinLoader from '../../components/SpinLoader';
 import { baseUrl } from '../../utils/ApiConstants';
+import { pythonUrl } from '../../utils/ApiConstants';
 
 function Report() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -606,7 +607,8 @@ function Report() {
     if (!ok) return;
     try {
       const base = window.REACT_APP_BASE_URL || `${baseUrl}`;
-      const res = await fetch('https://python-k0xt.onrender.com/api/v1/test/attempts/${encodeURIComponent(attempt.id)}', { method: 'DELETE' });
+      const res = await fetch(`${pythonUrl}/api/v1/test/attempts/${encodeURIComponent(attempt.id)}`, { method: 'DELETE' });
+      console.log("response:",res)
       if (!res.ok) {
         const txt = await res.text();
         alert('Delete failed: ' + txt);
@@ -636,7 +638,7 @@ function Report() {
     }
     const restrictToLoggedCandidate = Boolean(loggedCid);
     try {
-      const res = await fetch('https://python-k0xt.onrender.com/api/v1/test/attempts');
+      const res = await fetch(`${pythonUrl}/api/v1/test/attempts`);
       if (!res.ok) {
         const txt = await res.text().catch(() => 'Failed');
         throw new Error(txt || 'Failed loading attempts');

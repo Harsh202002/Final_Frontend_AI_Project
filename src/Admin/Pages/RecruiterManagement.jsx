@@ -362,7 +362,7 @@ function RecruiterManagement() {
 
                 <div className="mt-4 text-sm text-gray-700 space-y-1">
                   <p>
-                    <span className="font-medium text-gray-800">ID :</span> {selectedRecruiter.id}
+                    {/* <span className="font-medium text-gray-800">ID :</span> {selectedRecruiter.id} */}
                   </p>
                   <p>
                     <span className="font-medium text-gray-800">Register Date :</span> {selectedRecruiter.registerDate}
