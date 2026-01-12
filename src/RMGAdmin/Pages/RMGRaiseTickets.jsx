@@ -63,7 +63,8 @@ const RMGRaiseTickets = () => {
             );
         }
 
-        return filtered;
+        // Reverse to show latest first
+        return [...filtered].reverse();
     }, [activeTab, searchId, tickets]);
 
     const itemsPerPage = 7;
@@ -225,7 +226,7 @@ const RMGRaiseTickets = () => {
                             <table className="w-full">
                                 <thead className="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sr.No.</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Raised By</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Subject</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -249,7 +250,7 @@ const RMGRaiseTickets = () => {
                                                 onClick={() => setSelectedTicket(ticket)}
                                             >
                                                 <td className="px-4 py-4 text-sm text-gray-900">
-                                                    #{ticket._id?.slice(-5).toUpperCase()}
+                                                    {(currentPage - 1) * itemsPerPage + index + 1}.
                                                 </td>
                                                 <td className="px-4 py-4">
                                                     <div className="flex items-center gap-2">

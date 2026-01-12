@@ -22,7 +22,6 @@ const CandidateRegister = () => {
         password: ""
     });
     const [resumeFile, setResumeFile] = useState(null);
-    const [resumeBase64, setResumeBase64] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -47,16 +46,7 @@ const CandidateRegister = () => {
         if (error) setError("");
     };
 
-    const convertToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-        });
-    };
-
-    const handleFileChange = async (e) => {
+    const handleFileChange = (e) => {
         const file = e.target.files[0];
         
         if (file) {
@@ -72,21 +62,12 @@ const CandidateRegister = () => {
             }
             
             setResumeFile(file);
-            
-            try {
-                const base64 = await convertToBase64(file);
-                setResumeBase64(base64);
-            } catch (err) {
-                setError("Failed to process file");
-            }
-            
             if (error) setError("");
         }
     };
 
     const removeResume = () => {
         setResumeFile(null);
-        setResumeBase64("");
     };
 
     const validateForm = () => {
@@ -127,22 +108,28 @@ const CandidateRegister = () => {
         setError("");
 
         try {
-            const submitData = {
-                name: formData.name,
-                email: formData.email,
-                phone: formData.phone,
-                password: formData.password,
-                resume: resumeBase64 || "" 
-            };
+            const formDataToSend = new FormData();
+            formDataToSend.append('name', formData.name);
+            formDataToSend.append('email', formData.email);
+            formDataToSend.append('phone', formData.phone);
+            formDataToSend.append('password', formData.password);
+            
+            if (resumeFile) {
+                formDataToSend.append('resume', resumeFile);
+            }
 
             const { data } = await axios.post(
                 `${baseUrl}/api/candidate/register`, 
-                submitData
+                formDataToSend,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
             );
 
             console.log("data here", data);
             
-
             localStorage.setItem('token', data.token);
             alert("Account successfully created!");
             navigate("/CandidateLogin");

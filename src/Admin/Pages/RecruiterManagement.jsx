@@ -81,11 +81,11 @@ function RecruiterManagement() {
 
   const itemsPerPage = 5;
 
-  const filteredRecruiters = recruiters.filter(recruiter =>
-    recruiter.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    recruiter.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    recruiter.phone.includes(searchQuery)
-  );
+  const filteredRecruiters = [...recruiters].reverse().filter(recruiter =>
+  recruiter.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  recruiter.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  recruiter.phone.includes(searchQuery)
+);
 
   const totalPages = Math.ceil(filteredRecruiters.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -285,6 +285,7 @@ function RecruiterManagement() {
                   <table className="w-full min-w-[640px]">
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">Sr.No.</th>
                         <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">Name</th>
                         <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">Email</th>
                         <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">Phone</th>
@@ -296,6 +297,7 @@ function RecruiterManagement() {
                       {currentRecruiters.length > 0 ? (
                         currentRecruiters.map((recruiter, index) => (
                           <tr key={recruiter.id} className={index % 2 === 0 ? 'bg-blue-50/30' : 'bg-white'}>
+                            <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{startIndex + index + 1}.</td>
                             <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{recruiter.name}</td>
                             <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{recruiter.email}</td>
                             <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{recruiter.phone}</td>

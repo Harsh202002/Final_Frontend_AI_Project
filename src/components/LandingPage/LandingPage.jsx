@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { superAdminBaseUrl } from '../../utils/ApiConstants';
 import {
   BrainCircuit,
@@ -95,54 +95,15 @@ const LandingPage = () => {
     }
   ];
 
-  const testimonials = [
-    {
-      quote: "We reduced our hiring cycle by half and found incredible candidates we would have missed.",
-      author: "Sarah Kumar",
-      role: "HR Director",
-      rating: 5.0,
-      image: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2"
-    },
-    {
-      quote: "It's like having a full-time recruiter on our team — but faster and more consistent.",
-      author: "David",
-      role: "COO",
-      rating: 5.0,
-      image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2"
-    },
-    {
-      quote: "The AI-powered matching system helped us find perfect candidates in just days instead of weeks.",
-      author: "Emily Chen",
-      role: "Talent Manager",
-      rating: 5.0,
-      image: "https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2"
-    }
-  ];
+ 
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
+ 
 
   const goToSlide = (index) => {
     setCurrentIndex(index);
   };
 
-  const companies = [
-    { name: "Nestle", logo: nestle },
-    { name: "HONDA", logo: honda },
-    { name: "TOYOTA", logo: toyota },
-    { name: "SUZUKI", logo: suzuki },
-    { name: "Deloitte", logo: deloitte },
-    { name: "Philips", logo: philips },
-    { name: "Toyo", logo: toyo },
-    { name: "Comp", logo: comp }
-  ];
+
 
   const benefits = [
     {
@@ -371,40 +332,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Trusted Companies */}
-      <section className="py-12">
-        <div className="container mx-auto px-6">
-          <p className="text-center text-3xl font-medium mb-8">
-            Trusted by leading companies
-          </p>
-
-          <div className="max-w-4xl mx-auto overflow-hidden relative flex items-center bg-purple-100 shadow-[0px_0px_11px_-2px_#7C3AED] rounded-4xl h-16">
-            <div className="flex animate-marquee h-full whitespace-nowrap gap-8 items-center">
-              {companies.map((company, index) => (
-                <div key={index} className="flex h-full items-center justify-center cursor-default">
-                  <img
-                    src={company.logo}
-                    alt={company.name}
-                    className="h-15 w-22 object-contain block"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-        </div>
-
-        {/* Tailwind animation */}
-        <style jsx>{`
-          @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-          }
-          .animate-marquee {
-            animation: marquee 20s linear infinite;
-          }
-        `}</style>
-      </section>
+     
 
 
       {/* Why Choose Us */}
@@ -601,102 +529,10 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Customize Own Website Section */}
-      <section className='py-20 max-w-6xl mx-auto text-center'>
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Customize your own website
-        </h2>
-        <div className='flex justify-center'>
-          <img
-            src={ownsite}
-            alt="Customize your website"
-            className="w-full max-w-4xl h-auto object-contain"
-          />
-        </div>
-      </section>
+      
 
 
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 px-6 bg-gradient-to-br from-purple-50 to-blue-50">
-        <div className="container mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-purple-700 mb-4">
-              Testimonials
-            </h2>
-            <p className="text-lg text-gray-600">
-              Trusted by HR professionals and hiring managers across industries
-            </p>
-          </div>
-
-          <div className="relative max-w-4xl mx-auto">
-            {/* Main Testimonial Card */}
-            <div className="overflow-hidden rounded-2xl">
-              <div
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-              >
-                {testimonials.map((testimonial, index) => (
-                  <div
-                    key={index}
-                    className="w-full flex-shrink-0"
-                  >
-                    <div className="bg-white rounded-2xl p-8 md:p-12 mx-auto max-w-2xl relative">
-                      {/* Quote Icon */}
-                      <div className="absolute -top-1 left-6 text-purple-200 font-bold">
-                        <img src={quote} alt="" />
-                      </div>
-
-                      {/* Rating Stars */}
-                      <div className="flex justify-center mb-6 text-yellow-400 text-2xl">
-                        {'★'.repeat(Math.floor(testimonial.rating))}
-                        <span className="ml-2 text-lg font-bold text-gray-700">
-                          {testimonial.rating}
-                        </span>
-                      </div>
-
-                      {/* Quote */}
-                      <p className="text-gray-700 text-center mb-8 text-lg md:text-xl leading-relaxed font-medium">
-                        {testimonial.quote}
-                      </p>
-
-                      {/* Author Info */}
-                      <div className="flex items-center justify-center">
-                        <img
-                          src={testimonial.image}
-                          alt={testimonial.author}
-                          className="w-16 h-16 rounded-full object-cover mr-4 border-4 border-purple-100"
-                        />
-                        <div>
-                          <div className="font-bold text-gray-900 text-lg">
-                            {testimonial.author}
-                          </div>
-                          <div className="text-purple-600 text-sm font-medium">
-                            {testimonial.role}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Dot Navigation */}
-            <div className="flex justify-center mt-8 space-x-3">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex
-                    ? 'bg-purple-600 w-8'
-                    : 'bg-gray-300 hover:bg-purple-300'
-                    }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      
 
       {/* CTA Section */}
       <section className="py-20 px-6 bg-gray-50">
@@ -712,9 +548,6 @@ const LandingPage = () => {
               Discover a smarter way to recruit. Let UserPitch streamline your hiring process with <br /> intelligent matching, data-driven insights, and seamless automation.
             </p>
 
-            <button className="bg-white hover:bg-gray-50 text-gray-700 px-12 py-2 rounded-2xl font-semibold text-lg border border-gray-200 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105">
-              Get Started
-            </button>
           </div>
         </div>
       </section>

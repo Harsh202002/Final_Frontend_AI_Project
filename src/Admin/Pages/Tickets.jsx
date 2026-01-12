@@ -60,24 +60,25 @@ const Tickets = () => {
 
 
     const filteredTickets = useMemo(() => {
-        let filtered = allTickets;
+    let filtered = allTickets;
 
-        if (activeTab === 'Pending') {
-            filtered = filtered.filter(ticket => ticket.status === 'Open');
-        } else if (activeTab === 'Closed') {
-            filtered = filtered.filter(ticket => ticket.status === 'Closed');
-        } else if (activeTab === 'Resolved') {
-            filtered = filtered.filter(ticket => ticket.status === 'Resolved');
-        }
+    if (activeTab === 'Pending') {
+        filtered = filtered.filter(ticket => ticket.status === 'Open');
+    } else if (activeTab === 'Closed') {
+        filtered = filtered.filter(ticket => ticket.status === 'Closed');
+    } else if (activeTab === 'Resolved') {
+        filtered = filtered.filter(ticket => ticket.status === 'Resolved');
+    }
 
-        if (searchId) {
-            filtered = filtered.filter(ticket =>
-                ticket.id.toLowerCase().includes(searchId.toLowerCase())
-            );
-        }
+    if (searchId) {
+        filtered = filtered.filter(ticket =>
+            ticket.id.toLowerCase().includes(searchId.toLowerCase())
+        );
+    }
 
-        return filtered;
-    }, [activeTab, searchId, allTickets]);
+    // Reverse to show latest first
+    return [...filtered].reverse();
+}, [activeTab, searchId, allTickets]);
 
     const itemsPerPage = 7;
     const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
@@ -214,7 +215,7 @@ const Tickets = () => {
                             <table className="w-full">
                                 <thead className="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sr.No.</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reporter</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
@@ -232,7 +233,7 @@ const Tickets = () => {
                                                 className="hover:bg-gray-50 transition-colors cursor-pointer"
                                                 onClick={() => setSelectedTicket(ticket)}
                                             >
-                                                <td className="px-4 py-4 text-sm text-gray-900">{ticket.id}</td>
+                                                <td className="px-4 py-4 text-sm text-gray-900">{(currentPage - 1) * itemsPerPage + index + 1}.</td>
                                                 <td className="px-4 py-4">
                                                     <div className="flex items-center gap-2">
                                                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs font-medium">

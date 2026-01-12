@@ -966,9 +966,7 @@ function Report() {
                       >
                         <Eye size={16} className="text-blue-500" />
                       </button>
-                      <button onClick={() => handleDelete(candidate)} className="p-1.5 border border-red-300 rounded hover:bg-red-50" aria-label="Delete">
-                        <Trash2 size={16} className="text-red-600" />
-                      </button>
+                     
                     </td>
                   </tr>
                 ))
@@ -1025,10 +1023,7 @@ function Report() {
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
                 <section className="col-span-1 rounded-xl border border-gray-200 p-4 sm:p-6 lg:col-span-2">
                   <div className="space-y-3 sm:space-y-4">
-                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      <span className="min-w-[120px] text-gray-600">ID</span>
-                      <span className="font-medium text-gray-900">{selectedCandidate.id}</span>
-                    </div>
+                   
                     
                     <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                       <span className="min-w-[120px] text-gray-600">Name</span>

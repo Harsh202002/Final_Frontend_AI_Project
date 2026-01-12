@@ -69,9 +69,9 @@ export default function AssignedRecruiters() {
         }
     };
 
-    const filteredJobs = jobs.filter((job) =>
-        job.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+  const filteredJobs = [...jobs].reverse().filter((job) =>
+    job.title.toLowerCase().includes(searchQuery.toLowerCase())
+);
 
     const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
     const startIndex = (currentPage - 1) * jobsPerPage;
