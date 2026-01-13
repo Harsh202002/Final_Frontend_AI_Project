@@ -321,7 +321,7 @@ const AllJDs = () => {
                                 <Search className="w-5 h-5" />
                             </span>
                         </div>
-                        <select
+                        {/* <select
                             value={filterLocation}
                             onChange={e => setFilterLocation(e.target.value)}
                             className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700 bg-white shadow-sm"
@@ -330,7 +330,7 @@ const AllJDs = () => {
                             {uniqueLocations.map(loc => (
                                 <option key={loc} value={loc}>{loc}</option>
                             ))}
-                        </select>
+                        </select> */}
                         {/* <select
                             value={filterCompany}
                             onChange={e => setFilterCompany(e.target.value)}

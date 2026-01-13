@@ -220,7 +220,7 @@ function RequirementForm() {
                   value={companyName}
                   readOnly
                   disabled
-                  className="w-full cursor-not-allowed px-3 py-2 border bg-[#D9D9D940] border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full cursor-not-allowed px-3 py-2 border  border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 

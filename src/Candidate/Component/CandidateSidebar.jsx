@@ -125,7 +125,7 @@ const CandidateAdminSidebar = ({ isOpen, onToggle }) => {
               </button>
             </li>
 
-            <li>
+            {/* <li>
               <button
                 onClick={handleLogout}
                 className={`flex w-full items-center space-x-3 py-2 px-7 rounded transition-colors hover:bg-white hover:text-black text-left`}
@@ -133,7 +133,7 @@ const CandidateAdminSidebar = ({ isOpen, onToggle }) => {
                 <LogOut size={20} />
                 <span>Logout</span>
               </button>
-            </li>
+            </li> */}
 
 
           </ul>

@@ -1057,7 +1057,7 @@ const GiveTest = ({ jdId }) => {
             All sections have been submitted and evaluated.
           </p>
 
-          <div className="space-y-6">
+          {/* <div className="space-y-6">
             {submissionResults.map((sectionResult, sectionIdx) => (
               <div key={sectionIdx} className="border rounded-lg p-6">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">
@@ -1089,7 +1089,7 @@ const GiveTest = ({ jdId }) => {
                 )}
               </div>
             ))}
-          </div>
+          </div> */}
 
           <button
             onClick={() => (window.location.href = '/Candidate-Dashboard')}

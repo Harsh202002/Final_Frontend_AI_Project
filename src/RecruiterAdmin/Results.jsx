@@ -633,7 +633,8 @@ function Results() {
         console.log('[Results] mapped finalized jobs count:', mapped.length);
         console.log('[Results] mapped finalized jobs sample:', mapped.slice(0, 5));
         console.log('[Results] finalized counts:', counts);
-        if (mountedRef.current) setJobs(mapped);
+        const sortedMapped = mapped.sort((a, b) => new Date(b.testDate) - new Date(a.testDate));
+        if (mountedRef.current) setJobs(sortedMapped);
       } catch (e) {
         console.error('Failed loading finalized tests', e);
         setError((e && e.message) ? String(e.message) : 'Failed loading finalized tests');
@@ -832,7 +833,7 @@ function Results() {
         
         <div className="flex flex-col sm:flex-row justify-between items-stretch gap-6 mb-8">
 
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 flex-1">
+          {/* <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 flex-1">
             <div className="bg-blue-100 rounded-2xl p-6 sm:p-8 shadow-sm flex-1">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">Total Jobs</h2>
               <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-600">{jobs.length}</p>
@@ -844,7 +845,7 @@ function Results() {
                 {jobs.reduce((sum, j) => sum + j.totalCandidates, 0)}
               </p>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex items-end">
             <div className="relative w-full sm:w-[280px]">
@@ -875,7 +876,7 @@ function Results() {
                 <tr>
                   <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">S.No</th>
                   <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Job Title</th>
-                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Total Candidate</th>
+                  {/* <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Total Candidate</th> */}
                   <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Test Date</th>
                   <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Created At</th>
                   <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Actions</th>
@@ -891,11 +892,11 @@ function Results() {
                       </td>
                      
                       <td className="px-4 py-4 text-sm text-gray-700 border-b border-gray-300">{job.jobTitle}</td>
-                      <td className="px-4 py-4 border-b border-gray-300">
+                      {/* <td className="px-4 py-4 border-b border-gray-300">
                         <span className="inline-flex items-center justify-center min-w-[60px] px-3 py-1 bg-green-200 text-green-800 text-sm font-medium rounded-full">
                           {job.totalCandidates}
                         </span>
-                      </td>
+                      </td> */}
                       <td className="px-4 py-4 text-sm text-gray-700 border-b border-gray-300">
                         {job.testDate || 'N/A'}
                       </td>

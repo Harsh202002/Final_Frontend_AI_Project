@@ -166,7 +166,7 @@ const LandingPage = () => {
   const quickLinks = [
     { name: 'Features', href: '#features' },
     { name: 'How It Works', href: '#how-it-works' },
-    { name: 'Resources', href: '#resources' }
+    // { name: 'Resources', href: '#resources' }
   ];
 
   const handleChange = (e) => {
@@ -718,17 +718,17 @@ const LandingPage = () => {
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <Phone className="w-5 h-5" />
-                  <span className="">+91 9876543210</span>
+                  <span className="">+91 9147410041</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Mail className="w-5 h-5" />
-                  <span className="">airecruit@gmail.com</span>
+                  <span className="">sales@netfotech.in</span>
                 </div>
                 <div className="flex items-start space-x-3">
                   <MapPin className="w-5 h-5 mt-1" />
                   <div className="">
-                    <p>123 Newtown</p>
-                    <p>Kolkata-700156</p>
+                    <p>World Trade Center,Kharadi,Pune</p>
+                    <p>Maharashta-411014,INDIA</p>
                   </div>
                 </div>
               </div>
@@ -738,7 +738,7 @@ const LandingPage = () => {
           {/* Bottom Bar */}
           <div className="border-t border-purple-700 mt-12 pt-6 text-center">
             <p className="">
-              © 2025 RecruitAI. All rights reserved
+              © 2026 RecruitAI. All rights reserved
             </p>
           </div>
         </div>

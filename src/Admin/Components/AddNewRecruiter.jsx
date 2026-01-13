@@ -16,6 +16,29 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
         companyName: ''    
     });
 
+    const [errors, setErrors] = useState({});
+
+    const validatePhone = (phone) => {
+        const phoneRegex = /^\d{10,}$/; // At least 10 digits
+        return phoneRegex.test(phone);
+    };
+
+    const handlePhoneChange = (e) => {
+        const value = e.target.value;
+        setFormData({ ...formData, phone: value });
+        if (value && !validatePhone(value)) {
+            setErrors({ ...errors, phone: 'Phone number must be at least 10 digits' });
+        } else {
+            setErrors({ ...errors, phone: '' });
+        }
+    };
+
+    const handleKeyPress = (e) => {
+        if (!/[0-9]/.test(e.key)) {
+            e.preventDefault();
+        }
+    };
+
     useEffect(() => {
         if (editData) {
             const company = companiesList.find(c => c._id === editData.company);
@@ -52,6 +75,12 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validate phone before submitting
+        if (formData.phone && !validatePhone(formData.phone)) {
+            setErrors({ ...errors, phone: 'Phone number must be at least 10 digits' });
+            return;
+        }
 
         try {
             if (editData) {
@@ -143,10 +172,12 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
                             type="tel"
                             placeholder="Enter Phone Number"
                             value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                            onChange={handlePhoneChange}
+                            onKeyPress={handleKeyPress}
+                            className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
                             required
                         />
+                        {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                     </div>
                 </div>
 
