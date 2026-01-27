@@ -119,7 +119,7 @@ const CandidateRegister = () => {
             }
 
             const { data } = await axios.post(
-                `${baseUrl}/api/candidate/register`, 
+                `${baseUrl}/candidate/register`, 
                 formDataToSend,
                 {
                     headers: {

@@ -19,7 +19,7 @@ const SuperAdminLogin = () => {
 
         try {
             const response = await axios.post(
-                `${superAdminBaseUrl}/api/superadmin/login`, 
+                `${superAdminBaseUrl}/superadmin/login`, 
                 { 
                     email, 
                     password 

@@ -2,7 +2,7 @@
 // API integration for test review and finalization
 import { pythonUrl } from "../../utils/ApiConstants";
 
-const API_BASE_URL = `${pythonUrl}/api/v1`;
+const API_BASE_URL = `${pythonUrl}/v1`;
 
 class ReviewAPI {
     /**

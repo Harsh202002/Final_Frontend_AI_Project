@@ -311,7 +311,7 @@ export default function AudioInterview({
     fd.append("question_set_id", questionSetId);
     fd.append("qa_data", JSON.stringify([qa]));
     if (audioFile) fd.append('audio', audioFile);
-    fetch(`${baseUrl}/api/v1/upload_audio`, { method: 'POST', body: fd }).catch(() => {});
+    fetch(`${baseUrl}/v1/upload_audio`, { method: 'POST', body: fd }).catch(() => {});
 
     // Move to next question
     const nextIndex = currentIndex + 1;

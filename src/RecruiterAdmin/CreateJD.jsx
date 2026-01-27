@@ -74,7 +74,7 @@ function CreateJD() {
         try {
             setCreating(true);
             const response = await axios.post(
-                `${baseUrl}/api/jd/${formData.offerId}/ai`,
+                `${baseUrl}/jd/${formData.offerId}/ai`,
                 {
                     companyName: formData.companyName,
                     keyResponsibilities: formData.keyResponsibilities,
@@ -132,7 +132,7 @@ function CreateJD() {
         try {
             setSaving(true);
             const response = await axios.put(
-                `${baseUrl}/api/jd/editjd/${generatedJD._id}`,
+                `${baseUrl}/jd/editjd/${generatedJD._id}`,
                 {
                     jobSummary: editableJD.jobSummary,
                     responsibilities: editableJD.responsibilities,

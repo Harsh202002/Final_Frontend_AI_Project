@@ -14,7 +14,7 @@ function RecruiterManagement() {
   useEffect(() => {
     const fetchAllRecruiter = async () => {
       try {
-        const res = await axios.get(`${baseUrl}/api/admin/allhr`, {
+        const res = await axios.get(`${baseUrl}/admin/allhr`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -112,7 +112,7 @@ function RecruiterManagement() {
     try {
       const recruiterToDelete = recruiters.find(r => r.id === id);
       
-      const res = await axios.delete(`${baseUrl}/api/admin/hr/${id}`, {
+      const res = await axios.delete(`${baseUrl}/admin/hr/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

@@ -132,7 +132,7 @@ function CompaniesRegister() {
 
             console.log('Sending data:', apiData);
 
-            const response = await fetch(`${superAdminBaseUrl}/api/company/register`, {
+            const response = await fetch(`${superAdminBaseUrl}/company/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

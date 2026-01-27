@@ -21,7 +21,7 @@ function AppliedJD() {
         const fetchData = async () => {
             try {
                 const response = await axios.get(
-                    `${baseUrl}/api/candidate/applied-jds`,
+                    `${baseUrl}/candidate/applied-jds`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem('candidateToken')}`,

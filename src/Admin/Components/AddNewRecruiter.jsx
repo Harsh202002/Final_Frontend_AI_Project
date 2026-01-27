@@ -85,7 +85,7 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
         try {
             if (editData) {
                 const response = await axios.put(
-                    `${baseUrl}/api/admin/hr/${editData.id}`,
+                    `${baseUrl}/admin/hr/${editData.id}`,
                     {
                         name: formData.fullName,
                         phone: formData.phone,

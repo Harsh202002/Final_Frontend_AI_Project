@@ -19,7 +19,7 @@ export default function AssignedRecruiters() {
         const fetchAllOffer = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${baseUrl}/api/offer/overview`, {
+                const response = await axios.get(`${baseUrl}/offer/overview`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
@@ -52,7 +52,7 @@ export default function AssignedRecruiters() {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this offer?')) {
             try {
-                const response = await axios.delete(`${baseUrl}/api/offer/${id}`, {
+                const response = await axios.delete(`${baseUrl}/offer/${id}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },

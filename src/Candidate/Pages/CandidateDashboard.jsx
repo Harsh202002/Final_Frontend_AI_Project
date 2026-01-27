@@ -43,7 +43,7 @@ const CandidateDashboard = () => {
         const fetchCandidateData = async () => {
             try {
                 const token = localStorage.getItem("candidateToken");
-                const res = await axios.get(`${baseUrl}/api/auth/me`, {
+                const res = await axios.get(`${baseUrl}/auth/me`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -65,7 +65,7 @@ const CandidateDashboard = () => {
     useEffect(() => {
         const fetchAppliedJobs = async () => {
             try {
-                const res = await axios.get(`${baseUrl}/api/candidate/applied-jobs`, {
+                const res = await axios.get(`${baseUrl}/candidate/applied-jobs`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("candidateToken")}`,
                     },
@@ -85,7 +85,7 @@ const CandidateDashboard = () => {
     useEffect(() => {
         const fetchjdcounts = async () => {
             try {
-                const res = await axios.get(`${baseUrl}/api/candidate/jd-counts`, {
+                const res = await axios.get(`${baseUrl}/candidate/jd-counts`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("candidateToken")}`,
                     },
@@ -105,7 +105,7 @@ const CandidateDashboard = () => {
     useEffect(() => {
         const fetchlatestfivejds = async () => {
             try {
-                const res = await axios.get(`${baseUrl}/api/candidate/latest-five-jds`, {
+                const res = await axios.get(`${baseUrl}/candidate/latest-five-jds`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("candidateToken")}`,
                     },

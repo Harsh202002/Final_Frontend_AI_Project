@@ -21,10 +21,10 @@ export default function SuperAdminDashboard() {
             try {
                 const token = localStorage.getItem("token");
                 const [allCompany, allEnquiry, allTickets, getAllAdmins] = await Promise.all([
-                    axios.get(`${superAdminBaseUrl}/api/company/`, { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get(`${superAdminBaseUrl}/api/enquiry/all`, { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get(`${superAdminBaseUrl}/api/superadmin/allTickets`, { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get(`${superAdminBaseUrl}/api/superadmin/getAllAdmins`, { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${superAdminBaseUrl}/company/`, { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${superAdminBaseUrl}/enquiry/all`, { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${superAdminBaseUrl}/superadmin/allTickets`, { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${superAdminBaseUrl}/superadmin/getAllAdmins`, { headers: { Authorization: `Bearer ${token}` } }),
                 ]);
                 setCompanies(allCompany.data.companies || allCompany.data || []);
                 setEnquiries(allEnquiry.data.data || allEnquiry.data || []);

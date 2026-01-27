@@ -48,7 +48,7 @@ function AddNewRMG({ onSave, onCancel, editData }) {
         try {
             if (editData) {
                 const response = await axios.put(
-                    `${baseUrl}/api/admin/rmg/${editData.id || editData._id}`,
+                    `${baseUrl}/admin/rmg/${editData.id || editData._id}`,
                     {
                         name: formData.fullName,
                         email: formData.email,
@@ -70,7 +70,7 @@ function AddNewRMG({ onSave, onCancel, editData }) {
                 }
             } else {
                 const response = await axios.post(
-                    `${baseUrl}/api/admin/rmg`,
+                    `${baseUrl}/admin/rmg`,
                     {
                         name: formData.fullName,
                         email: formData.email,

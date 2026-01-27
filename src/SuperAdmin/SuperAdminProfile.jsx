@@ -14,7 +14,7 @@ const RecruiterProfile = () => {
         const fetchProfileData = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${superAdminBaseUrl}/api/superadmin/profile`, {
+                const response = await axios.get(`${superAdminBaseUrl}/superadmin/profile`, {
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${localStorage.getItem("token")}`

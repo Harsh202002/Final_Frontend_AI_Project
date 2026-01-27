@@ -35,7 +35,7 @@ function JD() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${baseUrl}/api/jd//created-by/hr`, {
+      const response = await axios.get(`${baseUrl}/jd//created-by/hr`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -72,7 +72,7 @@ function JD() {
   const fetchIncomingJDs = async () => {
     try {
       setLoadingIncoming(true);
-      const response = await axios.get(`${baseUrl}/api/jd/assigned-offers/hr`, {
+      const response = await axios.get(`${baseUrl}/jd/assigned-offers/hr`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

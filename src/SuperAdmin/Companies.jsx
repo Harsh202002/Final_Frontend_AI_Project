@@ -28,7 +28,7 @@ function Companies() {
 
   const fetchTotalCompanies = async () => {
     try {
-      const response = await axios.get(`${superAdminBaseUrl}/api/company/`, {
+      const response = await axios.get(`${superAdminBaseUrl}/company/`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("token")}`

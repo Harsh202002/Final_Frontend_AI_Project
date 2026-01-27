@@ -18,7 +18,7 @@ function CandidateProfile() {
             setLoading(true);
             try {
                 const token = localStorage.getItem("candidateToken");
-                const res = await axios.get(`${baseUrl}/api/candidate/profile/me`, {
+                const res = await axios.get(`${baseUrl}/candidate/profile/me`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setCandidate(res.data.candidate);
@@ -45,7 +45,7 @@ function CandidateProfile() {
             const formData = new FormData();
             formData.append("phone", phone);
             if (resume) formData.append("resume", resume);
-            const res = await axios.put(`${baseUrl}/api/candidate/profile/me`, formData, {
+            const res = await axios.put(`${baseUrl}/candidate/profile/me`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',

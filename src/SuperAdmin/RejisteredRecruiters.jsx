@@ -25,7 +25,7 @@ function RejisteredRecruiters() {
     useEffect(() => {
       const fetchRegisteredRecruiters = async () => {
         try {
-          const response = await axios.get(`${superAdminBaseUrl}/api/company/`, {
+          const response = await axios.get(`${superAdminBaseUrl}/company/`, {
             headers: {
               "Authorization": `Bearer ${localStorage.getItem("token")}`
             }
@@ -78,7 +78,7 @@ function RejisteredRecruiters() {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this company?')) {
             try {
-                await axios.delete(`${superAdminBaseUrl}/api/company/${id}`, {
+                await axios.delete(`${superAdminBaseUrl}/company/${id}`, {
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("token")}`
                     }

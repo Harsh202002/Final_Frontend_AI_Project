@@ -38,7 +38,7 @@ function JDDetails() {
                     return;
                 }
 
-                const response = await axios.get(`${baseUrl}/api/jd/${jdId}/candidatess`, {
+                const response = await axios.get(`${baseUrl}/jd/${jdId}/candidatess`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     }
@@ -74,7 +74,7 @@ function JDDetails() {
             }
 
             const response = await axios.post(
-                `${baseUrl}/api/jd/${jdId}/filter-resumes`,
+                `${baseUrl}/jd/${jdId}/filter-resumes`,
                 {},
                 {
                     headers: {

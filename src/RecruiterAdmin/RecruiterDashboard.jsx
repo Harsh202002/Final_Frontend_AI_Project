@@ -34,13 +34,13 @@ export default function RecruiterDashboard() {
                     allJdRes,
                     jdByRecruiterRes
                 ] = await Promise.all([
-                    axios.get(`${baseUrl}/api/jd/all-candidates`, {
+                    axios.get(`${baseUrl}/jd/all-candidates`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get(`${baseUrl}/api/jd/all-jd-hr`, {
+                    axios.get(`${baseUrl}/jd/all-jd-hr`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get(`${baseUrl}/api/jd/created-by/hr`, {
+                    axios.get(`${baseUrl}/jd/created-by/hr`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
                 ]);

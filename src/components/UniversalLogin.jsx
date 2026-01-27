@@ -65,7 +65,7 @@ const UniversalLogin = () => {
  
         try {
             const response = await axios.post(
-                `${baseUrl}/api/auth/login`,
+                `${baseUrl}/auth/login`,
                 { email, password },
                 { withCredentials: true }
             );

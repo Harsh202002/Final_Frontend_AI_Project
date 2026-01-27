@@ -33,7 +33,7 @@ const SuperAdminHeader = ({ onMenuToggle }) => {
         const fetchProfile = async () => {
             try {
                 const res = await axios.get(
-                    `${superAdminBaseUrl}/api/superadmin/profile`,
+                    `${superAdminBaseUrl}/superadmin/profile`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,

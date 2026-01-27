@@ -32,7 +32,7 @@ const AllJDs = () => {
     useEffect(() => {
         const fetchAppliedJDs = async () => {
             try {
-                const response = await axios.get(`${baseUrl}/api/candidate/applied-jobs`, {
+                const response = await axios.get(`${baseUrl}/candidate/applied-jobs`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('candidateToken')}`,
                     },
@@ -54,7 +54,7 @@ const AllJDs = () => {
         const fetchJDs = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${baseUrl}/api/jd/all-jd`, {
+                const response = await axios.get(`${baseUrl}/jd/all-jd`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('candidateToken')}`,
                     }
@@ -141,7 +141,7 @@ const AllJDs = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem('candidateToken');
-            const response = await axios.get(`${baseUrl}/api/candidate/resume`, {
+            const response = await axios.get(`${baseUrl}/candidate/resume`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -243,7 +243,7 @@ const AllJDs = () => {
             submitData.append('reallocate', formData.reallocate ? 'yes' : 'no');
 
             const response = await axios.post(
-                `${baseUrl}/api/candidate/apply/${selectedJob._id}`,
+                `${baseUrl}/candidate/apply/${selectedJob._id}`,
                 submitData,
                 {
                     headers: {

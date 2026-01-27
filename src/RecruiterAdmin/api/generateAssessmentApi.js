@@ -1,7 +1,7 @@
 // API service for Generate Assessment
 // API service for Generate Assessment
 import { pythonUrl } from "../../utils/ApiConstants";
-const API_BASE_URL = `${pythonUrl}/api/v1`;
+const API_BASE_URL = `${pythonUrl}/v1`;
 
 class AssessmentAPI {
   /**

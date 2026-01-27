@@ -91,7 +91,7 @@ const CompanyDetail = () => {
             console.log('Sending data for ID:', company._id);
 
             const response = await axios.put(
-                `${superAdminBaseUrl}/api/company/${company._id}`,
+                `${superAdminBaseUrl}/company/${company._id}`,
                 formDataToSend,
                 {
                     headers: {

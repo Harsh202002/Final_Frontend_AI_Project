@@ -34,19 +34,19 @@ function AdminDashboard() {
         const token = localStorage.getItem("token");
 
         const [allRMG, allHR, allCandidates, allJD, allOffers] = await Promise.all([
-          axios.get(`${baseUrl}/api/admin/allrmg`, {
+          axios.get(`${baseUrl}/admin/allrmg`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get(`${baseUrl}/api/admin/allhr`, {
+          axios.get(`${baseUrl}/admin/allhr`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get(`${baseUrl}/api/jd/all-candidates`, {
+          axios.get(`${baseUrl}/jd/all-candidates`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get(`${baseUrl}/api/jd/all-jd-admin`, {
+          axios.get(`${baseUrl}/jd/all-jd-admin`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get(`${baseUrl}/api/offer/all-offers`, {
+          axios.get(`${baseUrl}/offer/all-offers`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
         ]);

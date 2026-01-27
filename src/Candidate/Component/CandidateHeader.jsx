@@ -55,7 +55,7 @@ const CandidateHeader = ({ onMenuToggle }) => {
         const fetchUser = async () => {
             try {
                 const token = localStorage.getItem("candidateToken");
-                const res = await axios.get(`${baseUrl}/api/auth/me`, {
+                const res = await axios.get(`${baseUrl}/auth/me`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

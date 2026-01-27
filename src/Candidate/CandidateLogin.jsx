@@ -31,7 +31,7 @@ const CandidateLogin = () => {
 
         try {
             const { data } = await axios.post(
-                `${baseUrl}/api/candidate/login`,
+                `${baseUrl}/candidate/login`,
                 { email, password }
             );
 

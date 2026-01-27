@@ -23,7 +23,7 @@ const SupportTicketDetail = ({ selectedTicket, getStatusColor }) => {
             if (assignedTo) updateData.assignedTo = assignedTo;
 
             const res = await axios.put(
-                `${baseUrl}/api/tickets/${selectedTicket._id}`,
+                `${baseUrl}/tickets/${selectedTicket._id}`,
                 updateData,
                 {
                     headers: {

@@ -33,7 +33,7 @@ export default function NonCandidateList() {
         const fetchNonCandidates = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get(`${baseUrl}/api/jd/all-candidates`, {
+                const res = await axios.get(`${baseUrl}/jd/all-candidates`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
@@ -107,7 +107,7 @@ export default function NonCandidateList() {
             setSendingInvites(true);
             const candidateIds = Array.from(selectedIds);
             const res = await axios.post(
-                `${baseUrl}/api/candidate/send-email/${jdId}`,
+                `${baseUrl}/candidate/send-email/${jdId}`,
                 { candidateIds },
                 {
                     headers: {

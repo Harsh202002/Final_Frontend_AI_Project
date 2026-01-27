@@ -26,7 +26,7 @@ function EnquiryMessages() {
         const fetchTotalEnquiry = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${superAdminBaseUrl}/api/enquiry/all`, {
+                const response = await axios.get(`${superAdminBaseUrl}/enquiry/all`, {
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${localStorage.getItem("token")}`

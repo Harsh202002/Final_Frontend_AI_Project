@@ -42,7 +42,7 @@ function RequirementForm() {
 
   const fetchHRUsers = async () => {
     try {
-      const response = await axios.get(`${baseUrl}/api/offer/hr`, {
+      const response = await axios.get(`${baseUrl}/offer/hr`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -135,7 +135,7 @@ function RequirementForm() {
 
       console.log('Submitting data:', submitData);
 
-      const response = await axios.post(`${baseUrl}/api/offer`, submitData, {
+      const response = await axios.post(`${baseUrl}/offer`, submitData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'

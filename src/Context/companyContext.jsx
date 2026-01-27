@@ -11,7 +11,7 @@ export const CompanyProvider = ({ children }) => {
         const fetchCompany = async () => {
             try {
                 const res = await axios.get(
-                    `${baseUrl}/api/auth/all-companies`
+                    `${baseUrl}/auth/all-companies`
                 );
                 setCompanies(res.data);  
             } catch (error) {

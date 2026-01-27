@@ -22,7 +22,7 @@ const Tickets = () => {
     useEffect(() => {
         const fetchTickets = async () => {
             try {
-                const res = await axios.get(`${baseUrl}/api/tickets/`, {
+                const res = await axios.get(`${baseUrl}/tickets/`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },

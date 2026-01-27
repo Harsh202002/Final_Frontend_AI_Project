@@ -34,7 +34,7 @@ export default function RMGSupportTickets() {
     try {
       const token = localStorage.getItem("token");
 
-      const { data } = await axios.post(`${baseUrl}/api/tickets/`, formData,
+      const { data } = await axios.post(`${baseUrl}/tickets/`, formData,
         {
           headers: {
             Authorization: `Bearer ${token}`

@@ -29,7 +29,7 @@ const RMGHeader = ({ onMenuToggle }) => {
         const fetchUser = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get(`${baseUrl}/api/auth/meAll`, {
+                const res = await axios.get(`${baseUrl}/auth/meAll`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

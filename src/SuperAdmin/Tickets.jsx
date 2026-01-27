@@ -22,7 +22,7 @@ function Tickets() {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const response = await axios.get(`${superAdminBaseUrl}/api/superAdmin/allTickets`, {
+        const response = await axios.get(`${superAdminBaseUrl}/superAdmin/allTickets`, {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }
@@ -112,7 +112,7 @@ function Tickets() {
     setIsSubmitting(true);
     try {
       const response = await axios.post(
-        `${superAdminBaseUrl}/api/superadmin/reply-to-ticket/${selectedTicketId}`,
+        `${superAdminBaseUrl}/superadmin/reply-to-ticket/${selectedTicketId}`,
         { message: replyMessage },
         {
           headers: {

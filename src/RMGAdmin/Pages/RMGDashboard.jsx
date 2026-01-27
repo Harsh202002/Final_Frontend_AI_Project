@@ -63,25 +63,25 @@ export default function RMGDashboard() {
                     jdStatusPercentageRes,
                     recruitersClosedRes
                 ] = await Promise.all([
-                    axios.get(`${baseUrl}/api/dashboard/total-offers`, {
+                    axios.get(`${baseUrl}/dashboard/total-offers`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get(`${baseUrl}/api/dashboard/jobs-recruiters-month-wise`, {
+                    axios.get(`${baseUrl}/dashboard/jobs-recruiters-month-wise`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get(`${baseUrl}/api/dashboard/count-hr-tickets-month-wise`, {
+                    axios.get(`${baseUrl}/dashboard/count-hr-tickets-month-wise`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get(`${baseUrl}/api/dashboard/current-offers`, {
+                    axios.get(`${baseUrl}/dashboard/current-offers`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get(`${baseUrl}/api/dashboard/recent-jobs`, {
+                    axios.get(`${baseUrl}/dashboard/recent-jobs`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get(`${baseUrl}/api/dashboard/jd-status-percentage`, {
+                    axios.get(`${baseUrl}/dashboard/jd-status-percentage`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get(`${baseUrl}/api/dashboard/getAll-recruiters-closed`, {
+                    axios.get(`${baseUrl}/dashboard/getAll-recruiters-closed`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
                 ]);

@@ -14,7 +14,7 @@ function RMGManagement() {
   useEffect(() => {
     const fetchAllRMG = async () => {
       try {
-        const res = await axios.get(`${baseUrl}/api/admin/allrmg`, {
+        const res = await axios.get(`${baseUrl}/admin/allrmg`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -116,7 +116,7 @@ function RMGManagement() {
     try {
       const rmgToDelete = recruiters.find(r => r.id === id);
       
-      const res = await axios.delete(`${baseUrl}/api/admin/rmg/${id}`, {
+      const res = await axios.delete(`${baseUrl}/admin/rmg/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

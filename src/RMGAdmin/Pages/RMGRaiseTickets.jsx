@@ -17,7 +17,7 @@ const RMGRaiseTickets = () => {
             setLoading(true);
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get(`${baseUrl}/api/tickets/`,
+                const res = await axios.get(`${baseUrl}/tickets/`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`

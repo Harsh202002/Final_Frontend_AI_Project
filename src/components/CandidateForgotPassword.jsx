@@ -51,7 +51,7 @@ const CandidateForgotPassword = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post(`${baseUrl}/api/candidate-forgot/forgot`, { email });
+            const response = await axios.post(`${baseUrl}/candidate-forgot/forgot`, { email });
             // console.log("res:", response.data);
             setStep(2);
         } catch (err) {
@@ -71,7 +71,7 @@ const CandidateForgotPassword = () => {
         const otpValue = otp.join("");
 
         try {
-            const response = await axios.post(`${baseUrl}/api/candidate-forgot/validate-otp`, { email, otp: otpValue });
+            const response = await axios.post(`${baseUrl}/candidate-forgot/validate-otp`, { email, otp: otpValue });
             // console.log("OTP:", otpValue);
             // console.log("res:", response.data);
             setStep(3);
@@ -125,7 +125,7 @@ const CandidateForgotPassword = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post(`${baseUrl}/api/candidate-forgot/change-password`, { email, newPassword: password });
+            const response = await axios.post(`${baseUrl}/candidate-forgot/change-password`, { email, newPassword: password });
             // console.log("res:", response.data);
             // console.log("New Password:", password);
             // console.log("Confirm Password:", confirmPassword);
@@ -144,7 +144,7 @@ const CandidateForgotPassword = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post(`${baseUrl}/api/candidate-forgot/forgot`, { email });
+            const response = await axios.post(`${baseUrl}/candidate-forgot/forgot`, { email });
             setOtp(["", "", "", "", "", ""]);
             alert("OTP resent successfully!");
         } catch (err) {
