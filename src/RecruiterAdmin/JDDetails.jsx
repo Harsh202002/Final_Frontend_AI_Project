@@ -87,53 +87,96 @@ function JDDetails() {
             console.log('Filter Resumes Response:', response.data);
 
             if (response.data.success) {
-                const updatedJdDetails = {
-                    ...jdDetails,
-                    filteredCandidates: response.data.filtered.map(f => ({
+                const newlyProcessedIds = new Set([
+                    ...response.data.filtered.map(f => f.id),
+                    ...response.data.unfiltered.map(u => u.id)
+                ]);
+
+                setPendingCandidates(prevPending => {
+                    const updated = prevPending.filter(pc => {
+                        const possibleIds = [
+                            pc.candidate,
+                            pc._id,
+                            pc.candidateId,
+                            pc.candidate?._id,
+                            pc.id
+                        ].filter(Boolean);
+
+                        const shouldRemove = possibleIds.some(id => newlyProcessedIds.has(id));
+                        return !shouldRemove;
+                    });
+                    return updated;
+                });
+
+                setCurrentPageTable1(1);
+
+                setJdDetails(prevJdDetails => {
+                    const existingFilteredCandidates = [...(prevJdDetails?.filteredCandidates || [])];
+                    const existingUnfilteredCandidates = [...(prevJdDetails?.unfilteredCandidates || [])];
+
+                    const newFilteredCandidates = response.data.filtered.map(f => ({
                         candidate: f.id,
                         aiScore: f.score,
                         aiExplanation: f.explanation
-                    })),
-                    unfilteredCandidates: response.data.unfiltered.map(u => ({
+                    }));
+
+                    const newUnfilteredCandidates = response.data.unfiltered.map(u => ({
                         candidate: u.id,
                         aiScore: u.score,
                         aiExplanation: u.explanation
-                    }))
-                };
+                    }));
 
-                if (updatedJdDetails.appliedCandidates) {
-                    updatedJdDetails.appliedCandidates = updatedJdDetails.appliedCandidates.map(candidate => {
-                        const filtered = response.data.filtered.find(f => f.id === candidate.candidate);
-                        const unfiltered = response.data.unfiltered.find(u => u.id === candidate.candidate);
+                    const existingFilteredIds = new Set(existingFilteredCandidates.map(c => c.candidate));
+                    const existingUnfilteredIds = new Set(existingUnfilteredCandidates.map(c => c.candidate));
 
-                        if (filtered) {
-                            return {
-                                ...candidate,
-                                status: 'filtered',
-                                aiScore: filtered.score,
-                                aiExplanation: filtered.explanation
-                            };
-                        }
+                    const mergedFilteredCandidates = [
+                        ...existingFilteredCandidates,
+                        ...newFilteredCandidates.filter(c => !existingFilteredIds.has(c.candidate))
+                    ];
 
-                        if (unfiltered) {
-                            return {
-                                ...candidate,
-                                status: 'unfiltered',
-                                aiScore: unfiltered.score,
-                                aiExplanation: unfiltered.explanation
-                            };
+                    const mergedUnfilteredCandidates = [
+                        ...existingUnfilteredCandidates,
+                        ...newUnfilteredCandidates.filter(c => !existingUnfilteredIds.has(c.candidate))
+                    ];
+
+                    const updatedAppliedCandidates = prevJdDetails.appliedCandidates.map(candidate => {
+                        const candidateId = candidate.candidate;
+
+                        if (newlyProcessedIds.has(candidateId)) {
+                            const filteredData = response.data.filtered.find(f => f.id === candidateId);
+                            const unfilteredData = response.data.unfiltered.find(u => u.id === candidateId);
+
+                            if (filteredData) {
+                                return {
+                                    ...candidate,
+                                    status: 'filtered',
+                                    aiScore: filteredData.score,
+                                    aiExplanation: filteredData.explanation
+                                };
+                            }
+
+                            if (unfilteredData) {
+                                return {
+                                    ...candidate,
+                                    status: 'unfiltered',
+                                    aiScore: unfilteredData.score,
+                                    aiExplanation: unfilteredData.explanation
+                                };
+                            }
                         }
 
                         return candidate;
                     });
-                }
 
-                setJdDetails(updatedJdDetails);
+                    return {
+                        ...prevJdDetails,
+                        filteredCandidates: mergedFilteredCandidates,
+                        unfilteredCandidates: mergedUnfilteredCandidates,
+                        appliedCandidates: updatedAppliedCandidates
+                    };
+                });
 
-                setPendingCandidates([]);
-
-                const totalFiltered = response.data.filtered.length;
-                const totalUnfiltered = response.data.unfiltered.length;
+                setCurrentPageTable2(1);
 
                 alert('Resumes filtered successfully!');
             } else {
@@ -142,6 +185,7 @@ function JDDetails() {
 
         } catch (error) {
             console.error('Error filtering resumes:', error);
+            alert('Error filtering resumes. Please try again.');
         } finally {
             setIsFiltering(false);
         }
@@ -280,8 +324,8 @@ function JDDetails() {
                             onClick={handleFilterResumes}
                             disabled={isFiltering || pendingCandidates.length === 0}
                             className={`${isFiltering || pendingCandidates.length === 0
-                                    ? 'bg-purple-400 cursor-not-allowed'
-                                    : 'bg-purple-600 hover:bg-purple-700'
+                                ? 'bg-purple-400 cursor-not-allowed'
+                                : 'bg-purple-600 hover:bg-purple-700'
                                 } text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors`}
                         >
                             <Filter size={18} className={isFiltering ? 'animate-spin' : ''} />
