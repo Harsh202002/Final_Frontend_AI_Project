@@ -111,7 +111,7 @@ const RMGSidebar = ({ isOpen, onToggle }) => {
               </button>
             </li>
 
-            <li>
+            {/* <li>
               <button
                 onClick={() => handleNavClick('SupportTickets', '/RMGAdmin-Dashboard/RMGSupportTickets')}
                 className={`flex w-full items-center space-x-3 py-2 px-7 rounded transition-colors 
@@ -120,7 +120,7 @@ const RMGSidebar = ({ isOpen, onToggle }) => {
                 <Building2 size={20} />
                 <span>Support Tickets</span>
               </button>
-            </li>
+            </li> */}
 
             <li>
               <button

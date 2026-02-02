@@ -1,10 +1,12 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, SlidersHorizontal, Ticket, Clock, FileCheck, Trash2, ChevronDown } from 'lucide-react';
 import Pagination from '../../components/LandingPage/Pagination';
 import axios from 'axios';
 import { baseUrl } from '../../utils/ApiConstants';
 
 const RMGRaiseTickets = () => {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('All');
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -67,7 +69,7 @@ const RMGRaiseTickets = () => {
         return [...filtered].reverse();
     }, [activeTab, searchId, tickets]);
 
-    const itemsPerPage = 7;
+    const itemsPerPage = 5;
     const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
     const paginatedTickets = filteredTickets.slice(
         (currentPage - 1) * itemsPerPage,
@@ -188,37 +190,45 @@ const RMGRaiseTickets = () => {
                             </div>
                         </div>
 
-                        <div className="flex gap-6 px-4 border-b border-gray-200 overflow-x-auto">
+                        <div className="flex gap-6 px-4 border-b border-gray-200 overflow-x-auto items-center justify-between">
+                            <div className="flex gap-6">
+                                <button
+                                    onClick={() => handleTabChange('All')}
+                                    className={`py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === 'All' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+                                        }`}
+                                >
+                                    All ({calculatedStats.total})
+                                </button>
+                                <button
+                                    onClick={() => handleTabChange('Pending')}
+                                    className={`flex items-center gap-2 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === 'Pending' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+                                        }`}
+                                >
+                                    <span className="w-2 h-2 rounded-full bg-yellow-400"></span>
+                                    Pending ({calculatedStats.pending})
+                                </button>
+                                <button
+                                    onClick={() => handleTabChange('Closed')}
+                                    className={`flex items-center gap-2 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === 'Closed' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+                                        }`}
+                                >
+                                    <span className="w-2 h-2 rounded-full bg-green-400"></span>
+                                    Closed ({calculatedStats.closed})
+                                </button>
+                                <button
+                                    onClick={() => handleTabChange('Resolved')}
+                                    className={`flex items-center gap-2 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === 'Resolved' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+                                        }`}
+                                >
+                                    <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                                    Resolved ({calculatedStats.resolved})
+                                </button>
+                            </div>
                             <button
-                                onClick={() => handleTabChange('All')}
-                                className={`py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === 'All' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-                                    }`}
+                                onClick={() => navigate('/RMGAdmin-Dashboard/RMGSupportTickets')}
+                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors whitespace-nowrap text-sm font-medium"
                             >
-                                All ({calculatedStats.total})
-                            </button>
-                            <button
-                                onClick={() => handleTabChange('Pending')}
-                                className={`flex items-center gap-2 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === 'Pending' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-                                    }`}
-                            >
-                                <span className="w-2 h-2 rounded-full bg-yellow-400"></span>
-                                Pending ({calculatedStats.pending})
-                            </button>
-                            <button
-                                onClick={() => handleTabChange('Closed')}
-                                className={`flex items-center gap-2 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === 'Closed' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-                                    }`}
-                            >
-                                <span className="w-2 h-2 rounded-full bg-green-400"></span>
-                                Closed ({calculatedStats.closed})
-                            </button>
-                            <button
-                                onClick={() => handleTabChange('Resolved')}
-                                className={`flex items-center gap-2 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === 'Resolved' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-                                    }`}
-                            >
-                                <span className="w-2 h-2 rounded-full bg-blue-400"></span>
-                                Resolved ({calculatedStats.resolved})
+                                Raise Tickets
                             </button>
                         </div>
 
@@ -232,7 +242,7 @@ const RMGRaiseTickets = () => {
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Priority</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Created Date</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                        {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th> */}
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
@@ -280,7 +290,7 @@ const RMGRaiseTickets = () => {
                                                 <td className="px-4 py-4 text-sm text-gray-500 hidden lg:table-cell">
                                                     {formatDate(ticket.createdAt)}
                                                 </td>
-                                                <td className="px-4 py-4">
+                                                {/* <td className="px-4 py-4">
                                                     <button
                                                         className="p-1 rounded-sm hover:bg-red-100 transition-colors group border border-red-500"
                                                         onClick={(e) => {
@@ -289,7 +299,7 @@ const RMGRaiseTickets = () => {
                                                     >
                                                         <Trash2 className="w-4 h-4 text-red-500" />
                                                     </button>
-                                                </td>
+                                                </td> */}
                                             </tr>
                                         ))
                                     ) : (

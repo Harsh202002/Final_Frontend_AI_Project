@@ -101,21 +101,30 @@ const CandidateHeader = ({ onMenuToggle }) => {
                         <Bell size={20} className="text-gray-600" />
                     </button> */}
 
-                    <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg">
-                        <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                            {user?.name ? user.name[0].toUpperCase() : "?"}
-                        </div>
-
-                        <div className="relative hidden sm:block" ref={dropdownRef}>
-                            <button
-                                className="flex items-center gap-1 text-sm font-medium text-gray-700 focus:outline-none"
+                    <div className="flex items-center">
+                        <div
+                            className="relative border border-gray-800 rounded-lg p-2 flex items-center justify-between space-x-3 min-w-[180px]"
+                            ref={dropdownRef}
+                        >
+                            <div
+                                className="flex-1 min-w-0 cursor-pointer"
                                 onClick={() => setDropdownOpen((prev) => !prev)}
                             >
-                                {user?.name || "Loading..."}
-                                <ChevronDown size={18} className="ml-1" />
-                            </button>
+                                <div className="flex items-center gap-1">
+                                    <span className="text-sm font-medium text-gray-800 truncate">
+                                        {user?.name || "Loading..."}
+                                    </span>
+                                    <ChevronDown size={16} className="text-gray-500" />
+                                </div>
+                                <div className="text-xs text-gray-500">candidate</div>
+                            </div>
+
+                            <div className="w-9 h-9 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                                {user?.name ? user.name[0].toUpperCase() : "?"}
+                            </div>
+
                             {dropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50 animate-fade-in">
+                                <div className="absolute right-0 top-full mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                                     <button
                                         onClick={handleProfile}
                                         className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700 rounded-t-lg"
@@ -131,7 +140,6 @@ const CandidateHeader = ({ onMenuToggle }) => {
                                 </div>
                             )}
                         </div>
-
                     </div>
                 </div>
             </div>

@@ -85,7 +85,7 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
                   ${activeNav === 'RecruiterManagement' ? 'bg-white text-black' : 'hover:bg-white hover:text-black'}`}
               >
                 <UserPlus size={20} />
-                <span>Recruiter Management</span>
+                <span>Recruiter Administration</span>
               </button>
             </li>
 

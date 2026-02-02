@@ -91,12 +91,14 @@ function RequirementForm() {
 
   // Dropdown open/close state for responsive UI
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
+  const [locationSearchQuery, setLocationSearchQuery] = useState('');
   const locationDropdownRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (locationDropdownRef.current && !locationDropdownRef.current.contains(event.target)) {
         setLocationDropdownOpen(false);
+        setLocationSearchQuery('');
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -406,20 +408,42 @@ function RequirementForm() {
                     ))}
                   </div>
                   {locationDropdownOpen && (
-                    <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto bg-white border border-gray-300 rounded-md shadow-lg animate-fade-in">
-                      {cities.filter(city => !formData.location.includes(city)).length === 0 ? (
-                        <div className="px-4 py-2 text-gray-400 text-sm">No more cities to select</div>
-                      ) : (
-                        cities.filter(city => !formData.location.includes(city)).map((city, idx) => (
-                          <div
-                            key={city}
-                            className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-gray-700 text-sm transition-colors"
-                            onClick={() => { handleChange({ target: { name: 'location', value: city } }); setLocationDropdownOpen(false); }}
-                          >
-                            {city}
+                    <div className="absolute z-10 mt-1 w-full max-h-80 bg-white border border-gray-300 rounded-md shadow-lg animate-fade-in">
+                      <div className="sticky top-0 bg-white border-b border-gray-200 p-2">
+                        <input
+                          type="text"
+                          placeholder="Search cities..."
+                          value={locationSearchQuery}
+                          onChange={(e) => setLocationSearchQuery(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div className="overflow-auto max-h-64">
+                        {cities
+                          .filter(city => 
+                            !formData.location.includes(city) &&
+                            city.toLowerCase().includes(locationSearchQuery.toLowerCase())
+                          ).length === 0 ? (
+                          <div className="px-4 py-2 text-gray-400 text-sm">
+                            {locationSearchQuery ? 'No cities found' : 'No more cities to select'}
                           </div>
-                        ))
-                      )}
+                        ) : (
+                          cities
+                            .filter(city => 
+                              !formData.location.includes(city) &&
+                              city.toLowerCase().includes(locationSearchQuery.toLowerCase())
+                            )
+                            .map((city, idx) => (
+                              <div
+                                key={city}
+                                className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-gray-700 text-sm transition-colors"
+                                onClick={() => { handleChange({ target: { name: 'location', value: city } }); setLocationSearchQuery(''); setLocationDropdownOpen(false); }}
+                              >
+                                {city}
+                              </div>
+                            ))
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>

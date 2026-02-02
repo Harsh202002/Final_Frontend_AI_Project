@@ -88,7 +88,7 @@ const CandidateAdminSidebar = ({ isOpen, onToggle }) => {
                   ${activeNav === 'AllJds' ? 'bg-white text-black' : 'hover:bg-white hover:text-black'}`}
               >
                 <Building2 size={20} />
-                <span>All Jds</span>
+                <span>Open Positions</span>
               </button>
             </li>
 
@@ -99,7 +99,7 @@ const CandidateAdminSidebar = ({ isOpen, onToggle }) => {
                   ${activeNav === 'AppliedJD' ? 'bg-white text-black' : 'hover:bg-white hover:text-black'}`}
               >
                 <Building2 size={20} />
-                <span>Applied JD</span>
+                <span>Applied Jobs</span>
               </button>
             </li>
 
@@ -110,7 +110,7 @@ const CandidateAdminSidebar = ({ isOpen, onToggle }) => {
                   ${activeNav === 'Examination' ? 'bg-white text-black' : 'hover:bg-white hover:text-black'}`}
               >
                 <UserPlus size={20} />
-                <span>Examination</span>
+                <span>Online Assessment</span>
               </button>
             </li>
 
@@ -121,7 +121,7 @@ const CandidateAdminSidebar = ({ isOpen, onToggle }) => {
                   ${activeNav === 'Reports' ? 'bg-white text-black' : 'hover:bg-white hover:text-black'}`}
               >
                 <UserPlus size={20} />
-                <span>Reports</span>
+                <span>Evalution Summary</span>
               </button>
             </li>
 
