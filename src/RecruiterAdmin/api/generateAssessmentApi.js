@@ -45,7 +45,7 @@ class AssessmentAPI {
       return null;
     }
   }
-  
+
   /**
    * Get list of tests taken by a candidate (job_id / question_set_id)
    * @param {string} candidateId

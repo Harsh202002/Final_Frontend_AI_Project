@@ -5,6 +5,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
+import { pythonUrl } from "../../utils/ApiConstants";
  
 const WebCamRecorder = forwardRef(
   (
@@ -12,7 +13,6 @@ const WebCamRecorder = forwardRef(
       questions = [],
       candidateId,
       questionSetId,
-      baseUrl = "https://python-k0xt.onrender.com",
       onComplete = () => {},
       showMultipleFaces = false,
     },
@@ -204,7 +204,7 @@ const WebCamRecorder = forwardRef(
       setStatus("Uploading video...");
 
       try {
-        const res = await fetch(`https://python-k0xt.onrender.com/api/v1/upload_video`, {
+        const res = await fetch(`${pythonUrl}/v1/upload_video`, {
           method: "POST",
           body: fd,
         });

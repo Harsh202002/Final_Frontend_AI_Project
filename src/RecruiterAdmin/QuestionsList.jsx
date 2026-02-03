@@ -30,10 +30,11 @@ const QuestionsList = () => {
         const fetchQuestions = async () => {
             setLoading(true);
             setError(null);
-            try {
+                try {
                 const data = await AssessmentAPI.getQuestionsByAssessmentId(questionSetId);
-                setQuestions(data);
-                if (data.length === 0) setError("No questions found for this assessment.");
+                const questionsArray = data?.questions ?? data ?? [];
+                setQuestions(questionsArray);
+                if (questionsArray.length === 0) setError("No questions found for this assessment.");
             } catch (err) {
                 console.error("Failed to load questions:", err);
                 setError(err.message || "Failed to load questions");
@@ -73,8 +74,8 @@ const QuestionsList = () => {
             header.innerHTML = `<h1 style="font-size:20px;margin-bottom:8px">${title}</h1><p>Total questions: ${questions.length}</p>`;
             container.appendChild(header);
 
-            questions.forEach((q, idx) => {
-                const prompt = q.content?.prompt || q.content?.question || '';
+                questions.forEach((q, idx) => {
+                const prompt = q.content?.prompt_text || q.content?.prompt || q.content?.question || '';
                 const qDiv = document.createElement('div');
                 qDiv.style.marginBottom = '14px';
                 qDiv.innerHTML = `<div><strong>Q${idx + 1}.</strong> ${prompt}</div>`;
@@ -181,7 +182,7 @@ const QuestionsList = () => {
                                     <div className="hover:bg-gradient-to-r from-indigo-50 to-purple-50 transition-all duration-200">
                                         <div className="px-5 py-3 text-gray-700">
                                             <p className="font-semibold text-gray-900 mb-1 whitespace-pre-line">
-                                                Q. {q.content?.prompt || q.content?.question}
+                                                Q. {q.content?.prompt_text || q.content?.prompt || q.content?.question}
                                             </p>
 
                                             {/* MCQ options */}

@@ -1,4 +1,5 @@
-const BASE_URL = "https://python-k0xt.onrender.com/api/v1";
+import { pythonUrl } from "../../utils/ApiConstants";
+const BASE_URL = `${pythonUrl}/v1`;
 
 export const testApi = {
   startTest: async (questionSetId) => {
@@ -73,6 +74,32 @@ export const testApi = {
       return await response.json();
     } catch (error) {
       console.error('Error creating session:', error);
+      throw error;
+    }
+  },
+  getVideoUrl: async (attemptId) => {
+    try {
+      if (!attemptId) return { video_url: null };
+      const url = `${BASE_URL}/test/video_url?attempt_id=${encodeURIComponent(attemptId)}`;
+      const response = await fetch(url);
+      const text = await response.text();
+      try {
+        const json = text ? JSON.parse(text) : null;
+        if (!response.ok) {
+          console.error('getVideoUrl server error:', response.status, json || text);
+          throw new Error(json?.error || `Failed to get video url (${response.status})`);
+        }
+        return json;
+      } catch (parseErr) {
+        if (!response.ok) {
+          console.error('getVideoUrl server error (non-json):', response.status, text);
+          throw new Error(`Failed to get video url (${response.status})`);
+        }
+        // non-json but ok
+        return { video_url: text };
+      }
+    } catch (error) {
+      console.error('Error getVideoUrl:', error);
       throw error;
     }
   },

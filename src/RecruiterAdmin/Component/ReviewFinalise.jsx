@@ -221,7 +221,13 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
          const token = localStorage.getItem("token");
          await axios.post(
           `${baseUrl}/candidate/send-email-shortlisted/${jobIdFromLocal}`,
-          { candidateIds: candidateIdsArray, },
+          {
+            candidateIds: candidateIdsArray,
+            startDate: minimalPayload.startDate || formData.startDate || null,
+            startTime: minimalPayload.startTime || formData.startTime || null,
+            endDate: minimalPayload.endDate || formData.endDate || null,
+            endTime: minimalPayload.endTime || formData.endTime || null,
+          },
           {
             headers: {
               Authorization: `Bearer ${token}`,

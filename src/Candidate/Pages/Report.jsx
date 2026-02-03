@@ -15,14 +15,13 @@ function Report() {
   const [error, setError] = useState(null);
   const mountedRef = useRef(true);
   const itemsPerPage = 5;
-  const CAND_API_BASE = window.REACT_APP_BASE_URL || `${baseUrl}`;
+  const CAND_API_BASE = baseUrl;
 
   const handleDelete = async (attempt) => {
     if (!attempt || !attempt.id) return;
     const ok = window.confirm(`Delete attempt ${attempt.id}? This cannot be undone.`);
     if (!ok) return;
     try {
-      const base = window.REACT_APP_BASE_URL || `${baseUrl}`;
       const res = await fetch(`${pythonUrl}/v1/test/attempts/${encodeURIComponent(attempt.id)}`, { method: 'DELETE' });
       console.log("response:",res)
       if (!res.ok) {
@@ -127,6 +126,18 @@ function Report() {
 
         // Try to resolve candidate names by calling candidate API route for each candidate_id
         try {
+          // Fetch finalized tests once and use their titles (if present) to set jobTitle
+          let finalizedTests = [];
+          try {
+            const fr = await fetch(`${pythonUrl}/v1/finalise/finalized-tests`);
+            if (fr.ok) {
+              const fj = await fr.json();
+              finalizedTests = Array.isArray(fj) ? fj : (fj.data || []);
+            }
+          } catch (e) {
+            // ignore finalized-tests failures — fallback to question-set lookup below
+            finalizedTests = [];
+          }
           // Prefer same API base as other calls (backend main API)
           const CAND_API_BASE = `${baseUrl}`;
           const token = localStorage.getItem('candidateToken') || localStorage.getItem('token') || null;
@@ -162,21 +173,55 @@ function Report() {
               }
             }
 
-            // also fetch assessment metadata (title/role) from main API and use it as jobTitle when available
+            // also fetch assessment metadata (title/role) from finalized-tests or question-set metadata
             try {
               const qset = m.raw?.question_set_id || m.raw?.questionSetId || m.raw?.question_setId || null;
               if (qset) {
-                try {
-                  const ar = await fetch(`${pythonUrl}/v1/question-set/${encodeURIComponent(qset)}/questions`);
-                  if (ar.ok) {
-                    const aj = await ar.json();
-                    if (aj && aj.status === 'success') {
-                      m.jobTitle = aj.role_title || aj.title || m.jobTitle;
-                      m.company = aj.company || m.company;
+                // prefer finalized tests (they contain a human-friendly `title`/`job_id`)
+                if (Array.isArray(finalizedTests) && finalizedTests.length) {
+                  try {
+                    const ft = finalizedTests.find(t => {
+                      try {
+                        const cand = String(qset);
+                        // direct matches
+                        if (String(t.question_set_id || '') === cand) return true;
+                        if (String(t._id || t.id || '') === cand) return true;
+                        // nested shape: t.question_set._id
+                        if (String((t.question_set && t.question_set._id) || '') === cand) return true;
+                        // sometimes question_set_id stored with prefix/longer id
+                        if (String(t.question_set_id || '').startsWith(cand) || String(t._id || '').startsWith(cand)) return true;
+                        // match by test-taken URL if present (URL may contain the qset)
+                        const urlCandidates = [t.test_taken_url, t.testTakenUrl, t.url, t.link, t.test_url];
+                        for (const u of urlCandidates) {
+                          if (!u) continue;
+                          try {
+                            if (String(u).includes(cand)) return true;
+                          } catch (e) { /* ignore URL parse errors */ }
+                        }
+                      } catch (e) { /* ignore */ }
+                      return false;
+                    });
+                    if (ft) {
+                      m.jobTitle = ft.title || ft.role_title || m.jobTitle;
+                      m.company = ft.company || m.company;
                     }
+                  } catch (e) { /* ignore finalized lookup errors */ }
+                }
+
+                // fallback: fetch question-set metadata if finalized-tests didn't provide a title
+                if (!m.jobTitle || m.jobTitle === '-' || m.jobTitle === 'Untitled Test') {
+                  try {
+                    const ar = await fetch(`${pythonUrl}/v1/question-set/${encodeURIComponent(qset)}/questions`);
+                    if (ar.ok) {
+                      const aj = await ar.json();
+                      if (aj && aj.status === 'success') {
+                        m.jobTitle = aj.role_title || aj.title || m.jobTitle;
+                        m.company = aj.company || m.company;
+                      }
+                    }
+                  } catch (e) {
+                    // ignore assessment fetch failures
                   }
-                } catch (e) {
-                  // ignore assessment fetch failures
                 }
               }
             } catch (e) {

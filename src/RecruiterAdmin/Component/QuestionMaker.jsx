@@ -4,6 +4,7 @@ import { Info, Edit, Copy, Trash2, Clock, RefreshCcw, Check, X } from 'lucide-re
 export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loading }) {
     const [editingQuestion, setEditingQuestion] = useState(null);
     const [editedData, setEditedData] = useState(null);
+    const [newQuestionType, setNewQuestionType] = useState('mcq');
 
     // Transform API questions to display format
     const displayQuestions = questions.map((q, idx) => {
@@ -211,68 +212,102 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
         if (!editedData || !editingQuestion) return;
 
         // Transform edited data back to API format
-        const updatedQuestion = questions.find(q => q.question_id === editingQuestion.question_id);
-        
-        if (!updatedQuestion) return;
-        // Ensure content object exists before assigning
-        updatedQuestion.content = updatedQuestion.content || {};
+        // Try to find an existing question — if not found, we'll create a new one on save
+        const existingIndex = questions.findIndex(q => q.question_id === editingQuestion.question_id);
 
-        if (editedData.questionType === 'MCQ') {
-            updatedQuestion.time_limit = parseInt(editedData.timeLimit);
-            updatedQuestion.positive_marking = parseInt(editedData.marks);
-            updatedQuestion.difficulty = editedData.level.toLowerCase();
-            updatedQuestion.content.prompt = editedData.questionText;
-            updatedQuestion.content.options = editedData.options.map(opt => opt.text);
-            
-            const correctOption = editedData.options.find(opt => opt.isCorrect);
-            const correctId = correctOption ? correctOption.id : 'A';
-            const correctText = correctOption ? correctOption.text : '';
-            updatedQuestion.content.answer = correctId;
-            // keep both naming variants for compatibility:
-            updatedQuestion.content.correct_answer = correctId;
-            updatedQuestion.content.correct_option_text = correctText;
-            // also store top-level fields for downstream components and persistence
-            updatedQuestion.correct_answer = correctId;
-            updatedQuestion.correct_option_text = correctText;
-        } else if (editedData.questionType === 'Coding') {
-            updatedQuestion.time_limit = parseInt(editedData.timeLimit);
-            updatedQuestion.positive_marking = parseInt(editedData.marks);
-            updatedQuestion.difficulty = editedData.level.toLowerCase();
-            updatedQuestion.content.prompt = editedData.questionText;
-            updatedQuestion.content.input_spec = editedData.input_spec;
-            updatedQuestion.content.output_spec = editedData.output_spec;
-        } else if (editedData.questionType === 'Audio') {
-            updatedQuestion.time_limit = parseInt(editedData.timeLimit);
-            updatedQuestion.difficulty = editedData.level.toLowerCase();
-            updatedQuestion.positive_marking = parseInt(editedData.marks);
-            updatedQuestion.content.prompt_text = editedData.questionText;
-            updatedQuestion.content.expected_keywords = editedData.expected_keywords;
-            // updatedQuestion.content.rubric = editedData.rubric;
-        } else if (editedData.questionType === 'Video') {
-            updatedQuestion.time_limit = parseInt(editedData.timeLimit);
-            updatedQuestion.difficulty = editedData.level.toLowerCase();
-            updatedQuestion.positive_marking = parseInt(editedData.marks);
-            updatedQuestion.content.prompt_text = editedData.questionText;
-            // updatedQuestion.content.rubric = editedData.rubric;
-        } else if (editedData.questionType === 'Text') {
-            updatedQuestion.time_limit = parseInt(editedData.timeLimit);
-            updatedQuestion.positive_marking = parseInt(editedData.marks);
-            updatedQuestion.difficulty = editedData.level.toLowerCase();
-            updatedQuestion.content.prompt = editedData.questionText;
-        } else if (editedData.questionType === 'Rating') {
-            updatedQuestion.time_limit = parseInt(editedData.timeLimit);
-            updatedQuestion.positive_marking = parseInt(editedData.marks);
-            updatedQuestion.difficulty = editedData.level.toLowerCase();
-            updatedQuestion.content.prompt = editedData.questionText;
-            updatedQuestion.content.scale = editedData.scale || 5;
-            updatedQuestion.time_limit = parseInt(editedData.timeLimit);
-            updatedQuestion.difficulty = editedData.level.toLowerCase();
-            updatedQuestion.content.prompt_text = editedData.questionText;
-            // updatedQuestion.content.rubric = editedData.rubric;
-        }
-        
-        if (onUpdate) {
-            onUpdate([...questions]);
+        if (existingIndex !== -1) {
+            const updatedQuestions = [...questions];
+            const updatedQuestion = { ...updatedQuestions[existingIndex] };
+            updatedQuestion.content = updatedQuestion.content || {};
+
+            if (editedData.questionType === 'MCQ') {
+                updatedQuestion.time_limit = parseInt(editedData.timeLimit);
+                updatedQuestion.positive_marking = parseInt(editedData.marks);
+                updatedQuestion.difficulty = editedData.level.toLowerCase();
+                updatedQuestion.content.prompt = editedData.questionText;
+                updatedQuestion.content.options = editedData.options.map(opt => opt.text);
+
+                const correctOption = editedData.options.find(opt => opt.isCorrect);
+                const correctId = correctOption ? correctOption.id : 'A';
+                const correctText = correctOption ? correctOption.text : '';
+                updatedQuestion.content.answer = correctId;
+                updatedQuestion.content.correct_answer = correctId;
+                updatedQuestion.content.correct_option_text = correctText;
+                updatedQuestion.correct_answer = correctId;
+                updatedQuestion.correct_option_text = correctText;
+            } else if (editedData.questionType === 'Coding') {
+                updatedQuestion.time_limit = parseInt(editedData.timeLimit);
+                updatedQuestion.positive_marking = parseInt(editedData.marks);
+                updatedQuestion.difficulty = editedData.level.toLowerCase();
+                updatedQuestion.content.prompt = editedData.questionText;
+                updatedQuestion.content.input_spec = editedData.input_spec;
+                updatedQuestion.content.output_spec = editedData.output_spec;
+            } else if (editedData.questionType === 'Audio') {
+                updatedQuestion.time_limit = parseInt(editedData.timeLimit);
+                updatedQuestion.difficulty = editedData.level.toLowerCase();
+                updatedQuestion.positive_marking = parseInt(editedData.marks);
+                updatedQuestion.content.prompt_text = editedData.questionText;
+                updatedQuestion.content.expected_keywords = editedData.expected_keywords;
+            } else if (editedData.questionType === 'Video') {
+                updatedQuestion.time_limit = parseInt(editedData.timeLimit);
+                updatedQuestion.difficulty = editedData.level.toLowerCase();
+                updatedQuestion.positive_marking = parseInt(editedData.marks);
+                updatedQuestion.content.prompt_text = editedData.questionText;
+            } else if (editedData.questionType === 'Text') {
+                updatedQuestion.time_limit = parseInt(editedData.timeLimit);
+                updatedQuestion.positive_marking = parseInt(editedData.marks);
+                updatedQuestion.difficulty = editedData.level.toLowerCase();
+                updatedQuestion.content.prompt = editedData.questionText;
+            } else if (editedData.questionType === 'Rating') {
+                updatedQuestion.time_limit = parseInt(editedData.timeLimit);
+                updatedQuestion.positive_marking = parseInt(editedData.marks);
+                updatedQuestion.difficulty = editedData.level.toLowerCase();
+                updatedQuestion.content.prompt = editedData.questionText;
+                updatedQuestion.content.scale = editedData.scale || 5;
+            }
+
+            updatedQuestions[existingIndex] = updatedQuestion;
+            if (onUpdate) onUpdate(updatedQuestions);
+        } else {
+            // Create a new question object in the expected API shape and append it
+            const newQuestion = {
+                question_id: editingQuestion.question_id,
+                type: (editedData.questionType === 'MCQ') ? 'mcq' : (editedData.questionType === 'Coding' ? 'coding' : (editedData.questionType === 'Audio' ? 'audio' : (editedData.questionType === 'Video' ? 'video' : editedData.questionType.toLowerCase()))),
+                skill: (editedData.skills && editedData.skills[0]) || '',
+                difficulty: (editedData.level || 'Medium').toLowerCase(),
+                positive_marking: parseInt(editedData.marks) || 0,
+                negative_marking: parseInt(editedData.negative_marking) || 0,
+                time_limit: parseInt(editedData.timeLimit) || 60,
+                content: {}
+            };
+
+            if (editedData.questionType === 'MCQ') {
+                newQuestion.content.prompt = editedData.questionText;
+                newQuestion.content.options = editedData.options.map(o => o.text);
+                const correctOpt = editedData.options.find(o => o.isCorrect) || editedData.options[0];
+                const correctId = correctOpt ? correctOpt.id : 'A';
+                const correctText = correctOpt ? correctOpt.text : '';
+                newQuestion.content.answer = correctId;
+                newQuestion.content.correct_answer = correctId;
+                newQuestion.content.correct_option_text = correctText;
+                newQuestion.correct_answer = correctId;
+                newQuestion.correct_option_text = correctText;
+            } else if (editedData.questionType === 'Coding') {
+                newQuestion.content.prompt = editedData.questionText;
+                newQuestion.content.input_spec = editedData.input_spec;
+                newQuestion.content.output_spec = editedData.output_spec;
+                newQuestion.content.examples = editedData.examples || [];
+            } else if (editedData.questionType === 'Audio') {
+                newQuestion.content.prompt_text = editedData.questionText;
+                newQuestion.content.expected_keywords = editedData.expected_keywords || [];
+            } else if (editedData.questionType === 'Video') {
+                newQuestion.content.prompt_text = editedData.questionText;
+            } else {
+                newQuestion.content.prompt = editedData.questionText;
+            }
+
+            const updatedQuestions = [...questions, newQuestion];
+            if (onUpdate) onUpdate(updatedQuestions);
         }
         
         setEditingQuestion(null);
@@ -291,6 +326,104 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                 onUpdate(updatedQuestions);
             }
         }
+    };
+
+    const handleAddQuestion = (type) => {
+        const newId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `tmp-${Date.now()}`;
+        const base = {
+            question_id: newId,
+            type: type,
+            skill: '',
+            difficulty: 'medium',
+            positive_marking: type === 'coding' ? 2 : 5,
+            negative_marking: 0,
+            time_limit: type === 'coding' ? 300 : (type === 'video' ? 180 : (type === 'audio' ? 120 : 60)),
+            content: {}
+        };
+
+        if (type === 'mcq') {
+            base.content = { prompt: '', options: ['Option A', 'Option B'], answer: 'A' };
+        } else if (type === 'coding') {
+            base.content = { prompt: '', input_spec: '', output_spec: '', examples: [] };
+        } else if (type === 'audio' || type === 'video') {
+            base.content = { prompt_text: '', expected_keywords: [], suggested_time_seconds: base.time_limit };
+        } else {
+            base.content = { prompt: '' };
+        }
+
+
+        // Do not add to `questions` yet — create a local draft and open editor.
+
+        // Open editor for the newly created question with reasonable defaults
+        const display = {
+            id: displayQuestions.length + 1,
+            question_id: newId,
+            text: type === 'mcq' ? '' : '',
+            options: type === 'mcq' ? base.content.options : [],
+            expected_keywords: type === 'audio' ? [] : [],
+            input_spec: type === 'coding' ? '' : '',
+            output_spec: type === 'coding' ? '' : '',
+            time: base.time_limit,
+            difficulty: 'medium',
+            questionType: type === 'mcq' ? 'MCQ' : (type === 'coding' ? 'Coding' : (type === 'audio' ? 'Audio' : 'Video')),
+            marks: base.positive_marking,
+            negative_marking: base.negative_marking,
+            tags: [],
+            skills: []
+        };
+
+        display._isNew = true;
+        setEditingQuestion(display);
+
+        let edited;
+        if (display.questionType === 'MCQ') {
+            edited = {
+                ...display,
+                questionType: 'MCQ',
+                timeLimit: String(display.time || 60),
+                marks: String(display.marks || 5),
+                level: 'Medium',
+                skills: [],
+                questionText: '',
+                options: (display.options || []).map((opt, idx) => ({ id: String.fromCharCode(65 + idx), text: opt || '', isCorrect: idx === 0 }))
+            };
+        } else if (display.questionType === 'Coding') {
+            edited = {
+                ...display,
+                questionType: 'Coding',
+                timeLimit: String(display.time || 300),
+                marks: String(display.marks || 2),
+                level: 'Medium',
+                skills: [],
+                questionText: '',
+                input_spec: '',
+                output_spec: '',
+                examples: []
+            };
+        } else if (display.questionType === 'Audio') {
+            edited = {
+                ...display,
+                questionType: 'Audio',
+                timeLimit: String(display.time || 120),
+                marks: String(display.marks || 5),
+                level: 'Medium',
+                skills: [],
+                questionText: '',
+                expected_keywords: []
+            };
+        } else {
+            edited = {
+                ...display,
+                questionType: 'Video',
+                timeLimit: String(display.time || 180),
+                marks: String(display.marks || 5),
+                level: 'Medium',
+                skills: [],
+                questionText: ''
+            };
+        }
+
+        setEditedData(edited);
     };
 
     const updateOptionText = (id, text) => {
@@ -481,7 +614,27 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
             <div className="p-6 border border-gray-300 shadow-md rounded-xl">
                 <div className="mb-4 flex justify-between items-center">
                     <h2 className="text-xl font-semibold text-gray-900">Generated Questions ({displayQuestions.length})</h2>
-                    <span className="text-sm text-gray-600">Total Duration: {displayQuestions.reduce((sum, q) => sum + parseInt(q.time), 0)}s</span>
+                    <div className="flex items-center gap-3">
+                        <span className="text-sm text-gray-600">Total Duration: {displayQuestions.reduce((sum, q) => sum + parseInt(q.time), 0)}s</span>
+
+                        <select
+                            value={newQuestionType}
+                            onChange={(e) => setNewQuestionType(e.target.value)}
+                            className="px-2 py-1 border border-gray-300 rounded bg-white text-sm"
+                        >
+                            <option value="mcq">MCQ</option>
+                            <option value="coding">Coding</option>
+                            <option value="audio">Audio</option>
+                            <option value="video">Video</option>
+                        </select>
+
+                        <button
+                            onClick={() => handleAddQuestion(newQuestionType)}
+                            className="px-3 py-1.5 bg-green-500 text-white rounded hover:bg-green-600 text-sm"
+                        >
+                            + Add Question
+                        </button>
+                    </div>
                 </div>
 
                 <div className="space-y-4">

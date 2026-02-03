@@ -1,11 +1,12 @@
 
-
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, Eye, Trash2 } from 'lucide-react';
 import Pagination from '../components/LandingPage/Pagination';
-import ViewResults from './ViewResults'; 
+import ViewResults from './ViewResults';
 import SpinLoader from '../components/SpinLoader';
 import { baseUrl } from '../utils/ApiConstants';
+import { pythonUrl } from '../utils/ApiConstants';
+import { testApi } from './api/tests';
 
 function Results() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,11 +14,17 @@ function Results() {
   const [showViewResults, setShowViewResults] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [attemptsLoading, setAttemptsLoading] = useState(false);
+  const [videoSrc, setVideoSrc] = useState(null);
+  const [videoLoading, setVideoLoading] = useState(false);
+  const [videoError, setVideoError] = useState(null);
+  const [videoType, setVideoType] = useState(null);
+  const videoRef = useRef(null);
+  const [playAttemptId, setPlayAttemptId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [attemptsError, setAttemptsError] = useState(null);
   const mountedRef = useRef(true);
-  
+
   const rowsPerPage = 5;
 
   const computeAttemptScore = (attempt) => {
@@ -88,15 +95,14 @@ function Results() {
     setError(null);
     setLoading(true);
     try {
-      const base = window.REACT_APP_BASE_URL || 'https://python-k0xt.onrender.com';
-      const res = await fetch(`${base}/api/v1/finalise/finalized-tests`);
+      const res = await fetch(`${pythonUrl}/v1/finalise/finalized-tests`);
       if (!res.ok) {
         const txt = await res.text().catch(() => 'Failed');
         throw new Error(txt || 'Failed loading finalized tests');
       }
       const data = await res.json();
       console.log("[Result] finalized-tests result:", data);
-      
+
         // `data` is expected to be an array of tests from get_finalized_test
         const rawArr = Array.isArray(data) ? data : [];
         // Count occurrences per job_id (or question_set_id fallback)
@@ -184,9 +190,8 @@ function Results() {
       setAttemptsLoading(true);
       setAttemptsError(null);
       try {
-        const base = window.REACT_APP_BASE_URL || 'https://python-k0xt.onrender.com';
         const qsid = encodeURIComponent(job.raw.question_set_id);
-        const res = await fetch(`${base}/api/v1/test/attempts/${qsid}`);
+        const res = await fetch(`${pythonUrl}/v1/test/attempts/${qsid}`);
         if (!res.ok) {
           const txt = await res.text().catch(() => 'Failed');
           console.error('Failed to load attempts', txt);
@@ -264,6 +269,10 @@ function Results() {
               face_not_visible: Number(a.face_not_visible) || 0,
               attempts_count: 1,
               created_at: ts,
+              // keep a representative recording/audio URL and raw qa_data for viewing
+              video_url: a.video_url || a.video || a.videoUrl || null,
+              audio_url: a.audio_url || a.audio || a.audioUrl || null,
+              qa_data: a.qa_data || a.qaData || null,
             };
           } else {
             aggMap[key].totalScore += score;
@@ -275,6 +284,13 @@ function Results() {
             if (ts && (!aggMap[key].created_at || ts > aggMap[key].created_at)) aggMap[key].created_at = ts;
             // prefer populated candidate object
             if (!aggMap[key].candidate && a.candidate) aggMap[key].candidate = a.candidate;
+            // prefer newer recording/audio if this attempt is newer
+            const existingTs = aggMap[key].created_at;
+            if (ts && (!existingTs || ts >= existingTs)) {
+              aggMap[key].video_url = a.video_url || a.video || a.videoUrl || aggMap[key].video_url;
+              aggMap[key].audio_url = a.audio_url || a.audio || a.audioUrl || aggMap[key].audio_url;
+              aggMap[key].qa_data = a.qa_data || a.qaData || aggMap[key].qa_data;
+            }
           }
         }
 
@@ -295,14 +311,82 @@ function Results() {
     })();
   };
 
+  // Try to resolve a relative or partial media path to a working absolute URL by probing common prefixes.
+  const resolveMediaUrl = async (raw) => {
+    if (!raw) return null;
+    const s = String(raw).trim();
+    if (!s) return null;
+    // if already absolute, return as-is
+    if (/^https?:\/\//i.test(s)) return s;
+
+    const prefixes = [
+      baseUrl.replace(/\/$/, ''),
+      pythonUrl.replace(/\/$/, ''),
+      window.location.origin.replace(/\/$/, ''),
+      // also try removing '/api' if present in baseUrl
+      baseUrl.replace(/\/api\/?$/, ''),
+    ];
+
+    for (const p of prefixes) {
+      try {
+        const candidate = `${p}${s.startsWith('/') ? '' : '/'}${s}`;
+        // First try HEAD to avoid downloading full file
+        const headResp = await fetch(candidate, { method: 'HEAD' });
+        if (headResp && headResp.ok) return candidate;
+        // fallback: try GET for servers that don't support HEAD but allow byte ranges
+        const getResp = await fetch(candidate, { method: 'GET', headers: { Range: 'bytes=0-0' } });
+        if (getResp && (getResp.ok || getResp.status === 206)) return candidate;
+      } catch (e) {
+        // ignore and try next prefix
+      }
+    }
+
+    // last resort: return original raw as relative (browser may still resolve if served)
+    return s;
+  };
+
+  // Lightweight endpoint-backed video player that queries the server for a full URL.
+  const VideoPlayer = ({ attemptId }) => {
+    const [url, setUrl] = useState(null);
+    const [loadingUrl, setLoadingUrl] = useState(false);
+    useEffect(() => {
+      let mounted = true;
+      if (!attemptId) {
+        setUrl(null);
+        return () => { mounted = false; };
+      }
+      setLoadingUrl(true);
+      testApi.getVideoUrl(attemptId)
+        .then((j) => {
+          if (!mounted) return;
+          const v = j && (j.video_url || j.videoUrl || j.url || (j.data && j.data.video_url));
+          setUrl(v || null);
+        })
+        .catch((e) => {
+          console.error('VideoPlayer getVideoUrl failed', e);
+          if (mounted) setUrl(null);
+        })
+        .finally(() => { if (mounted) setLoadingUrl(false); });
+      return () => { mounted = false; };
+    }, [attemptId]);
+
+    if (loadingUrl) return <div className="text-white p-4">Loading video...</div>;
+    if (!url) return <div className="text-white p-4">No video available</div>;
+    return (
+      <video controls autoPlay muted playsInline style={{ maxWidth: '100%' }}>
+        <source src={url} />
+        Your browser does not support the video tag.
+      </video>
+    );
+  };
+
   const handleDelete = async (job) => {
     if (!job || !job.raw || !job.raw.question_set_id) return;
     const ok = window.confirm(`Delete test "${job.jobTitle}"? This cannot be undone.`);
     if (!ok) return;
     try {
-      const base = window.REACT_APP_BASE_URL || 'https://python-k0xt.onrender.com';
       const qsid = encodeURIComponent(job.raw.question_set_id);
-      const res = await fetch(`${base}/api/v1/finalise/finalized-test/${qsid}`, { method: 'DELETE' });
+      const res = await fetch(`${pythonUrl}/v1/finalise/finalized-test/${qsid}`, { method: 'DELETE' });
       if (!res.ok) {
         const txt = await res.text();
         alert('Delete failed: ' + txt);
@@ -324,7 +408,7 @@ function Results() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className={`${(loading || attemptsLoading) ? 'filter blur-sm pointer-events-none' : ''} max-w-7xl mx-auto`}>
-        
+
         <div className="flex flex-col sm:flex-row justify-between items-stretch gap-6 mb-8">
 
           {/* <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 flex-1">
@@ -365,7 +449,7 @@ function Results() {
           <div className="overflow-x-auto">
 
             <table className="w-full min-w-[640px]">
-                
+
               <thead className="bg-gray-200">
                 <tr>
                   <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">S.No</th>
@@ -384,7 +468,7 @@ function Results() {
                       <td className="px-4 py-4 text-sm text-gray-700 border-b border-gray-300">
                         {(indexOfFirstRow + index + 1)}.
                       </td>
-                     
+
                       <td className="px-4 py-4 text-sm text-gray-700 border-b border-gray-300">{job.jobTitle}</td>
                       {/* <td className="px-4 py-4 border-b border-gray-300">
                         <span className="inline-flex items-center justify-center min-w-[60px] px-3 py-1 bg-green-200 text-green-800 text-sm font-medium rounded-full">
@@ -546,11 +630,26 @@ function Results() {
                                 <td className="p-2">{a.inactivities ?? 0}</td>
                                 <td className="p-2">{a.face_not_visible ?? 0}</td>
                                 <td className="p-2 flex items-center gap-2">
-                                  <span>{a.created_at ? String(a.created_at).split('T')[0] : 'N/A'}</span>
-                                  
+                                          <span>{a.created_at ? String(a.created_at).split('T')[0] : 'N/A'}</span>
+                                          {a.video_url && (
+                                            <button
+                                              onClick={() => {
+                                                try {
+                                                  const cid = a.candidate_id || a.candidate?.id || a.candidate?._id || a.candidate?.candidate_id || String(i);
+                                                  setPlayAttemptId(cid || String(i));
+                                                } catch (e) {
+                                                  console.error('Play click failed', e);
+                                                }
+                                              }}
+                                              className="ml-2 px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                                            >
+                                              Play Video
+                                            </button>
+                                          )}
+
                                 </td>
                               </tr>
-                              
+
                             </>
                           )
                         })
@@ -560,6 +659,51 @@ function Results() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+      {/* Video overlay */}
+      {videoSrc && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-black rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden relative">
+            <button
+              onClick={() => {
+                try { if (videoSrc && videoSrc.startsWith('blob:')) URL.revokeObjectURL(videoSrc); } catch(_){}
+                setVideoSrc(null); setVideoError(null);
+              }}
+              className="absolute right-2 top-2 bg-white/90 text-black rounded px-2 py-1 z-50"
+            >
+              Close
+            </button>
+            {videoLoading ? (
+              <div className="w-full h-64 flex items-center justify-center text-white">Loading video...</div>
+            ) : videoError ? (
+              <div className="w-full p-6 text-white">
+                <div className="mb-3">Failed to load video: {videoError}</div>
+                <div className="flex gap-2">
+                  <a href={videoSrc} target="_blank" rel="noreferrer" className="px-3 py-2 bg-white text-black rounded">Open in new tab</a>
+                  <button onClick={() => { try { if (videoSrc && videoSrc.startsWith('blob:')) URL.revokeObjectURL(videoSrc); } catch(_){}; setVideoSrc(null); setVideoError(null); }} className="px-3 py-2 bg-gray-200 rounded">Close</button>
+                </div>
+              </div>
+            ) : (
+              <video key={videoSrc} controls autoPlay playsInline crossOrigin="anonymous" className="w-full h-full bg-black" src={videoSrc}>
+                Your browser does not support the video tag.
+              </video>
+            )}
+          </div>
+        </div>
+      )}
+      {playAttemptId && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-black rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden relative p-4">
+            <button
+              onClick={() => setPlayAttemptId(null)}
+              className="absolute right-2 top-2 bg-white/90 text-black rounded px-2 py-1 z-50"
+            >
+              Close
+            </button>
+            <div className="text-white mb-2">Playing attempt: {String(playAttemptId)}</div>
+            <VideoPlayer attemptId={playAttemptId} />
           </div>
         </div>
       )}
