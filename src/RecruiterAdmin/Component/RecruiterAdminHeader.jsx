@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Search, Bell, MessageCircle, Menu, ChevronDown } from "lucide-react";
+import { Menu, ChevronDown } from "lucide-react";
 import axios from "axios";
 import { baseUrl } from "../../utils/ApiConstants";
 import NotificationBell from '../../components/NotificationBell';
@@ -71,58 +71,67 @@ const RecruiterAdminHeader = ({ onMenuToggle }) => {
     }, []);
 
     return (
-        <header className="bg-white border-b border-gray-200 px-4 py-3">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
+        <header className="bg-white border-b border-gray-200 px-2 sm:px-4 py-2 sm:py-3">
+            <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
                     <button
                         onClick={onMenuToggle}
-                        className="lg:hidden p-2 rounded hover:bg-gray-100"
+                        className="lg:hidden p-1.5 sm:p-2 rounded hover:bg-gray-100 flex-shrink-0"
                     >
-                        <Menu size={20} />
+                        <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
 
-                    <div>
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            Welcome, {user?.name || "..."}
+                    <div className="min-w-0">
+                        <h2 className="text-xs sm:text-lg font-semibold text-gray-800 truncate">
+                            Welcome, {user?.name?.split(' ')[0] || "..."}
                         </h2>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-[9px] sm:text-sm text-gray-500">
                             {dateTime}
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                    {user && user._id && <NotificationBell userId={user._id} />}
-                    <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg">
-                        <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                <div className="flex items-center gap-1 sm:gap-4 flex-shrink-0">
+                    <div className="scale-[0.8] sm:scale-100 origin-right">
+                        {user && user._id && <NotificationBell userId={user._id} />}
+                    </div>
+
+                    <div
+                        className="relative border border-gray-200 rounded-lg p-1 sm:p-2 flex items-center gap-1 sm:gap-3 cursor-pointer hover:bg-gray-50"
+                        ref={dropdownRef}
+                        onClick={() => setDropdownOpen((prev) => !prev)}
+                    >
+                        <div className="w-6 h-6 sm:w-9 sm:h-9 bg-purple-500 rounded-full flex items-center justify-center text-white text-[10px] sm:text-sm font-semibold flex-shrink-0">
                             {user?.name ? user.name[0].toUpperCase() : "?"}
                         </div>
 
-                        <div className="relative hidden sm:block" ref={dropdownRef}>
-                            <button
-                                className="flex items-center gap-1 text-sm font-medium text-gray-700 focus:outline-none"
-                                onClick={() => setDropdownOpen((prev) => !prev)}
-                            >
+                        <div className="hidden min-[380px]:block min-w-0 max-w-[80px] sm:max-w-[120px]">
+                            <span className="text-[10px] sm:text-sm font-medium text-gray-800 truncate block">
                                 {user?.name || "Loading..."}
-                                <ChevronDown size={18} className="ml-1" />
-                            </button>
-                            {dropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50 animate-fade-in">
-                                    <button
-                                        onClick={handleProfile}
-                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700 rounded-t-lg"
-                                    >
-                                        Profile
-                                    </button>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 rounded-b-lg"
-                                    >
-                                        Logout
-                                    </button>
-                                </div>
-                            )}
+                            </span>
+                            <span className="text-[8px] sm:text-xs text-gray-500 block">
+                                {user?.role || "Recruiter Admin"}
+                            </span>
                         </div>
+
+                        <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 flex-shrink-0" />
+
+                        {dropdownOpen && (
+                            <div className="absolute right-0 top-full mt-2 w-28 sm:w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                                <button
+                                    onClick={handleProfile}
+                                    className="w-full text-left px-3 py-2 hover:bg-gray-100 text-gray-700 rounded-t-lg text-xs sm:text-sm"
+                                >
+                                    Profile
+                                </button>
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full text-left px-3 py-2 hover:bg-gray-100 text-red-600 rounded-b-lg text-xs sm:text-sm"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

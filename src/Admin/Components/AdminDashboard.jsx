@@ -395,7 +395,6 @@ function AdminDashboard() {
             <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 h-full flex flex-col">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 py-3 px-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Candidates</h3>
-                <span className="text-sm text-indigo-600 cursor-pointer underline">View All</span>
               </div>
               <div className="flex-1 overflow-x-auto">
                 <table className="w-full min-w-[600px]">

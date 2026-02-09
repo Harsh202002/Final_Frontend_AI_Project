@@ -347,33 +347,35 @@ function RMGDashboard() {
                         <MonthDropdown value={priorityMonthFilter} onChange={setPriorityMonthFilter} />
                     </div>
 
-                    <div className="h-64 flex gap-4">
-                        <div className="flex flex-col justify-between text-xs text-gray-400 py-2">
-                            <span>100</span>
-                            <span>75</span>
-                            <span>50</span>
-                            <span>25</span>
-                            <span>0</span>
-                        </div>
+                    <div className="overflow-x-auto">
+                        <div className="h-64 flex gap-4 min-w-[280px]">
+                            <div className="flex flex-col justify-between text-xs text-gray-400 py-2">
+                                <span>100</span>
+                                <span>75</span>
+                                <span>50</span>
+                                <span>25</span>
+                                <span>0</span>
+                            </div>
 
-                        <div className="flex-1 flex items-end justify-around gap-4 border-l border-b border-gray-200 pl-2">
-                            {priorityData.map((item, index) => {
-                                const height = (item.count / 100) * 100;
-                                return (
-                                    <div key={index} className="flex-1 flex flex-col items-center gap-3 h-full group">
-                                        <div className="w-full flex-1 flex items-end justify-center relative">
-                                            <div className="absolute -top-6 text-xs font-semibold text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                {item.count}
+                            <div className="flex-1 flex items-end justify-around gap-4 border-l border-b border-gray-200 pl-2">
+                                {priorityData.map((item, index) => {
+                                    const height = (item.count / 100) * 100;
+                                    return (
+                                        <div key={index} className="flex-1 flex flex-col items-center gap-3 h-full group">
+                                            <div className="w-full flex-1 flex items-end justify-center relative">
+                                                <div className="absolute -top-6 text-xs font-semibold text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    {item.count}
+                                                </div>
+                                                <div
+                                                    className={`w-12 rounded-xl transition-all duration-500 ${item.color}`}
+                                                    style={{ height: `${Math.max(height, 2)}%` }}
+                                                ></div>
                                             </div>
-                                            <div
-                                                className={`w-12 rounded-xl transition-all duration-500 ${item.color}`}
-                                                style={{ height: `${Math.max(height, 2)}%` }}
-                                            ></div>
+                                            <span className="text-xs text-gray-500 font-medium text-center leading-tight capitalize">{item.priority_level}</span>
                                         </div>
-                                        <span className="text-xs text-gray-500 font-medium text-center leading-tight capitalize">{item.priority_level}</span>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -563,9 +565,9 @@ function RMGDashboard() {
                 </div>
 
                 <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-                    <div className="flex justify-between items-center mb-6">
+                    <div className="flex justify-between items-center mb-6 flex-wrap gap-3 max-lg:flex-col max-lg:items-start">
                         <h3 className="text-lg font-bold text-gray-800">JD Generation</h3>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 max-lg:flex-col max-lg:items-start">
                             <div className="flex items-center gap-2 text-xs text-gray-500">
                                 <span>0</span>
                                 <div className="w-12 h-1.5 bg-gradient-to-r from-cyan-100 to-cyan-600 rounded-full"></div>

@@ -21,7 +21,7 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
 
     if (path.includes("/EnquiryMessages")) setActiveNav("EnquiryMessages");
     else if (path.includes("/CompaniesRegister")) setActiveNav("RegisteredCompanies");
-    else if (path.includes("/Tickets")) setActiveNav("Tickets");
+    // else if (path.includes("/Tickets")) setActiveNav("Tickets");
     else if (path.includes("/RejisteredRecruiters")) setActiveNav("RejisteredRecruiters");
     else if (path.includes("/Profile")) setActiveNav("Profile");
     else if (path.includes("/logout")) setActiveNav("Logout");
@@ -36,7 +36,7 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('token'); 
-    navigate('/Login');
+    navigate('/SuperAdminLogin');
   };
 
   return (
@@ -104,7 +104,7 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
 
            
 
-            <li>
+            {/* <li>
               <button
                 onClick={() => handleNavClick('Tickets', '/SuperAdmin-Dashboard/Tickets')}
                 className={`flex w-full items-center space-x-3 py-2 px-7 rounded transition-colors
@@ -113,7 +113,7 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
                 <UserPlus size={20} />
                 <span>Tickets</span>
               </button>
-            </li>
+            </li> */}
 
             <li>
               <button

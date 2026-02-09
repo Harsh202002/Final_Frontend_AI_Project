@@ -207,7 +207,7 @@ function EnquiryMessages() {
                                     currentItems.map((ticket, index) => (
                                         <tr key={ticket._id || index} className="hover:bg-gray-50">
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                #{ticket._id ? ticket._id.slice(0, 4).padEnd(4, '0') : 'NA'}
+                                                {indexOfFirstItem + index + 1}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center">

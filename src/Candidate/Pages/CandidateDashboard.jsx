@@ -528,7 +528,7 @@ const CandidateDashboard = () => {
                     <div className="rounded-xl sm:rounded-2xl bg-white p-4 sm:p-5 shadow-sm lg:col-span-2 h-[380px] sm:h-[400px] md:h-[420px] flex flex-col">
                         <div className="flex items-center justify-between mb-3 sm:mb-4 flex-shrink-0">
                             <h2 className="text-sm sm:text-base font-semibold text-slate-900">Application Status</h2>
-                            <button className="text-xs sm:text-sm font-medium text-indigo-500 hover:underline">View All</button>
+                            <Link to="/Candidate-Dashboard/AppliedJD" className="text-xs sm:text-sm font-medium text-indigo-500 hover:underline">View All</Link>
                         </div>
                         <div className="flex-1 overflow-x-auto overflow-y-auto pr-1 sm:pr-2">
                             <div className="space-y-3 sm:space-y-4 min-w-[400px]">

@@ -18,6 +18,7 @@ import te from "../img/TE.png"
 import RobotHeroAnimation from "./Component/RobotHeroAnimation";
 import { superAdminBaseUrl } from "../utils/ApiConstants";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function SuperAdminDashboard() {
     const [companies, setCompanies] = useState([]);
@@ -34,7 +35,7 @@ export default function SuperAdminDashboard() {
     const [allCompaniesData, setAllCompaniesData] = useState([]);
     const [allEnquiriesData, setAllEnquiriesData] = useState([]);
     const [allTicketsData, setAllTicketsData] = useState([]);
-    
+
     const [distributionYear, setDistributionYear] = useState(new Date().getFullYear());
     const [distributionAvailableYears, setDistributionAvailableYears] = useState([]);
 
@@ -232,7 +233,7 @@ export default function SuperAdminDashboard() {
                 const response = await axios.get(`${superAdminBaseUrl}/superadmin/profile`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
+
                 if (response.data.status === 'success') {
                     setUserName(response.data.data.name);
                 }
@@ -251,10 +252,10 @@ export default function SuperAdminDashboard() {
             setCurrentDate(now.toLocaleDateString('en-US', options));
         };
 
-        updateDate(); 
-        
+        updateDate();
+
         const interval = setInterval(updateDate, 60000);
-        
+
         return () => clearInterval(interval);
     }, []);
 
@@ -281,6 +282,11 @@ export default function SuperAdminDashboard() {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
                 ]);
+                console.log("companies", allCompanies.data);
+                console.log("enquiry", allEnquiries.data);
+                console.log("tickets", allTickets.data);
+                console.log("admins", allAdmins.data);
+
 
                 const companiesData = allCompanies.data.companies || [];
                 setCompanies(companiesData);
@@ -429,7 +435,7 @@ export default function SuperAdminDashboard() {
                 <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 w-full overflow-x-auto">
                     <div className="flex justify-between items-center px-4 py-2">
                         <h3 className="text-lg font-bold text-[#05004E]">Latest Companies</h3>
-                        <a href="#" className="text-sm text-blue-600 underline">View All</a>
+                        <Link to="/SuperAdmin-Dashboard/RejisteredRecruiters" className="text-sm text-blue-600 underline">View All</Link>
                     </div>
                     <div className="overflow-x-auto w-full">
                         <table className="w-full min-w-[650px] text-sm text-left">
@@ -465,10 +471,10 @@ export default function SuperAdminDashboard() {
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-                <div className="flex justify-between items-center mb-6">
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6 overflow-hidden">
+                <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
                     <h3 className="text-lg font-bold text-[#05004E]">Performance Trends</h3>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-4">
                         <div className="flex items-center gap-2">
                             <div className="w-8 h-2 rounded-full bg-pink-400"></div>
                             <span className="text-xs text-gray-500">Enquiries</span>
@@ -497,36 +503,38 @@ export default function SuperAdminDashboard() {
                         </select>
                     </div>
                 </div>
-                <div className="h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={performanceData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
-                            <defs>
-                                <linearGradient id="colorEnquiries" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#f472b6" stopOpacity={0.1} />
-                                    <stop offset="95%" stopColor="#f472b6" stopOpacity={0} />
-                                </linearGradient>
-                                <linearGradient id="colorTickets" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.1} />
-                                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
-                                </linearGradient>
-                                <linearGradient id="colorCompanies" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
-                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid vertical={true} horizontal={false} stroke="#f0f0f0" />
-                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} />
-                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} />
-                            <Tooltip
-                                contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}
-                                itemStyle={{ fontSize: '12px' }}
-                                labelFormatter={(label) => `${label} ${selectedYear}`}
-                            />
-                            <Area type="monotone" dataKey="enquiries" stroke="#f472b6" strokeWidth={2} fillOpacity={1} fill="url(#colorEnquiries)" />
-                            <Area type="monotone" dataKey="tickets" stroke="#f59e0b" strokeWidth={2} fillOpacity={1} fill="url(#colorTickets)" />
-                            <Area type="monotone" dataKey="companies" stroke="#6366f1" strokeWidth={2} fillOpacity={1} fill="url(#colorCompanies)" />
-                        </AreaChart>
-                    </ResponsiveContainer>
+                <div className="overflow-x-auto">
+                    <div className="min-w-[650px] h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={performanceData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+                                <defs>
+                                    <linearGradient id="colorEnquiries" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#f472b6" stopOpacity={0.1} />
+                                        <stop offset="95%" stopColor="#f472b6" stopOpacity={0} />
+                                    </linearGradient>
+                                    <linearGradient id="colorTickets" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.1} />
+                                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                                    </linearGradient>
+                                    <linearGradient id="colorCompanies" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
+                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid vertical={true} horizontal={false} stroke="#f0f0f0" />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} />
+                                <Tooltip
+                                    contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}
+                                    itemStyle={{ fontSize: '12px' }}
+                                    labelFormatter={(label) => `${label} ${selectedYear}`}
+                                />
+                                <Area type="monotone" dataKey="enquiries" stroke="#f472b6" strokeWidth={2} fillOpacity={1} fill="url(#colorEnquiries)" />
+                                <Area type="monotone" dataKey="tickets" stroke="#f59e0b" strokeWidth={2} fillOpacity={1} fill="url(#colorTickets)" />
+                                <Area type="monotone" dataKey="companies" stroke="#6366f1" strokeWidth={2} fillOpacity={1} fill="url(#colorCompanies)" />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             </div>
 
@@ -534,7 +542,7 @@ export default function SuperAdminDashboard() {
                 <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 w-full overflow-x-auto">
                     <div className="flex justify-between items-center px-4 py-2">
                         <h3 className="text-lg font-bold text-[#05004E]">Latest Enquiries</h3>
-                        <a href="#" className="text-sm text-blue-600 underline">View All</a>
+                        <Link to="/SuperAdmin-Dashboard/EnquiryMessages" className="text-sm text-blue-600 underline">View All</Link>
                     </div>
                     <div className="overflow-x-auto w-full">
                         <table className="w-full min-w-[650px] text-sm text-left">

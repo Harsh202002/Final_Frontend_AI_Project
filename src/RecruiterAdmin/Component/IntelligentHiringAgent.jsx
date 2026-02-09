@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Lottie from 'lottie-react';
 import { motion } from 'framer-motion';
 import robotData from '../../Component 10.json';
  
 const IntelligentHiringHero = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 392);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 392);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   return (
-    <div style={containerStyle}>
+    <div style={{...containerStyle, width: isMobile ? '300px' : '362px', height: isMobile ? '300px' : '363px' }}>
       {/* 1. ANIMATED BACKGROUND LAYER (Matching the JSON Gradient) */}
       <motion.div
         animate={{
@@ -67,9 +77,9 @@ const IntelligentHiringHero = () => {
 // --- STYLES ---
  
 const containerStyle = {
-  width: '362px', // Matches JSON width
-  height: '363px', // Matches JSON height
-  borderRadius: '24px',
+  width: "362px",
+  height: "363px",
+  borderRadius: 24,
   position: 'relative',
   overflow: 'hidden',
   display: 'flex',

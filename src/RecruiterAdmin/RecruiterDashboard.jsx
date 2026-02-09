@@ -281,17 +281,17 @@ const RecruiterDashboard = () => {
 
         return (
             <div key={jd._id} className="flex gap-4 py-3 mb-2">
-                <div className={`w-1 md:w-1.5 rounded-full ${colorClass} h-12 flex-shrink-0`}></div>
-                <div className="flex flex-col md:flex-row md:items-center justify-between flex-1 gap-2 md:gap-4">
-                    <h4 className="font-medium text-gray-800 text-sm md:text-base w-full md:w-[40%] truncate" title={jd.jobTitle}>
+                <div className={`w-1.5 rounded-full ${colorClass} flex-shrink-0`}></div>
+                <div className="flex items-center gap-6 flex-1">
+                    <h4 className="font-medium text-gray-800 text-sm w-[180px] truncate flex-shrink-0" title={jd.jobTitle}>
                         {jd.jobTitle}
                     </h4>
-                    <div className="flex flex-col">
-                        <span className="text-gray-400 text-xs">Experience</span>
+                    <div className="flex-shrink-0 w-[80px]">
+                        <span className="text-gray-400 text-xs block">Experience</span>
                         <span className="text-sm text-gray-600">{jd.experience || 'N/A'}</span>
                     </div>
-                    <div className="flex flex-col text-right">
-                        <span className="text-gray-400 text-xs">Timeline</span>
+                    <div className="flex-shrink-0">
+                        <span className="text-gray-400 text-xs block">Timeline</span>
                         <span className="text-sm text-gray-600 whitespace-nowrap">
                             {formatDate(jd.createdAt)} - {formatDate(jd.dueDate)}
                         </span>
@@ -556,8 +556,8 @@ const RecruiterDashboard = () => {
 
                 <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm h-[320px] flex flex-col">
                     <h3 className="text-lg font-semibold mb-4">Calendar</h3>
-                    <div className="overflow-y-auto overflow-x-auto pb-2 flex-1">
-                        <div className="min-w-[400px]">
+                    <div className="overflow-x-auto overflow-y-auto pb-2 flex-1">
+                        <div className="min-w-[500px]">
                             {todayJDs.length > 0 && (
                                 <div className="mb-4">
                                     <h4 className="text-gray-400 text-sm mb-3">Today</h4>
@@ -577,12 +577,12 @@ const RecruiterDashboard = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-                <div className="">
+            <div className="flex flex-col lg:flex-row gap-6 mt-8">
+                <div className="flex-shrink-0 mx-auto">
                     <IntelligentHiringHero />
                 </div>
 
-                <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-4 overflow-hidden">
+                <div className="flex-1 min-w-0 bg-white rounded-2xl shadow-sm p-4 overflow-hidden">
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-xl font-semibold">Candidates</h3>
                         <button className="text-indigo-500 text-sm hover:underline">View All</button>
