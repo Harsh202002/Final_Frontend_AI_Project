@@ -463,7 +463,7 @@ function JD() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Experience
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '250px' }}>
                       Skills
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -486,8 +486,10 @@ function JD() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {jd.priority || '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {jd.location || '-'}
+                      <td className="px-6 py-4 text-sm text-gray-900" style={{ minWidth: '250px' }}>
+                        <div className="break-words whitespace-normal">
+                          {jd.location?.length > 0 ? jd.location.join(", ") : '-'}
+                        </div>
                       </td>
                       {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {jd.country || '-'}
@@ -495,9 +497,12 @@ function JD() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {jd.experience || '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {jd.skills?.length ? jd.skills.join(", ") : "-"}
+                      <td className="px-4 py-4 text-sm text-gray-900" style={{ minWidth: '250px' }}>
+                        <div className="max-h-16 overflow-y-auto break-words whitespace-normal">
+                          {jd.skills?.length ? jd.skills.join(", ") : "-"}
+                        </div>
                       </td>
+
 
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <button
