@@ -30,7 +30,7 @@ function RMGDashboard() {
     const [jdAssignedCreatedData, setJdAssignedCreatedData] = useState([]);
     const [priorityData, setPriorityData] = useState([
         { priority_level: "Low", count: 0, color: "bg-indigo-200" },
-        { priority_level: "Model", count: 0, color: "bg-indigo-300" },
+        { priority_level: "Medium", count: 0, color: "bg-indigo-300" },
         { priority_level: "High", count: 0, color: "bg-indigo-400" },
         { priority_level: "Critical", count: 0, color: "bg-indigo-500" },
     ]);
@@ -184,7 +184,7 @@ function RMGDashboard() {
             ? offers2026
             : offers2026.filter(offer => getMonthFromDate(offer.createdAt) === parseInt(monthFilter));
 
-        const priorityCounts = { Low: 0, Model: 0, High: 0, Critical: 0 };
+        const priorityCounts = { Low: 0, Medium: 0, High: 0, Critical: 0 };
         filteredOffers.forEach(offer => {
             const priority = offer.priority;
             if (priorityCounts.hasOwnProperty(priority)) {
@@ -194,7 +194,7 @@ function RMGDashboard() {
 
         return [
             { priority_level: "Low", count: priorityCounts.Low, color: "bg-indigo-200" },
-            { priority_level: "Model", count: priorityCounts.Model, color: "bg-indigo-300" },
+            { priority_level: "Medium", count: priorityCounts.Medium, color: "bg-indigo-300" },
             { priority_level: "High", count: priorityCounts.High, color: "bg-indigo-400" },
             { priority_level: "Critical", count: priorityCounts.Critical, color: "bg-indigo-500" },
         ];

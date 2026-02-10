@@ -97,9 +97,9 @@ export default function NotificationBell({ userId }) {
                   </div>
                   <div className="flex-1">
                     <div className="font-medium text-gray-800 mb-1">{notif.message}</div>
-                    {notif.link && (
+                    {/* {notif.link && (
                       <a href={notif.link} className="text-[#6D28D9] text-sm hover:underline font-semibold">View Details</a>
-                    )}
+                    )} */}
                     <div className="text-xs text-gray-400 mt-1">{new Date(notif.createdAt).toLocaleString()}</div>
                   </div>
                 </li>

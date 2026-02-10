@@ -84,7 +84,7 @@ const RMGSidebar = ({ isOpen, onToggle }) => {
                   ${activeNav === 'RequirementForm' ? 'bg-white text-black' : 'hover:bg-white hover:text-black'}`}
               >
                 <UserPlus size={20} />
-                <span>Requirement Form</span>
+                <span>Requisition Form</span>
               </button>
             </li>
 

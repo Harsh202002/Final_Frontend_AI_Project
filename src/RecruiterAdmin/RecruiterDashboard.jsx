@@ -303,7 +303,7 @@ const RecruiterDashboard = () => {
 
     return (
         <div className="min-h-screen">
-            <div className="relative w-full mb-6 overflow-hidden rounded-xl shadow-sm">
+            <div className="relative w-full mb-6 overflow-hidden rounded-xl shadow-sm ">
                 <img
                     src={RDbanner}
                     alt="Dashboard Banner"

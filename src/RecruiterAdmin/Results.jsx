@@ -490,13 +490,13 @@ function Results() {
                           >
                             <Eye size={16} />
                           </button>
-                          <button
+                          {/* <button
                             onClick={() => handleDelete(job)}
                             className="p-2 text-red-500 border border-red-500 rounded hover:bg-red-50 transition-colors"
                             aria-label="Delete job"
                           >
                             <Trash2 size={16} />
-                          </button>
+                          </button> */}
                         </div>
                       </td>
                     </tr>

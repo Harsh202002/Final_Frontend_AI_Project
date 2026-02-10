@@ -315,7 +315,7 @@ function RMGManagement() {
                     <tr>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">Name</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">Email</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">Phone</th>
+                      {/* <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">Phone</th> */}
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">Status</th>
                       {/* <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">Total Recruiter Managed</th> */}
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">Action</th>
@@ -327,7 +327,7 @@ function RMGManagement() {
                         <tr key={recruiter.id} className={index % 2 === 0 ? 'bg-blue-50/30' : 'bg-white'}>
                           <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{recruiter.name}</td>
                           <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{recruiter.email}</td>
-                          <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{recruiter.phone}</td>
+                          {/* <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{recruiter.phone}</td> */}
                           <td className="px-6 py-4 text-sm whitespace-nowrap">
                             <span
                               className={`font-medium ${recruiter.status === 'Active' ? 'text-green-600' : 'text-red-600'}`}
@@ -483,7 +483,7 @@ function RMGManagement() {
           />
         )}
 
-        <div className="w-full">
+        {/* <div className="w-full">
           <h1 className='text-3xl font-medium pl-1 mb-4'>Activity Logs</h1>
           <div className="w-full space-y-3">
             {activityLogs.length > 0 ? (
@@ -503,7 +503,7 @@ function RMGManagement() {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

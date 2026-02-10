@@ -340,9 +340,9 @@ function JDDetails() {
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-gray-300">
-                                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
+                                    {/* <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
                                         ID
-                                    </th>
+                                    </th> */}
                                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
                                         Candidate Name
                                     </th>
@@ -361,9 +361,9 @@ function JDDetails() {
                                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
                                         Status
                                     </th>
-                                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
+                                    {/* <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
                                         Action
-                                    </th>
+                                    </th> */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -373,9 +373,9 @@ function JDDetails() {
                                             key={candidate._id || index}
                                             className="border-b border-gray-300 hover:bg-gray-50"
                                         >
-                                            <td className="py-4 px-4 text-sm text-gray-800">
+                                            {/* <td className="py-4 px-4 text-sm text-gray-800">
                                                 #{candidate._id?.slice(-6) || 'N/A'}
-                                            </td>
+                                            </td> */}
                                             <td className="py-4 px-4 text-sm text-gray-600">
                                                 {candidate.name || candidate.candidate?.name || 'N/A'}
                                             </td>
@@ -396,13 +396,13 @@ function JDDetails() {
                                                     {candidate.status || 'Pending'}
                                                 </span>
                                             </td>
-                                            <td className="py-4 px-4">
+                                            {/* <td className="py-4 px-4">
                                                 <div className="flex gap-2">
                                                     <button className="p-1.5 border border-red-300 rounded hover:bg-red-50">
                                                         <Trash2 size={16} className="text-red-600" />
                                                     </button>
                                                 </div>
-                                            </td>
+                                            </td> */}
                                         </tr>
                                     ))
                                 ) : (
@@ -560,9 +560,9 @@ function JDDetails() {
                                                     >
                                                         <Eye size={16} className="text-blue-500" />
                                                     </button>
-                                                    <button className="p-1.5 border border-red-300 rounded hover:bg-red-50">
+                                                    {/* <button className="p-1.5 border border-red-300 rounded hover:bg-red-50">
                                                         <Trash2 size={16} className="text-red-600" />
-                                                    </button>
+                                                    </button> */}
                                                 </div>
                                             </td>
                                         </tr>
