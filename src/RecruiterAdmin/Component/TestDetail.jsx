@@ -172,24 +172,24 @@ export default function TestDetail({
     return `${hour12}:${minute} ${ampm}`;
   };
 
-  const generateTimeSlots = () => {
+  // Start-time slots: same behaviour as before (starts from next half-hour from now)
+  const generateStartTimeSlots = () => {
     const now = new Date();
     const minutes = now.getMinutes();
     // round up to next half-hour
     let addMinutes = 0;
-    if (minutes === 0) addMinutes = 30; // 11:00 -> 11:30
-    else if (minutes <= 30) addMinutes = 30 - minutes; // 11:10 -> 11:30
-    else addMinutes = 60 - minutes; // 11:40 -> 12:00
+    if (minutes === 0) addMinutes = 30;
+    else if (minutes <= 30) addMinutes = 30 - minutes;
+    else addMinutes = 60 - minutes;
 
     const start = new Date(now.getTime() + addMinutes * 60000);
     start.setSeconds(0, 0);
 
     const end = new Date(start);
-    end.setHours(24, 0, 0, 0); // 5:00 PM end
+    end.setHours(24, 0, 0, 0);
 
     const slots = [];
     const cur = new Date(start);
-    // If start is after end, provide at least the next day's 5pm? For now return empty
     while (cur <= end) {
       slots.push(format12(cur));
       cur.setMinutes(cur.getMinutes() + 30);
@@ -197,7 +197,23 @@ export default function TestDetail({
     return slots;
   };
 
-  const timeSlots = generateTimeSlots();
+  // End-time slots: full 24-hour range from 00:00 to 23:30
+  const generateFullDaySlots = () => {
+    const today = new Date();
+    const start = new Date(today.setHours(0, 0, 0, 0));
+    const end = new Date(today.setHours(23, 30, 0, 0));
+
+    const slots = [];
+    const cur = new Date(start);
+    while (cur <= end) {
+      slots.push(format12(cur));
+      cur.setMinutes(cur.getMinutes() + 30);
+    }
+    return slots;
+  };
+
+  const startTimeSlots = generateStartTimeSlots();
+  const fullDaySlots = generateFullDaySlots();
 
   useEffect(() => {
     if (showScheduleModal) {
@@ -525,7 +541,7 @@ export default function TestDetail({
                   className="w-full border rounded-lg p-2"
                 >
                   <option value="">Select Start Time</option>
-                  {timeSlots.map((slot) => (
+                  {startTimeSlots.map((slot) => (
                     <option key={slot} value={slot}>{slot}</option>
                   ))}
                 </select>
@@ -540,7 +556,7 @@ export default function TestDetail({
                   disabled={!selectedTime}
                 >
                   <option value="">Select End Time</option>
-                  {timeSlots.map((slot) => (
+                  {fullDaySlots.map((slot) => (
                     <option key={slot} value={slot}>{slot}</option>
                   ))}
                 </select>

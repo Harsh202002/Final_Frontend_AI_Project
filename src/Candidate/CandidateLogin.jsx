@@ -154,7 +154,7 @@
 
 import React, { useState } from "react";
 import img from "../img/Logo.png";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../utils/ApiConstants";
 import CandidateRegister from "./CandidateRegister";
@@ -165,6 +165,8 @@ const CandidateLogin = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
+    const redirectJobId = location.state?.redirectJobId || null;
 
     const handleLogin = async () => {
         setLoading(true);
@@ -203,7 +205,9 @@ const CandidateLogin = () => {
 
             setLoading(false);
 
-            if (!data.candidate.hasLoggedIn) {
+            if (redirectJobId) {
+                navigate(`/Candidate-Dashboard/AllJDs/ApplyToJob/${redirectJobId}`);
+            } else if (!data.candidate.hasLoggedIn) {
                 navigate("/Candidate-Chatbot");
             } else {
                 navigate("/Candidate-Dashboard");
@@ -217,7 +221,7 @@ const CandidateLogin = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4">
             <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-12 pt-6">
-                Welcome Back 
+                Welcome Back
             </h1>
 
             <div className="flex flex-col md:flex-row items-center justify-between max-w-6xl mx-auto gap-12">

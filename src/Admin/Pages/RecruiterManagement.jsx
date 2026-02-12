@@ -411,7 +411,7 @@ function RecruiterManagement() {
             />
           )}
 
-          <div className="w-full ">
+          {/* <div className="w-full ">
             <h1 className='text-3xl font-medium pl-1 mb-4'>Activity Logs</h1>
             <div className="w-full space-y-3">
               {activityLogs.length > 0 ? (
@@ -431,7 +431,7 @@ function RecruiterManagement() {
                 </div>
               )}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

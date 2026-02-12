@@ -2,12 +2,12 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useCompany } from '../../Context/companyContext';
 import { baseUrl } from '../../utils/ApiConstants';
-
+ 
 function AddNewRecruiter({ onSave, onCancel, editData }) {
     const { companies } = useCompany();
-    
+   
     const companiesList = companies?.data || [];
-
+ 
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -15,14 +15,14 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
         companyId: '',    
         companyName: ''    
     });
-
+ 
     const [errors, setErrors] = useState({});
-
+ 
     const validatePhone = (phone) => {
         const phoneRegex = /^\d{10,}$/; // At least 10 digits
         return phoneRegex.test(phone);
     };
-
+ 
     const handlePhoneChange = (e) => {
         const value = e.target.value;
         setFormData({ ...formData, phone: value });
@@ -32,13 +32,13 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
             setErrors({ ...errors, phone: '' });
         }
     };
-
+ 
     const handleKeyPress = (e) => {
         if (!/[0-9]/.test(e.key)) {
             e.preventDefault();
         }
     };
-
+ 
     useEffect(() => {
         if (editData) {
             const company = companiesList.find(c => c._id === editData.company);
@@ -61,27 +61,27 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
             }
         }
     }, [editData, companiesList]);
-
+ 
     const handleCompanyChange = (e) => {
         const selectedId = e.target.value;
         const selectedCompany = companiesList.find(c => c._id === selectedId);
-        
+       
         setFormData({
             ...formData,
             companyId: selectedId,
             companyName: selectedCompany?.companyName || ''
         });
     };
-
+ 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+ 
         // Validate phone before submitting
         if (formData.phone && !validatePhone(formData.phone)) {
             setErrors({ ...errors, phone: 'Phone number must be at least 10 digits' });
             return;
         }
-
+ 
         try {
             if (editData) {
                 const response = await axios.put(
@@ -98,7 +98,7 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
                         }
                     }
                 );
-
+ 
                 if (response.data.success) {
                     alert("HR updated successfully!");
                     onSave({
@@ -111,17 +111,17 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
                     name: formData.fullName,
                     phone: formData.phone,
                     email: formData.email,
-                    company: formData.companyId 
+                    company: formData.companyId
                 }, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-
+ 
                 alert("HR created successfully!");
                 onSave(response.data);
             }
-
+ 
             setFormData({
                 fullName: '',
                 email: '',
@@ -129,13 +129,13 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
                 companyId: companiesList[0]?._id || '',
                 companyName: companiesList[0]?.companyName || ''
             });
-
+ 
         } catch (error) {
             console.error('Error:', error);
             alert(error.response?.data?.message || `Failed to ${editData ? 'update' : 'create'} HR`);
         }
     };
-
+ 
     return (
         <div className="bg-white rounded-2xl shadow-md border border-gray-300 p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -153,7 +153,7 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
                         required
                     />
                 </div>
-
+ 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label className="block text-sm font-medium text-gray-900 mb-2">Email ID</label>
@@ -180,23 +180,19 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
                         {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                     </div>
                 </div>
-
+ 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-end">
                     <div>
                         <label className="block text-sm font-medium text-gray-900 mb-2">Company Name</label>
-                        <select
-                            value={formData.companyId}
-                            onChange={handleCompanyChange}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-white"
+                        <input
+                            type="text"
+                            className="form-control w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                            id="companyName"
+                            name="companyName"
+                            value={formData.companyName}
+                            readOnly
                             required
-                        >
-                            <option value="">Select Company</option>
-                            {companiesList.map((company) => (
-                                <option key={company._id} value={company._id}>
-                                    {company.companyName}
-                                </option>
-                            ))}
-                        </select>
+                        />
                     </div>
                     <div className="flex gap-3">
                         <button
@@ -220,5 +216,5 @@ function AddNewRecruiter({ onSave, onCancel, editData }) {
         </div>
     );
 }
-
+ 
 export default AddNewRecruiter;

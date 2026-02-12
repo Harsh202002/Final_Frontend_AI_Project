@@ -94,7 +94,7 @@ function CreateJD() {
             if (response.data.success) {
                 setGeneratedJD(response.data.jd);
                 //const generatedUrl = `${window.location.origin}/Candidate-Dashboard/Alldjs/${response.data.jd._id}`;
-                const generatedUrl = `http://103.192.198.240/CandidateLogin`;
+                const generatedUrl = `http://103.192.198.240/JDDetail/${response.data.jd._id}`;
                 setJdUrl(generatedUrl);
                 setShowSuccessPopup(true);
             }
@@ -305,7 +305,7 @@ function CreateJD() {
                         <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-200 mb-4">
                             <input
                                 type="text"
-                                value={`${window.location.origin}/Candidate-Dashboard/Alldjs`}
+                                value={jdUrl}
                                 readOnly
                                 className="flex-1 bg-transparent text-sm text-gray-700 outline-none truncate"
                             />

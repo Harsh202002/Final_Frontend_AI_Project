@@ -41,10 +41,27 @@ function JD() {
         }
       });
 
-      console.log('JDs Data:', response.data);
+      console.log('JDs Data is here:', response.data);
 
       if (response.data.success && response.data.data) {
-        const data = response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const data = response.data.data
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .map((item) => {
+            // Ensure a consistent `dueDate` field exists on each JD row.
+            const dueDate =
+              item.dueDate ||
+              item.offerId?.dueDate ||
+              item.offer?.dueDate ||
+              item.offerId?.expiryDate ||
+              item.expiryDate ||
+              null;
+
+            return {
+              ...item,
+              dueDate,
+            };
+          });
+
         setJdData(data);
 
         let totalFiltered = 0;
@@ -124,6 +141,16 @@ function JD() {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-GB');
+  };
+
+  // Returns true if the given date is before now (i.e. due date has passed)
+  const isExpired = (dateString) => {
+    if (!dateString) return false;
+    try {
+      return new Date(dateString) < new Date();
+    } catch (e) {
+      return false;
+    }
   };
 
   const formatId = (id) => {
@@ -334,6 +361,7 @@ function JD() {
                     <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Company</th>
                     <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Job Title</th>
                     <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Created On</th>
+                    <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Due Date</th>
                     {/* <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Skills</th> */}
                     <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Filtered</th>
                     <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Unfiltered</th>
@@ -344,12 +372,15 @@ function JD() {
                 </thead>
                 <tbody>
                   {currentData.length > 0 ? (
-                    currentData.map((row, index) => (
-                      <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    currentData.map((row, index) => {
+                      const rowExpired = isExpired(row.dueDate);
+                      return (
+                        <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                         <td className="py-4 px-6 text-sm text-gray-900 font-medium">{startIndex + index + 1}</td>
                         <td className="py-4 px-6 text-sm text-gray-700">{row.companyName || row.offerId?.company || 'N/A'}</td>
                         <td className="py-4 px-6 text-sm text-gray-700">{row.offerId?.jobTitle || 'N/A'}</td>
                         <td className="py-4 px-6 text-sm text-gray-700">{formatDate(row.createdAt)}</td>
+                        <td className="py-4 px-6 text-sm text-gray-700">{formatDate(row.dueDate)}</td>
                         {/* <td className="py-4 px-6">
                           <button
                             className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-1.5 rounded-2xl text-sm font-medium transition-colors"
@@ -393,15 +424,18 @@ function JD() {
 
                         <td className="py-4 px-6">
                           <button
-                            onClick={() => navigate("/RecruiterAdmin-Dashboard/NonCandidateList", { state: { jdId: row._id } })}
-                            className="p-1 border border-blue-500 rounded-lg transition-colors"
-                            aria-label="View"
+                            onClick={() => !rowExpired && navigate("/RecruiterAdmin-Dashboard/NonCandidateList", { state: { jdId: row._id } })}
+                            disabled={rowExpired}
+                            title={rowExpired ? 'Due date passed — actions disabled' : 'Send Invite'}
+                            className={`p-1 border rounded-lg transition-colors ${rowExpired ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-blue-500 text-blue-600'}`}
+                            aria-label="Send Invite"
                           >
-                            <ShareIcon className="w-4 h-4 text-blue-600" />
+                            <ShareIcon className="w-4 h-4" />
                           </button>
                         </td>
                       </tr>
-                    ))
+                    );
+                    })
                   ) : (
                     <tr>
                       <td colSpan="10" className="py-8 text-center text-gray-500">
@@ -455,6 +489,9 @@ function JD() {
                       Priority
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Due Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       City
                     </th>
                     {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -463,7 +500,7 @@ function JD() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Experience
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '250px' }}>
                       Skills
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -472,7 +509,9 @@ function JD() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {currentIncomingData.map((jd, index) => (
+                  {currentIncomingData.map((jd, index) => {
+                    const incomingExpired = isExpired(jd.dueDate);
+                    return (
                     <tr key={jd._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {incomingStartIndex + index + 1}
@@ -486,8 +525,10 @@ function JD() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {jd.priority || '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {jd.location || '-'}
+                      <td className="px-6 py-4 text-sm text-gray-900" style={{ minWidth: '250px' }}>
+                        <div className="break-words whitespace-normal">
+                          {jd.location?.length > 0 ? jd.location.join(", ") : '-'}
+                        </div>
                       </td>
                       {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {jd.country || '-'}
@@ -495,21 +536,26 @@ function JD() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {jd.experience || '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {jd.skills?.length ? jd.skills.join(", ") : "-"}
+                      <td className="px-4 py-4 text-sm text-gray-900" style={{ minWidth: '250px' }}>
+                        <div className="max-h-16 overflow-y-auto break-words whitespace-normal">
+                          {jd.skills?.length ? jd.skills.join(", ") : "-"}
+                        </div>
                       </td>
+
 
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <button
                           type="button"
-                          onClick={() => handleSelectJD(jd)}
-                          className="px-4 py-2 rounded-lg font-medium transition-colors bg-black text-white hover:bg-gray-800"
+                          onClick={() => !incomingExpired && handleSelectJD(jd)}
+                          disabled={incomingExpired}
+                          title={incomingExpired ? 'Due date passed — cannot select' : 'Select'}
+                          className={`px-4 py-2 rounded-lg font-medium transition-colors ${incomingExpired ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800'}`}
                         >
                           Select
                         </button>
                       </td>
                     </tr>
-                  ))}
+                  )})}
                 </tbody>
               </table>
             )}

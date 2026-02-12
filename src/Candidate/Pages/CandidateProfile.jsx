@@ -1,14 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { baseUrl } from '../../utils/ApiConstants';
-import { Pencil, Save, X, Phone, Mail, FileText, User } from "lucide-react";
+import { Check, FileText } from 'lucide-react';
 
 function CandidateProfile() {
-    const [candidate, setCandidate] = useState(null);
-    const [editMode, setEditMode] = useState(false);
-    const [phone, setPhone] = useState("");
-    const [resume, setResume] = useState(null);
-    const [resumeUrl, setResumeUrl] = useState("");
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        resume: ''
+    });
+    const [originalData, setOriginalData] = useState({});
+    const [resumeFile, setResumeFile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const resumeRef = useRef(null);
@@ -21,11 +24,19 @@ function CandidateProfile() {
                 const res = await axios.get(`${baseUrl}/candidate/profile/me`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setCandidate(res.data.candidate);
-                setPhone(res.data.candidate.phone || "");
-                setResumeUrl(res.data.candidate.resume || "");
+                const candidate = res.data.candidate;
+                console.log(candidate);
+                
+                const profileData = {
+                    name: candidate.name || '',
+                    email: candidate.email || '',
+                    phone: candidate.phone || '',
+                    resume: candidate.resume || ''
+                };
+                setFormData(profileData);
+                setOriginalData(profileData);
             } catch (err) {
-                setCandidate(null);
+                console.error("Error fetching profile:", err);
             } finally {
                 setLoading(false);
             }
@@ -33,28 +44,44 @@ function CandidateProfile() {
         fetchProfile();
     }, []);
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        if (name === 'phone') {
+            const phoneValue = value.replace(/[^0-9]/g, '').slice(0, 10);
+            setFormData((prev) => ({ ...prev, [name]: phoneValue }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
+    };
+
     const handleResumeChange = (e) => {
         const file = e.target.files[0];
-        if (file) setResume(file);
+        if (file) setResumeFile(file);
     };
 
     const handleSave = async () => {
         setSaving(true);
         try {
             const token = localStorage.getItem("candidateToken");
-            const formData = new FormData();
-            formData.append("phone", phone);
-            if (resume) formData.append("resume", resume);
-            const res = await axios.put(`${baseUrl}/candidate/profile/me`, formData, {
+            const formDataToSend = new FormData();
+            formDataToSend.append("phone", formData.phone);
+            if (resumeFile) formDataToSend.append("resume", resumeFile);
+            
+            const res = await axios.put(`${baseUrl}/candidate/profile/me`, formDataToSend, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            setCandidate(res.data.candidate);
-            setResumeUrl(res.data.candidate.resume || "");
-            setEditMode(false);
-            setResume(null);
+            
+            const updatedData = {
+                ...formData,
+                phone: res.data.candidate.phone || '',
+                resume: res.data.candidate.resume || ''
+            };
+            setFormData(updatedData);
+            setOriginalData(updatedData);
+            setResumeFile(null);
             alert("Profile updated successfully!");
         } catch (err) {
             alert("Failed to update profile");
@@ -63,24 +90,13 @@ function CandidateProfile() {
         }
     };
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
-                <div className="animate-pulse text-gray-400">Loading profile...</div>
-            </div>
-        );
-    }
-
-    if (!candidate) {
-        return (
-            <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
-                <div className="text-red-500">Failed to load profile.</div>
-            </div>
-        );
-    }
+    const handleCancel = () => {
+        setFormData(originalData);
+        setResumeFile(null);
+    };
 
     const getInitials = (name) => {
-        if (!name) return '?';
+        if (!name) return 'NA';
         const words = name.trim().split(' ');
         if (words.length === 1) {
             return words[0][0].toUpperCase();
@@ -88,151 +104,131 @@ function CandidateProfile() {
         return (words[0][0] + words[words.length - 1][0]).toUpperCase();
     };
 
+    if (loading) {
+        return (
+            <div className="p-4 md:p-6 lg:p-8 shadow-[0px_0px_10px_0px_rgba(0,_0,_0,_0.1)] max-w-3xl mx-auto rounded-xl">
+                <p className="text-center text-gray-500">Loading...</p>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4">
-            <div className="max-w-4xl mx-auto">
-                <div className="text-center mb-10">
-                    <h1 className="text-4xl font-medium text-gray-800 mb-2">Profile</h1>
-                    <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto"></div>
+        <div className="p-4 md:p-6 lg:p-8 shadow-[0px_0px_10px_0px_rgba(0,_0,_0,_0.1)] max-w-3xl mx-auto rounded-xl bg-white">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8 text-center">Profile</h1>
+
+            <div className="flex flex-col md:flex-row items-center mb-8 md:space-x-8">
+                <div className="w-20 h-20 md:w-24 md:h-24 bg-purple-500 rounded-full flex items-center justify-center text-white text-2xl md:text-3xl font-bold mb-4 md:mb-0">
+                    {getInitials(formData.name)}
                 </div>
-
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-8 text-white">
-                        <div className="flex items-center space-x-6">
-                            <div className="w-24 h-24 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-3xl font-light">
-                                {getInitials(candidate.name)}
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-light mb-1">{candidate.name}</h2>
-                                <p className="text-white/80 font-light">{candidate.email}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="p-8">
-                        {!editMode && (
-                            <div className="flex justify-end mb-6">
-                                <button
-                                    onClick={() => setEditMode(true)}
-                                    className="flex items-center gap-2 px-6 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-200"
-                                >
-                                    <Pencil size={18} />
-                                    <span>Edit</span>
-                                </button>
-                            </div>
-                        )}
-
-                        <div className="space-y-6">
-                            <div className="group">
-                                <label className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                                    <User size={16} />
-                                    Name
-                                </label>
-                                <input
-                                    type="text"
-                                    value={candidate.name}
-                                    disabled
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-lg text-gray-800 transition-all duration-200"
-                                />
-                            </div>
-
-                            <div className="group">
-                                <label className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                                    <Mail size={16} />
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    value={candidate.email}
-                                    disabled
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-lg text-gray-800 transition-all duration-200"
-                                />
-                            </div>
-
-                            <div className="group">
-                                <label className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                                    <Phone size={16} />
-                                    Phone
-                                </label>
-                                <input
-                                    type="text"
-                                    maxLength={10}
-                                    value={phone}
-                                    onChange={e => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
-                                    disabled={!editMode}
-                                    placeholder="Enter your phone number"
-                                    className={`w-full px-4 py-3 rounded-lg transition-all duration-200 ${editMode
-                                            ? 'bg-white border-2 border-indigo-200 focus:border-indigo-500 focus:outline-none'
-                                            : 'bg-gray-50 text-gray-800'
-                                        }`}
-                                />
-                            </div>
-
-                            <div className="group">
-                                <label className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                                    <FileText size={16} />
-                                    Resume
-                                </label>
-
-                                {resumeUrl && (
-                                    <div className="mb-3">
-                                        <a
-                                            href={resumeUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 transition-colors"
-                                        >
-                                            <FileText size={18} />
-                                            View Current Resume
-                                        </a>
-                                    </div>
-                                )}
-
-                                {editMode && (
-                                    <div className="relative">
-                                        <input
-                                            ref={resumeRef}
-                                            type="file"
-                                            accept=".pdf,.doc,.docx"
-                                            onChange={handleResumeChange}
-                                            className="w-full px-4 py-3 bg-white border-2 border-dashed border-indigo-200 rounded-lg cursor-pointer hover:border-indigo-400 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-                                        />
-                                        {resume && (
-                                            <p className="mt-2 text-sm text-green-600">
-                                                Selected: {resume.name}
-                                            </p>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {editMode && (
-                            <div className="flex gap-4 mt-8 pt-6 border-t border-gray-100">
-                                <button
-                                    onClick={handleSave}
-                                    disabled={saving}
-                                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    <Save size={18} />
-                                    {saving ? 'Saving...' : 'Save Changes'}
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setEditMode(false);
-                                        setPhone(candidate.phone || "");
-                                        setResume(null);
-                                    }}
-                                    className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200"
-                                >
-                                    <X size={18} />
-                                    Cancel
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                    <button className="flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <span>Upload Image</span>
+                    </button>
+                    <button className="flex items-center justify-center space-x-2 px-4 py-2 border border-red-300 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
+                        <span>Delete</span>
+                    </button>
                 </div>
             </div>
+
+            <form className="space-y-6">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Name
+                    </label>
+                    <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        readOnly
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                    </label>
+                    <div className="relative">
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            readOnly
+                            className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                        />
+                        <Check className="absolute right-3 top-2.5 h-5 w-5 text-green-500" />
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Phone <span className="text-xs text-purple-500">(Editable)</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder="Enter your phone number"
+                        maxLength={10}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Resume <span className="text-xs text-purple-500">(Editable)</span>
+                    </label>
+                    
+                    {formData.resume && (
+                        <div className="mb-3">
+                            <a
+                                href={formData.resume}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors"
+                            >
+                                <FileText size={18} />
+                                View Current Resume
+                            </a>
+                        </div>
+                    )}
+                    
+                    <div className="relative">
+                        <input
+                            ref={resumeRef}
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleResumeChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200"
+                        />
+                        {resumeFile && (
+                            <p className="mt-2 text-sm text-green-600">
+                                Selected: {resumeFile.name}
+                            </p>
+                        )}
+                    </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 pt-6">
+                    <button
+                        type="button"
+                        onClick={handleCancel}
+                        disabled={saving}
+                        className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+                    >
+                        {saving ? 'Saving...' : 'Save'}
+                    </button>
+                </div>
+            </form>
         </div>
     );
 }

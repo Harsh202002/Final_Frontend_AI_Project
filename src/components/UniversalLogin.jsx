@@ -318,7 +318,7 @@ const UniversalLogin = () => {
         <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-blue-50 via-white to-blue-100">
             <div className="max-w-6xl w-full">
                 <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-12">
-                    Welcome Back 
+                    Welcome 
                 </h1>
 
                 <div className="flex flex-col md:flex-row items-center justify-between gap-12">

@@ -68,6 +68,10 @@ const GiveTest = ({ jdId }) => {
   const [videoDevices, setVideoDevices] = useState([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
 
+  // Recording state
+  const [recordingStarted, setRecordingStarted] = useState(false);
+  const recordingStartedRef = useRef(false);
+
   // Violations tracking
   const [violations, setViolations] = useState({
     tab_switches: 0,
@@ -144,38 +148,35 @@ const GiveTest = ({ jdId }) => {
     return () => { if (intId) clearInterval(intId); };
   }, [localStream, mediaAllowed, step, streamRef.current]);
 
-  // Request camera+mic permissions
+  // Request camera+mic permissions (always prompt, don't reuse stored stream)
   const requestMedia = async () => {
-    // Prefer a stream granted earlier in CameraCheck (same tab) to avoid re-prompt
     try {
-      const existing = window.__candidateCameraStream;
-      if (existing) {
-        setMediaAllowed(true);
-        setLocalStream(existing);
-        streamRef.current = existing;
-        if (videoRef.current) {
-          try { videoRef.current.srcObject = existing; } catch (e) { console.warn('attach existing stream failed', e); }
-        }
-        return;
-      }
+      // Always request fresh permissions - don't reuse existing stream
       const constraints = {
-        video: camEnabled ? (selectedDeviceId ? { deviceId: { exact: selectedDeviceId } } : { facingMode: 'user' }) : false,
+        video: camEnabled ? { facingMode: 'user' } : false,
         audio: micEnabled,
       };
-
+      console.log('GiveTest: requesting media with constraints:', constraints);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
       setMediaAllowed(true);
       setLocalStream(stream);
       streamRef.current = stream;
-      // also save globally for future pages in same tab
+      // Save globally for future pages in same tab
       try { window.__candidateCameraStream = stream; window.__cameraAllowed = true; } catch (e) {}
       if (videoRef.current) {
         try { videoRef.current.srcObject = stream; } catch (e) { console.warn('set srcObject failed', e); }
       }
+      console.log('GiveTest: media access granted successfully');
     } catch (err) {
-      console.error('Media permissions denied:', err);
+      console.error('Media permissions error:', err);
       setMediaAllowed(false);
-      alert('Please allow camera and microphone access to continue the test.');
+      const errorMsg = err.name === 'NotAllowedError' 
+        ? 'You denied camera/microphone access. Please enable permissions in your browser settings and refresh the page.'
+        : err.name === 'NotFoundError'
+        ? 'No camera or microphone found on your device.'
+        : `Unable to access camera/microphone: ${err.message}`;
+      alert(errorMsg);
     }
   };
 
@@ -237,6 +238,7 @@ const GiveTest = ({ jdId }) => {
   useEffect(() => {
     if (testStarted && !mediaAllowed && !_requestedMediaRef.current) {
       _requestedMediaRef.current = true;
+      console.log('GiveTest: auto-requesting media on test start');
       // attempt to reuse existing or prompt user
       requestMedia();
     }
@@ -706,11 +708,48 @@ const GiveTest = ({ jdId }) => {
     handleNext();
   };
 
+  // Auto-start recording when media is available (not waiting for any section)
+  useEffect(() => {
+    if (recordingStartedRef.current) return;
+    if (!testStarted || !mediaAllowed) return;
+    
+    console.log('GiveTest: media available and test started, auto-starting recording...');
+    try {
+      const candidateStream = streamRef.current || localStream || window.__candidateCameraStream;
+      if (candidateStream) {
+        setRecordingStarted(true);
+        recordingStartedRef.current = true;
+        toast.success('🎥 Test recording started! Your entire test is now being recorded.');
+        console.log('GiveTest: recording auto-started from page load');
+      } else {
+        console.warn('GiveTest: camera stream not available for recording');
+      }
+    } catch (err) {
+      console.error('Failed to auto-start recording:', err);
+    }
+  }, [testStarted, mediaAllowed]);
+
   // Submit all sections
   // options: { markComplete: boolean }
   const handleSubmitAllSections = async (answersOverride, options = {}) => {
     setSubmitting(true);
     try {
+      // Before submitting, upload the recorded video if recording was started
+      if (recordingStarted && webcamInterviewRef.current) {
+        try {
+          console.log('GiveTest: uploading recorded video before final submit...');
+          const uploadResult = await webcamInterviewRef.current.uploadRecording();
+          console.log('GiveTest: video upload result:', uploadResult);
+          if (uploadResult && uploadResult.qa_data) {
+            // Merge uploaded QA into allAnswers if needed
+            console.log('GiveTest: video QA data received from upload:', uploadResult.qa_data);
+          }
+        } catch (err) {
+          console.warn('GiveTest: video upload failed before submit:', err);
+          // Don't block submission if video upload fails
+        }
+      }
+
       const results = [];
       // read cid once from sessionStorage so it's available after the loop
       let cidFromSession = null;
@@ -1002,15 +1041,39 @@ const GiveTest = ({ jdId }) => {
       return (
         <InstructionsPage
           onComplete={() => {
-            requestMedia();
             setInstructionsVisible(false);
             setTestStarted(true);
             setStep('test');
+            // Media request will be auto-triggered by the testStarted effect above
           }}
           mediaAllowed={mediaAllowed}
         />
       );
     }
+  }
+
+  // Show permission request overlay if media not allowed after test started
+  if (!mediaAllowed && testStarted && step === 'test') {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md text-center">
+          <div className="text-4xl mb-4">📹🎤</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Permissions Required</h2>
+          <p className="text-gray-600 mb-6">
+            Your camera and microphone access is required to take this test. Please grant permissions when prompted by your browser.
+          </p>
+          <button
+            onClick={requestMedia}
+            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-semibold mb-2"
+          >
+            Request Camera & Microphone Access
+          </button>
+          <p className="text-xs text-gray-500 mt-4">
+            If you deny permissions, you won't be able to take the test. Make sure your device has both camera and microphone available.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   // Loading
@@ -1184,6 +1247,37 @@ const GiveTest = ({ jdId }) => {
       />
 
       {!submitted && <FaceDetection faceEventRef={faceEventRef} />}
+
+      {/* Persistent hidden recorder - mount only after recording started */}
+      {!submitted && recordingStarted && (
+        <div style={{ position: 'absolute', width: '0', height: '0', overflow: 'hidden' }} aria-hidden="true">
+          {console.log('GiveTest: mounting WebCamRecorder, sharedStream?', !!(streamRef.current || localStream || window.__candidateCameraStream))}
+          <WebCamRecorder
+            ref={webcamInterviewRef}
+            questions={(sections || []).flatMap(s => (s.questions || [])).map(q => ({
+              question_id: q.id || q._id || q.question_id,
+              prompt_text: q.prompt_text || q.content?.prompt_text || q.question || '',
+            }))}
+            candidateId={finalCandidateId}
+            questionSetId={questionSetId}
+            sharedStream={streamRef.current || localStream || window.__candidateCameraStream}
+            autoStart={true}
+            onComplete={(qa_payload) => {
+              console.log('GiveTest: persistent recorder onComplete with qa_payload=', qa_payload);
+            }}
+          />
+        </div>
+      )}
+
+      {/* Live Recording Indicator Badge - shows when recording is active */}
+      {!submitted && recordingStarted && (
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-red-600 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-pulse">
+            <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+            <span className="font-semibold text-sm">🎥 Recording Test...</span>
+          </div>
+        </div>
+      )}
 
       {/* Quick button to trigger camera permissions if preview missing */}
       {!submitted && step === 'test' && !mediaAllowed && (
