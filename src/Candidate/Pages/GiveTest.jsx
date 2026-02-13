@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useLocation } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import { useParams } from 'react-router-dom';
@@ -11,13 +11,624 @@ import Timer from '../../RecruiterAdmin/Component/Timer.jsx';
 import InstructionsPage from '../instructions_page/InstructionsPage.jsx';
 import ActivityMonitor from '../instructions_page/ActivityMonitor.jsx';
 import FaceDetection from '../instructions_page/FaceDetection.jsx';
-import WebCamRecorder from '../instructions_page/WebCamRecorder.jsx';
 import AudioInterview from '../instructions_page/AudioInterview.jsx'; // adjust the path as needed
 import WebcamPreview from '../Component/WebcamPreview.jsx';
 import { emitViolation } from '../../RecruiterAdmin/api/socket.js';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { pythonUrl } from '../../utils/ApiConstants';
 
+
+
+// ------------------------------
+// Embedded WebCamRecorder (merged into GiveTest to avoid mount/unmount timing issues)
+// ------------------------------
+ 
+const WebCamRecorder = forwardRef(
+  (
+    {
+      questions = [],
+      candidateId,
+      questionSetId,
+      onComplete = () => {},
+      showMultipleFaces = false,
+      sharedStream = null,
+      autoStart = true,
+      // If true, component will only show a preview and won't record or upload
+      previewOnly = false,
+      // If false, internal "Upload & Submit" button and uploadRecording will be disabled
+      allowUpload = true,
+    },
+    ref
+  ) => {
+    // Set to true during local debugging to see detailed recorder logs
+    const VERBOSE_LOG = false;
+    const vlog = (...args) => { if (VERBOSE_LOG) console.log(...args); };
+    const videoRef = useRef(null);
+    const streamRef = useRef(null);
+    const monitorRef = useRef(null);
+    const sharedStreamWarnedRef = useRef(false);
+    // Keep a reference to the *source* stream (shared or created) for preview/health checks
+    const sourceStreamRef = useRef(null);
+    // Use a dedicated recording stream made of cloned tracks so other components stopping the shared stream
+    // won't break this recording.
+    const recordingStreamRef = useRef(null);
+    const clonedTracksRef = useRef([]);
+      const createdStreamRef = useRef(false);
+    const mediaRecorderRef = useRef(null);
+    const chunksRef = useRef([]);
+    const startedOnceRef = useRef(false);
+ 
+    const [interviewStarted, setInterviewStarted] = useState(false);
+    const [interviewEnded, setInterviewEnded] = useState(false);
+    const [currentAnswer, setCurrentAnswer] = useState("");
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const qaListRef = useRef([]);
+    const [status, setStatus] = useState("Idle");
+    const [uploading, setUploading] = useState(false);
+
+    // Initialize qa list with question metadata so indices exist and ids are preserved
+    useEffect(() => {
+      try {
+        qaListRef.current = (questions || []).map((q) => ({
+          question_id: q.question_id || q.id || q._id || null,
+          question: (q.prompt_text || q.question) || '',
+          answer: '',
+        }));
+        vlog('WebCamRecorder: initialized qaListRef with', qaListRef.current);
+      } catch (e) { console.warn('qaList init failed', e); }
+    }, [questions]);
+ 
+    const prompt =
+      (questions[currentIndex]?.prompt_text || questions[currentIndex]?.question) ||
+      "Please answer this question.";
+
+    // ---------------------------------------------------------
+    // Initialize Camera + MediaRecorder
+    // ---------------------------------------------------------
+    useEffect(() => {
+      vlog('WebCamRecorder: useEffect init() running now, sharedStream present?', !!sharedStream);
+      const initRecorder = async () => {
+        // Avoid double-initializing recorder (can happen in StrictMode/dev remounts)
+        if (mediaRecorderRef.current) {
+          vlog('WebCamRecorder: initRecorder called but recorder already exists; skipping');
+          return;
+        }
+        try {
+              let stream = sharedStream;
+              vlog('WebCamRecorder: init called, sharedStream present?', !!sharedStream);
+              
+              // Check if shared stream is viable
+              if (stream) {
+                const videoTracks = stream.getVideoTracks();
+                const audioTracks = stream.getAudioTracks();
+                vlog('WebCamRecorder: checking sharedStream - video tracks:', videoTracks.length, 'audio tracks:', audioTracks.length);
+                
+                // Check if tracks are actually alive
+                let tracksAlive = false;
+                if (videoTracks.length > 0) {
+                  videoTracks.forEach((t, i) => {
+                    vlog(`WebCamRecorder: video track ${i} - enabled: ${t.enabled}, readyState: ${t.readyState}`);
+                    if (t.readyState === 'live' && t.enabled) tracksAlive = true;
+                  });
+                }
+                
+                if (!tracksAlive) {
+                  if (!sharedStreamWarnedRef.current) {
+                    console.warn('WebCamRecorder: shared stream tracks are dead/ended, requesting fresh stream');
+                    sharedStreamWarnedRef.current = true;
+                  } else {
+                    vlog('WebCamRecorder: shared stream tracks dead -> requesting fresh stream (suppressed repeat warning)');
+                  }
+                  stream = null;
+                }
+              }
+              
+              // If no viable shared stream, request fresh media
+              if (!stream) {
+                  vlog('WebCamRecorder: requesting fresh camera stream');
+                stream = await navigator.mediaDevices.getUserMedia({
+                  video: true,
+                  audio: true,
+                });
+                createdStreamRef.current = true;
+              }
+
+              // Source stream is either sharedStream or a newly created stream
+              sourceStreamRef.current = stream;
+
+              // Build a dedicated recording stream with cloned tracks.
+              // This prevents recording from stopping if some other component stops/ends tracks on the shared stream.
+              try {
+                // Stop any previous cloned tracks (defensive)
+                try { (clonedTracksRef.current || []).forEach(t => { try { t.stop(); } catch(e){} }); } catch(e){}
+                clonedTracksRef.current = [];
+
+                const recStream = new MediaStream();
+                const v0 = stream.getVideoTracks && stream.getVideoTracks()[0];
+                const a0 = stream.getAudioTracks && stream.getAudioTracks()[0];
+
+                if (v0) {
+                  const vClone = v0.clone();
+                  recStream.addTrack(vClone);
+                  clonedTracksRef.current.push(vClone);
+                }
+                if (a0) {
+                  const aClone = a0.clone();
+                  recStream.addTrack(aClone);
+                  clonedTracksRef.current.push(aClone);
+                }
+
+                recordingStreamRef.current = recStream;
+              } catch (e) {
+                console.warn('WebCamRecorder: failed to create cloned recording stream, falling back to source stream', e);
+                recordingStreamRef.current = stream;
+              }
+
+              // Use recordingStreamRef for MediaRecorder; keep streamRef.current pointing to recording stream
+              streamRef.current = recordingStreamRef.current || stream;
+
+              if (videoRef.current) {
+                try { videoRef.current.srcObject = stream; } catch (e) {}
+              }
+
+              // If previewOnly is set, skip creating MediaRecorder and only attach preview
+              if (previewOnly) {
+                vlog('WebCamRecorder: previewOnly=true, skipping MediaRecorder setup');
+                setStatus('Preview');
+                setInterviewStarted(true);
+                return;
+              }
+
+              // Check stream tracks are active
+              const videoTracks = (streamRef.current || stream).getVideoTracks();
+              const audioTracks = (streamRef.current || stream).getAudioTracks();
+              vlog('WebCamRecorder: final video tracks:', videoTracks.length, 'audio tracks:', audioTracks.length);
+              
+              // Enable all tracks to ensure they're active
+              videoTracks.forEach((t, i) => {
+                t.enabled = true;
+                vlog(`WebCamRecorder: enabled video track ${i}, readyState: ${t.readyState}`);
+              });
+              audioTracks.forEach((t, i) => {
+                t.enabled = true;
+                vlog(`WebCamRecorder: enabled audio track ${i}, readyState: ${t.readyState}`);
+              });
+              
+              if (videoTracks.length === 0) {
+                throw new Error('Stream missing video tracks - camera access required');
+              }
+              
+              // Audio is preferred but not strictly required for recording
+              if (audioTracks.length === 0) {
+                console.warn('WebCamRecorder: No audio tracks available - recording video only');
+              }
+
+              // Find supported MIME type
+              let mimeType = 'video/webm;codecs=vp8,opus';
+              const supportedTypes = [
+                'video/webm;codecs=vp8,opus',
+                'video/webm;codecs=vp9,opus',
+                'video/webm',
+                'video/mp4',
+              ];
+              
+              for (const type of supportedTypes) {
+                if (MediaRecorder.isTypeSupported(type)) {
+                  mimeType = type;
+                  vlog('WebCamRecorder: using MIME type:', mimeType);
+                  break;
+                }
+              }
+
+              mediaRecorderRef.current = new MediaRecorder(streamRef.current, {
+                mimeType: mimeType,
+              });
+ 
+              mediaRecorderRef.current.ondataavailable = (e) => {
+                if (e.data && e.data.size > 0) {
+                  chunksRef.current.push(e.data);
+                  vlog('WebCamRecorder: chunk added, total chunks now:', chunksRef.current.length);
+                }
+              };
+ 
+              mediaRecorderRef.current.onstop = () => {
+                console.log('WebCamRecorder: onstop fired, final chunks collected:', chunksRef.current.length);
+                setInterviewEnded(true);
+              };
+
+              // Auto-start recording once recorder is ready (only if autoStart prop is true)
+              try {
+                if (autoStart) {
+                  if (!startedOnceRef.current) {
+                    chunksRef.current = [];
+                  }
+                  // Start the recorder and log a single start message
+                  mediaRecorderRef.current.start(1000); // Request data every 1 second
+                  if (!startedOnceRef.current) {
+                    startedOnceRef.current = true;
+                    console.log('WebCamRecorder: Recording started');
+                  }
+                  
+                  // Monitor stream health while recording
+                  monitorRef.current = setInterval(() => {
+                    const rec = mediaRecorderRef.current;
+                    if (!rec || rec.state !== 'recording') {
+                      clearInterval(monitorRef.current);
+                      monitorRef.current = null;
+                      return;
+                    }
+                    const vTracks = streamRef.current?.getVideoTracks() || [];
+                    const aTracks = streamRef.current?.getAudioTracks() || [];
+                    vlog('WebCamRecorder: [MONITOR] recorder state:', rec.state, 'video enabled:', vTracks[0]?.enabled, 'audio enabled:', aTracks[0]?.enabled);
+                  }, 2000);
+                  
+                  setInterviewStarted(true);
+                  setStatus("Recording...");
+                } else {
+                  console.log('WebCamRecorder: autoStart=false, NOT starting recorder yet');
+                  setStatus("Ready to record");
+                }
+              } catch (e) {
+                console.error('WebCamRecorder: Auto-start recording failed', e);
+              }
+        } catch (err) {
+          console.error("Camera init failed:", err);
+          alert("Camera/microphone access is required!");
+        }
+      };
+ 
+      initRecorder();
+ 
+      // Cleanup: only stop recorder and tracks on unmount
+      return () => {
+        console.log('WebCamRecorder: cleanup running, recorder state:', mediaRecorderRef.current?.state);
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+          try { mediaRecorderRef.current.stop(); } catch (e) { console.warn('stop failed', e); }
+        }
+        // Always stop cloned tracks created for recording
+        try {
+          (clonedTracksRef.current || []).forEach((t) => {
+            try { t.stop(); } catch (e) {}
+          });
+        } catch (e) {}
+        clonedTracksRef.current = [];
+
+        // clear monitor interval if running
+        try { if (monitorRef.current) { clearInterval(monitorRef.current); monitorRef.current = null; } } catch (e) {}
+
+        // Only stop the source stream tracks if this component created the stream itself
+        if (createdStreamRef.current && sourceStreamRef.current) {
+          try { sourceStreamRef.current.getTracks().forEach((t) => t.stop()); } catch (e) {}
+        }
+      };
+    }, [sharedStream]);
+
+    // If autoStart flips from false -> true after init, start the recorder immediately.
+    useEffect(() => {
+      try {
+        if (previewOnly) return;
+        if (!autoStart) return;
+        const rec = mediaRecorderRef.current;
+        if (!rec) return;
+        if (rec.state === 'recording') return;
+        if (!startedOnceRef.current) {
+          chunksRef.current = [];
+          rec.start(1000);
+          startedOnceRef.current = true;
+          console.log('WebCamRecorder: Recording started');
+        } else {
+          rec.start(1000);
+        }
+        setInterviewStarted(true);
+        setStatus("Recording...");
+      } catch (e) {
+        console.warn('WebCamRecorder: autoStart effect failed', e);
+      }
+    }, [autoStart, previewOnly]);
+
+    // ---------------------------------------------------------
+    // Start Recording
+    // ---------------------------------------------------------
+    const startInterview = () => {
+      try {
+        // IMPORTANT: Do not wipe earlier chunks if recording already started once (prevents losing MCQ+Audio parts)
+        if (!startedOnceRef.current) {
+          chunksRef.current = [];
+          if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'recording') {
+            mediaRecorderRef.current.start(1000);
+            startedOnceRef.current = true;
+            console.log('WebCamRecorder: Recording started');
+          }
+        } else {
+          if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'recording') {
+            mediaRecorderRef.current.start(1000);
+          }
+        }
+        setInterviewStarted(true);
+        setStatus("Recording...");
+      } catch (e) {
+        console.warn('startInterview failed', e);
+      }
+    };
+ 
+    // ---------------------------------------------------------
+    // Stop Recording
+    // ---------------------------------------------------------
+    const pushAnswerForIndex = (idx, ans) => {
+      const item = {
+        question_id: questions[idx]?.question_id || questions[idx]?.id,
+        question: (questions[idx]?.prompt_text || questions[idx]?.question) || '',
+        answer: ans ? ans.trim() : '',
+      };
+      // ensure array size and set at index
+      qaListRef.current = qaListRef.current || [];
+      qaListRef.current[idx] = item;
+      console.log(`WebCamRecorder: pushAnswerForIndex idx=${idx} answer='${item.answer}' item=`, item);
+    };
+
+    const endInterview = async () => {
+      try {
+        // push current answer before stopping
+        console.log('WebCamRecorder: endInterview pushing answer for index', currentIndex, 'currentAnswer=', currentAnswer);
+        pushAnswerForIndex(currentIndex, currentAnswer);
+      } catch (e) {}
+
+      if (mediaRecorderRef.current?.state === "recording") {
+        mediaRecorderRef.current.stop();
+        setStatus("Recording stopped");
+      }
+    };
+
+    // Wait until recorder 'stop' event fires (returns a Promise)
+    const stopRecordingWait = () => {
+      return new Promise((resolve) => {
+        const rec = mediaRecorderRef.current;
+        if (!rec || rec.state === 'inactive') return resolve();
+        const onStop = () => {
+          try { rec.removeEventListener('stop', onStop); } catch (e) {}
+          resolve();
+        };
+        try {
+          rec.addEventListener('stop', onStop);
+          try { rec.stop(); } catch (e) { onStop(); }
+        } catch (e) {
+          onStop();
+        }
+      });
+    };
+ 
+    // ---------------------------------------------------------
+    // Upload Recording to Backend
+    // ---------------------------------------------------------
+    // Upload Recording to Backend (for all questions answered)
+    // ---------------------------------------------------------
+      const uploadRecording = async () => {
+      console.log('WebCamRecorder: uploadRecording called, allowUpload=', allowUpload);
+      if (!allowUpload) {
+        console.log('WebCamRecorder: internal upload disabled (allowUpload=false) - deferring to parent');
+        // Ensure recorder is stopped/flushed so parent recording (if any) can handle finalization
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+          try { mediaRecorderRef.current.requestData(); } catch (e) {}
+          await stopRecordingWait();
+        }
+        const qa_data = (qaListRef.current || []).map((item, idx) => ({
+          question_id: item?.question_id || questions[idx]?.question_id || questions[idx]?.id,
+          question: item?.question || questions[idx]?.prompt_text || questions[idx]?.question || '',
+          answer: item?.answer || '',
+        }));
+        setStatus('Upload deferred');
+        // Do NOT call onComplete because parent will handle upload
+        setUploading(false);
+        return { qa_data, skipped: true };
+      }
+      console.log('WebCamRecorder: uploadRecording called, current chunks:', chunksRef.current.length);
+      console.log('WebCamRecorder: recorder state before stop:', mediaRecorderRef.current?.state);
+      setUploading(true);
+      
+      // ensure recorder has flushed final chunks
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        console.log('WebCamRecorder: MediaRecorder still recording, requesting final data and stopping');
+        // Request final data flush before stopping
+        try {
+          mediaRecorderRef.current.requestData();
+          console.log('WebCamRecorder: requestData called');
+        } catch (e) { console.warn('requestData failed', e); }
+        
+        // Wait a bit for ondataavailable to fire
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        await stopRecordingWait();
+      }
+
+      console.log('WebCamRecorder: after stopRecordingWait, final chunks:', chunksRef.current.length);
+      if (!chunksRef.current.length) {
+        console.error('WebCamRecorder: No video chunks recorded! Check if MediaRecorder was recording.');
+        alert("No video recorded! Ensure camera/microphone permissions are enabled and try again.");
+        setUploading(false);
+        return null;
+      }
+
+      const blob = new Blob(chunksRef.current, { type: "video/webm" });
+      const filename = `video_${candidateId}_${Date.now()}.webm`;
+
+      const file = new File([blob], filename, { type: "video/webm" });
+
+      // use accumulated QA list
+      // ensure we have a safe copy of QA data
+      const qa_data = (qaListRef.current || []).map((item, idx) => ({
+        question_id: item?.question_id || questions[idx]?.question_id || questions[idx]?.id,
+        question: item?.question || questions[idx]?.prompt_text || questions[idx]?.question || '',
+        answer: item?.answer || '',
+      }));
+
+      console.log('WebCamRecorder: uploading video with qa_data=', qa_data, 'chunksCount=', chunksRef.current.length);
+
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("candidate_id", candidateId);
+      fd.append("question_set_id", questionSetId);
+      fd.append("qa_data", JSON.stringify(qa_data));
+
+      setStatus("Uploading video...");
+
+      try {
+        const res = await fetch(`${pythonUrl}/v1/upload_video`, {
+          method: "POST",
+          body: fd,
+        });
+
+        if (!res.ok) {
+          const txt = await res.text();
+          console.error("Upload failed:", txt);
+          alert("Video upload failed!");
+          setStatus("Upload failed");
+          return { qa_data, error: txt };
+        }
+
+        const data = await res.json();
+        console.log("Upload success:", data);
+        setStatus("Video uploaded!");
+        // notify parent with qa_data
+        try { onComplete(qa_data); } catch (e) { console.warn('onComplete callback failed', e); }
+        return { qa_data, response: data };
+
+      } catch (err) {
+        console.error("Upload error:", err);
+        alert("Failed to upload video!");
+        setStatus("Upload failed");
+        return { qa_data, error: err };
+      } finally {
+        setUploading(false);
+      }
+      }
+    // ---------------------------------------------------------
+    // Exposed methods for parent component (GiveTest.jsx)
+    // ---------------------------------------------------------
+    useImperativeHandle(ref, () => ({
+      startInterview,
+      endInterview,
+      uploadRecording,
+      stopAll: () => {
+        try {
+          endInterview();
+          if (createdStreamRef.current) {
+            streamRef.current?.getTracks().forEach((t) => t.stop());
+          }
+        } catch {}
+      },
+    }));
+ 
+    return (
+<div className="p-4 bg-white rounded shadow relative">
+      {showMultipleFaces && (
+        <>
+          <div className="fixed inset-0 backdrop-blur-sm bg-black/30 z-50" />
+          <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-60 bg-yellow-400 text-black px-4 py-2 rounded shadow">
+            🚨 Multiple faces detected — page blurred
+          </div>
+        </>
+      )}
+<h2 className="text-xl font-bold mb-4">Video Interview</h2>
+ 
+        {/* Live Camera Feed */}
+<video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          className="w-full h-72 bg-black rounded"
+        />
+ 
+        {/* Question */}
+<div className="mt-4">
+<h3 className="font-semibold mb-2">Question:</h3>
+<p className="p-3 bg-gray-100 rounded">{prompt}</p>
+</div>
+ 
+        {/* Text Answer */}
+<textarea
+          value={currentAnswer}
+          onChange={(e) => setCurrentAnswer(e.target.value)}
+          className="w-full p-3 border rounded mt-4 min-h-[120px]"
+          placeholder="Write your explanation / answer here..."
+        />
+ 
+        {/* Buttons */}
+        <div className="flex gap-3 mt-4">
+          {!interviewStarted && (
+            <button
+              onClick={startInterview}
+              className="px-4 py-2 bg-green-600 text-white rounded"
+            >
+              Start Recording
+            </button>
+          )}
+
+          {interviewStarted && !interviewEnded && (
+            <>
+              <button
+                onClick={async () => {
+                  // save current answer for this index
+                  pushAnswerForIndex(currentIndex, currentAnswer);
+                  // clear answer and move to next
+                  setCurrentAnswer('');
+                  const next = currentIndex + 1;
+                  if (next < questions.length) {
+                    setCurrentIndex(next);
+                    setTimeout(() => setStatus('Recording...'), 200);
+                  } else {
+                    // last question -> stop recording
+                    await stopRecordingWait();
+                    setInterviewEnded(true);
+                    setStatus('Recording stopped');
+                  }
+                }}
+                className="px-4 py-2 bg-amber-600 text-white rounded"
+              >
+                Next
+              </button>
+
+              <button
+                onClick={endInterview}
+                className="px-4 py-2 bg-red-600 text-white rounded"
+              >
+                Stop Recording
+              </button>
+            </>
+          )}
+
+          {interviewEnded && allowUpload && (
+            <button
+              onClick={uploadRecording}
+              className="px-4 py-2 bg-blue-600 text-white rounded"
+              disabled={(qaListRef.current?.length || 0) < questions.length}
+            >
+              Upload & Submit
+            </button>
+          )}
+
+          {interviewEnded && !allowUpload && (
+            <div className="px-4 py-2 bg-gray-100 text-gray-700 rounded">Recording complete — final upload will occur when you submit the test.</div>
+          )}
+        </div>
+ 
+        {/* Status */}
+<p className="text-sm text-gray-600 mt-3">Status: {status}</p>
+          {/* Uploading overlay */}
+          {uploading && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+              <div className="relative z-10 flex flex-col items-center gap-3 p-6 bg-white bg-opacity-90 rounded-lg shadow-lg">
+                <div className="w-12 h-12 border-4 border-t-blue-600 border-gray-200 rounded-full animate-spin" />
+                <div className="text-gray-700 font-medium">Uploading & Submitting...</div>
+              </div>
+            </div>
+          )}
+</div>
+    );
+  }
+);
 const GiveTest = ({ jdId }) => {
   const { questionSetId } = useParams();
   const location = useLocation();
@@ -74,6 +685,13 @@ const GiveTest = ({ jdId }) => {
   const recordingStartedRef = useRef(false);
   const [recordingPermissionAsked, setRecordingPermissionAsked] = useState(false);
   const [recordingPermissionGranted, setRecordingPermissionGranted] = useState(false);
+
+  // Is there an actually active candidate stream we can record from?
+  const candidateStreamActive = !!(
+    (streamRef.current && streamRef.current.active) ||
+    (localStream && localStream.active) ||
+    (window.__candidateCameraStream && window.__candidateCameraStream.active)
+  );
 
   // Violations tracking
   const [violations, setViolations] = useState({
@@ -188,7 +806,6 @@ const GiveTest = ({ jdId }) => {
     try {
       const existing = window.__candidateCameraStream;
       if (existing && !localStream) {
-        console.log('GiveTest: found global stream on mount, attaching immediately');
         setMediaAllowed(true);
         setLocalStream(existing);
         streamRef.current = existing;
@@ -712,65 +1329,23 @@ const GiveTest = ({ jdId }) => {
     handleNext();
   };
 
-  // Start recording immediately when test starts (after permission granted)
-  const recordingStartedManuallyRef = useRef(false);
+  // Start recording immediately on mount as soon as media is available
   useEffect(() => {
-    if (testStarted && recordingPermissionGranted && !submitted && !recordingStartedManuallyRef.current) {
-      recordingStartedManuallyRef.current = true;
-      // Call startInterview on persistent recorder to begin capturing
-      try {
-        if (webcamInterviewRef.current && typeof webcamInterviewRef.current.startInterview === 'function') {
-          console.log('GiveTest: Calling startInterview to begin recording from MCQ section');
-          webcamInterviewRef.current.startInterview();
-        }
-      } catch (e) {
-        console.warn('GiveTest: Failed to start interview recording:', e);
-      }
-    }
-  }, [testStarted, recordingPermissionGranted, submitted]);
+  if (recordingStartedRef.current) return;
+  if (!mediaAllowed) return;
 
-  // Start recording immediately on mount as soon as ANY candidate stream is available
-  // This polling ensures we catch the stream from CameraCheck even if there's a timing race
-  useEffect(() => {
-    if (recordingStartedRef.current) return;
+  const candidateStream =
+    streamRef.current ||
+    localStream ||
+    window.__candidateCameraStream;
 
-    const checkAndStartRecording = () => {
-      const candidateStream =
-        streamRef.current ||
-        localStream ||
-        window.__candidateCameraStream;
+  if (!candidateStream) return;
 
-      if (!candidateStream) return false;
+  console.log('GiveTest: recorder mounted and ready');
 
-      // Stream found - start recording
-      console.log('GiveTest: candidate stream detected, starting recording now', {
-        streamRef: !!streamRef.current,
-        localStream: !!localStream,
-        globalStream: !!window.__candidateCameraStream,
-      });
-
-      setRecordingStarted(true);
-      recordingStartedRef.current = true;
-      return true;
-    };
-
-    // Immediate check
-    if (checkAndStartRecording()) return;
-
-    // Poll until stream is available (up to 10 seconds)
-    let attempts = 0;
-    const pollId = setInterval(() => {
-      attempts++;
-      if (checkAndStartRecording() || attempts > 100) {
-        clearInterval(pollId);
-        if (!recordingStartedRef.current) {
-          console.warn('GiveTest: stream not detected after polling, fallback to mediaAllowed');
-        }
-      }
-    }, 100);
-
-    return () => clearInterval(pollId);
-  }, []);
+  setRecordingStarted(true);
+  recordingStartedRef.current = true;
+}, [mediaAllowed, localStream]);
 
 
   // Submit all sections
@@ -953,6 +1528,7 @@ const GiveTest = ({ jdId }) => {
       try {
         if (!saveViolationsSentRef.current) {
           saveViolationsSentRef.current = true;
+          console.log("HEYYYYYYYYYYYYYYYYYYYYY:")
             const violationsPayload = {
               question_set_id: questionSetId,
               candidate_id: finalCandidateId,
@@ -1310,7 +1886,7 @@ const GiveTest = ({ jdId }) => {
           questions={currentSection?.questions || []}
           candidateId={finalCandidateId}
           questionSetId={questionSetId}
-          baseUrl={window.REACT_APP_BASE_URL || 'https://recruterai.netfotech.in/ai'}
+          baseUrl={window.REACT_APP_BASE_URL || 'https://python-k0xt.onrender.com'}
           onClose={() => setShowAudioInterview(false)}
           onComplete={(qa) => {
             setAudioInterviewResults(qa);
@@ -1373,21 +1949,26 @@ const GiveTest = ({ jdId }) => {
 
       {!submitted && <FaceDetection faceEventRef={faceEventRef} />}
 
-      {/* Persistent hidden recorder - always mounted to capture entire test */}
-      {/* Uses the SAME stream throughout (from CameraCheck) - never creates its own stream */}
-      <div style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-        <WebCamRecorder
-          ref={webcamInterviewRef}
-          candidateId={finalCandidateId}
-          questionSetId={questionSetId}
-          sharedStream={streamRef.current || localStream || window.__candidateCameraStream}
-          autoStart={false}
-          previewOnly={false}
-          allowUpload={true}
-          isSharedStreamOnly={true}
-          onComplete={(qa) => {/* callback when upload completes */}}
-        />
-      </div>
+      {/* Persistent hidden recorder - records entire test continuously */}
+      {/* Persistent recorder – mounted early, starts later */}
+{recordingStarted && recordingPermissionGranted && (
+  <div style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}>
+    <WebCamRecorder
+      ref={webcamInterviewRef}
+      candidateId={finalCandidateId}
+      questionSetId={questionSetId}
+      sharedStream={streamRef.current || localStream || window.__candidateCameraStream}
+
+      /* 🔑 THIS IS THE FIX */
+      autoStart={recordingPermissionGranted}
+
+      onComplete={(qa) => {
+        console.log('Recorder completed:', qa);
+      }}
+    />
+  </div>
+)}
+
 
       {/* Live Recording Indicator Badge - shows when recording is active and test is running */}
       {recordingStarted && recordingPermissionGranted && testStarted && !submitted && (
