@@ -13,6 +13,23 @@ function GenerateAssessment() {
   const filteredCandidates = location.state?.filteredCandidates || [];
   console.log("Filtered candidates received:", filteredCandidates);
 
+  // Filter out candidates who have already received the test invite or completed the test
+  const eligibleCandidates = filteredCandidates.filter(candidate => {
+    // Exclude if mailStatus is "sent" (already received invite)
+    if (candidate.mailStatus === 'sent') {
+      console.log(`Excluding candidate ${candidate._id} - already sent mail`);
+      return false;
+    }
+    // Exclude if test is already completed
+    if (candidate.testCompletedAt) {
+      console.log(`Excluding candidate ${candidate._id} - already completed test`);
+      return false;
+    }
+    return true;
+  });
+
+  console.log(`Total candidates: ${filteredCandidates.length}, Eligible: ${eligibleCandidates.length}`);
+
   // Prefer JD passed via navigation state; fallback to localStorage
   const jdFromLocation = location.state?.jdData || null;
   const [selectedJD, setSelectedJD] = useState(() => {
@@ -55,7 +72,7 @@ function GenerateAssessment() {
     status: 'active',
     duration: 0,
     questions: [],
-    candidates: filteredCandidates,
+    candidates: eligibleCandidates,
     jobDetails: selectedJD,
     skillLevels: [],
   });

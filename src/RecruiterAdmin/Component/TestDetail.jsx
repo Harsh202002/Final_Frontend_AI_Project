@@ -173,29 +173,41 @@ export default function TestDetail({
   };
 
   // Start-time slots: same behaviour as before (starts from next half-hour from now)
-  const generateStartTimeSlots = () => {
+  const generateStartTimeSlots = (dateString) => {
+    // 1. Safety check: If no date is selected yet, return a full day or empty
+    if (!dateString) return [];
+
     const now = new Date();
-    const minutes = now.getMinutes();
-    // round up to next half-hour
-    let addMinutes = 0;
-    if (minutes === 0) addMinutes = 30;
-    else if (minutes <= 30) addMinutes = 30 - minutes;
-    else addMinutes = 60 - minutes;
+    const selectedDate = new Date(`${dateString}T00:00:00`); // Parse as local time
+    const isToday = selectedDate.toDateString() === now.toDateString();
 
-    const start = new Date(now.getTime() + addMinutes * 60000);
-    start.setSeconds(0, 0);
+    let start = new Date(selectedDate);
 
-    const end = new Date(start);
-    end.setHours(24, 0, 0, 0);
+    if (isToday) {
+      // Logic for Today: Start from the next half-hour increment
+      const minutes = now.getMinutes();
+      let addMinutes = minutes < 30 ? 30 - minutes : 60 - minutes;
+      start = new Date(now.getTime() + addMinutes * 60000);
+    } else {
+      // Logic for Future: Start at midnight
+      start.setHours(0, 0, 0, 0);
+    }
+
+    // Set end of the day boundary
+    const end = new Date(selectedDate);
+    end.setHours(23, 30, 0, 0);
 
     const slots = [];
     const cur = new Date(start);
+    cur.setSeconds(0, 0);
+
     while (cur <= end) {
       slots.push(format12(cur));
       cur.setMinutes(cur.getMinutes() + 30);
     }
     return slots;
   };
+
 
   // End-time slots: full 24-hour range from 00:00 to 23:30
   const generateFullDaySlots = () => {
@@ -212,7 +224,7 @@ export default function TestDetail({
     return slots;
   };
 
-  const startTimeSlots = generateStartTimeSlots();
+  const startTimeSlots = generateStartTimeSlots(selectedStart);
   const fullDaySlots = generateFullDaySlots();
 
   useEffect(() => {

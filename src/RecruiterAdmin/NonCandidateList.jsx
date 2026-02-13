@@ -56,13 +56,38 @@ export default function NonCandidateList() {
 
     const filtered = useMemo(() => {
         const needle = q.trim().toLowerCase();
-        if (!needle) return candidates;
-        return candidates.filter(
-            (c) =>
-                c.name?.toLowerCase().includes(needle) ||
-                c.email?.toLowerCase().includes(needle)
-        );
-    }, [q, candidates]);
+        let result = candidates;
+        
+        // First, filter by search query
+        if (needle) {
+            result = result.filter(
+                (c) =>
+                    c.name?.toLowerCase().includes(needle) ||
+                    c.email?.toLowerCase().includes(needle)
+            );
+        }
+        
+        // Then filter out candidates who have already received invite or completed test
+        result = result.filter(candidate => {
+            // Exclude if mailStatus is "sent" (already received invite for this JD)
+            const appliedCandidateRecord = candidate.appliedCandidates?.find(
+                ac => ac.candidate?._id === candidate._id || ac.candidate === candidate._id
+            );
+            
+            if (appliedCandidateRecord?.mailStatus === 'sent') {
+                return false;
+            }
+            
+            // Exclude if already completed test
+            if (appliedCandidateRecord?.testCompletedAt) {
+                return false;
+            }
+            
+            return true;
+        });
+        
+        return result;
+    }, [q, candidates, jdId]);
 
     const totalPages = Math.ceil(filtered.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
