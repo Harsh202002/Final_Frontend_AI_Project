@@ -81,7 +81,7 @@ const CandidateAdminSidebar = ({ isOpen, onToggle }) => {
       >
         <div className="flex items-center justify-between pb-8 py-4 px-6">
           <div className='w-full text-center'>
-            <h1 className="text-3xl font-bold tracking-wide">AIRecruit</h1>
+            <h1 className="text-3xl font-bold tracking-wide">RecruterAI</h1>
           </div>
           <button
             onClick={onToggle}

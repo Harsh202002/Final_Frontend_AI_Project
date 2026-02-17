@@ -76,7 +76,7 @@ export default function CandidateLogin() {
                             <img src={logo} alt="" />
                         </div>
                         <span className="text-2xl font-bold tracking-tight text-[#6A2767]">
-                            AIRecruit
+                    RecruterAI
                         </span>
                     </div>
 

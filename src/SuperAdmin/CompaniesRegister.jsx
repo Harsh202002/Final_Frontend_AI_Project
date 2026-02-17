@@ -194,7 +194,7 @@ function CompaniesRegister() {
 
             <div className="">
                 <div className="text-center mb-6">
-                    <h1 className="text-4xl font-bold text-purple-600 mb-2">AIRecruit</h1>
+                    <h1 className="text-4xl font-bold text-purple-600 mb-2">RecruterAI</h1>
                 </div>
 
                 {submitStatus && (
