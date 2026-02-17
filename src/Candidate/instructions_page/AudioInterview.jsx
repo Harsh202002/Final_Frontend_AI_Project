@@ -25,6 +25,9 @@ export default function AudioInterview({
   const audioChunksRef = useRef([]);
   const recognitionRef = useRef(null);
   const qaListRef = useRef([]);
+  const isPlayingRef = useRef(false); // Guard to prevent concurrent TTS calls
+  const firstQuestionPlayedRef = useRef(false); // Guard to ensure first question plays only once
+  const firstQuestionTimeoutRef = useRef(null); // Store timeout ID for cleanup
 
   // Movable preview so face-detection can operate while inside audio UI
   const previewWebcamRef = useRef(null);
@@ -146,36 +149,72 @@ export default function AudioInterview({
   const playQuestionTTS = React.useCallback(
     async (text) => {
       if (!text) return;
+      
+      // Prevent concurrent TTS calls
+      if (isPlayingRef.current) {
+        console.log('[AudioInterview] TTS already playing, skipping duplicate call');
+        return;
+      }
+      
+      isPlayingRef.current = true;
 
       window.speechSynthesis.cancel();
       setStatus('Speaking question...');
   
       try {
-        const res = await fetch(`${baseUrl}/tts_question`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text }),
-        });
-        const data = await res.json();
-        if (data?.status === 'success' && data?.tts_url) {
-          const audio = new Audio(`${baseUrl}${data.tts_url}`);
-          await audio.play();
-          await new Promise((resolve) => (audio.onended = resolve));
-          setStatus('Awaiting answer');
-          return;
+        // Validate baseUrl is a string
+        const finalBaseUrl = typeof baseUrl === 'string' ? baseUrl : 'http://127.0.0.1:5000';
+        
+        // Add timeout to prevent hanging
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        try {
+          const res = await fetch(`${finalBaseUrl}/tts_question`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text }),
+            signal: controller.signal,
+          });
+          clearTimeout(timeoutId);
+          
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.status === 'success' && data?.tts_url) {
+              try {
+                const audio = new Audio(`${finalBaseUrl}${data.tts_url}`);
+                await audio.play();
+                await new Promise((resolve) => (audio.onended = resolve));
+                setStatus('Awaiting answer');
+                isPlayingRef.current = false;
+                return;
+              } catch (audioErr) {
+                console.warn('Audio playback failed, using browser fallback.', audioErr);
+              }
+            }
+          }
+        } catch (fetchErr) {
+          clearTimeout(timeoutId);
+          console.warn('Server TTS failed, using browser fallback.', fetchErr.message);
         }
-      } catch {
-        console.warn('Server TTS failed, using browser fallback.');
+      } catch (err) {
+        console.warn('TTS error:', err.message);
       }
 
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = answerLanguage === 'hi' ? 'hi-IN' : 'en-US';
-      window.speechSynthesis.speak(u);
-      await new Promise((resolve) => {
-        u.onend = resolve;
-        setTimeout(resolve, 15000); // max wait fallback
-      });
+      // Browser fallback
+      try {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = answerLanguage === 'hi' ? 'hi-IN' : 'en-US';
+        window.speechSynthesis.speak(u);
+        await new Promise((resolve) => {
+          u.onend = resolve;
+          setTimeout(resolve, 15000); // max wait fallback
+        });
+      } catch (err) {
+        console.error('Browser TTS failed:', err);
+      }
       setStatus('Awaiting answer');
+      isPlayingRef.current = false;
     },
     [baseUrl, answerLanguage]
   );
@@ -317,7 +356,7 @@ export default function AudioInterview({
     const nextIndex = currentIndex + 1;
     if (nextIndex < questions.length) {
       setCurrentIndex(nextIndex);
-      setTimeout(() => playQuestionTTS(getPrompt(questions[nextIndex])), 400);
+      setStatus('Click "Replay Question" to hear the next question.');
     } else {
       setStatus('Interview complete');
     }
@@ -385,27 +424,42 @@ export default function AudioInterview({
 
   // Raise a single alert when we transition into any alert reason, and log changes
   useEffect(() => {
-    if (currentReason && prevReasonRef.current !== currentReason) {
-      if (currentReason === 'multiple_faces') {
-        console.log('[AudioInterview] Multiple faces detected (effective).');
-        try { alert('🚨 Multiple faces detected — page blurred. Please ensure only you are on camera.'); } catch (e) {}
-      } else if (currentReason === 'tab_switch') {
-        console.log('[AudioInterview] Tab switch detected (effective).');
-        try { alert('⚠️ Tab switch detected — page blurred. Please return to the test tab.'); } catch (e) {}
+    if (currentReason) {
+      // Only show alert if no alert is currently shown (prevReasonRef is null)
+      if (prevReasonRef.current === null) {
+        if (currentReason === 'multiple_faces') {
+          console.log('[AudioInterview] Multiple faces detected (effective).');
+          try { alert('🚨 Multiple faces detected — page blurred. Please ensure only you are on camera.'); } catch (e) {}
+        } 
+        // else if (currentReason === 'tab_switch') {
+        //   console.log('[AudioInterview] Tab switch detected (effective).');
+        //   try { alert('⚠️ Tab switch detected — page blurred. Please return to the test tab.'); } catch (e) {}
+        // }
+        prevReasonRef.current = currentReason;
       }
-      prevReasonRef.current = currentReason;
     } else if (!currentReason && prevReasonRef.current) {
+      // Clear alert only when reason becomes null
       console.log('[AudioInterview] Alert cleared.');
       prevReasonRef.current = null;
     }
   }, [currentReason]);
 
-  // Auto-play first question
+  // Auto-play first question (only once on mount)
   useEffect(() => {
-    if (questions.length > 0) {
+    // Stop any existing speech to prevent duplicates
+    window.speechSynthesis.cancel();
+    
+    if (questions.length > 0 && !firstQuestionPlayedRef.current) {
+      firstQuestionPlayedRef.current = true;
+      isPlayingRef.current = false; // Ensure flag is reset for this call
       setTimeout(() => playQuestionTTS(getPrompt(questions[0])), 500);
     }
-  }, [questions, playQuestionTTS]);
+    
+    return () => {
+      // Cleanup for StrictMode
+      window.speechSynthesis.cancel();
+    };
+  }, []); // Empty dependency array - run only once on mount
 
   if (!candidateId || !questionSetId) return <div>Candidate or Question Set ID missing!</div>;
 

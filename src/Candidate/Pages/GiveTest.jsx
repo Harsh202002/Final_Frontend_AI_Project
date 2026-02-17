@@ -2213,6 +2213,19 @@ const GiveTest = ({ jdId }) => {
                     );
 
                   case 'video':
+                    // Check if we've completed all video questions
+                    if (currentQuestionIndex >= totalQuestionsInSection) {
+                      return (
+                        <div className="bg-white rounded-lg shadow-md p-6">
+                          <div className="text-center py-8">
+                            <div className="text-5xl mb-4">✓</div>
+                            <h3 className="text-2xl font-bold text-gray-800 mb-2">Video Interview Complete</h3>
+                            <p className="text-gray-600">All video questions have been answered. Ready to submit your test.</p>
+                          </div>
+                        </div>
+                      );
+                    }
+
                     // Show placeholder if no real video questions
                     if (currentQuestion.id === 'video-placeholder') {
                       return (
@@ -2224,36 +2237,35 @@ const GiveTest = ({ jdId }) => {
                       );
                     }
 
-                    // Normal webcam interview button/modal
-                    return showWebcamInterview ? (
-                      <div className="mt-10 bg-white rounded-lg shadow-md p-6">
-                        <h2 className="text-xl font-bold mb-4">Final Interview Recording</h2>
-
-                        <WebCamRecorder
-                          ref={webcamPreviewRef}
-                          questions={currentSection?.questions || []}
-                          candidateId={finalCandidateId}
-                          questionSetId={questionSetId}
-                          baseUrl={window.REACT_APP_BASE_URL || 'http://127.0.0.1:5000'}
-                          sharedStream={streamRef.current || localStream || window.__candidateCameraStream}
-                          previewOnly={true}
-                          allowUpload={false}
-                          onComplete={(qa_payload) => {
-                            console.log('GiveTest: preview recorder onComplete (no upload):', qa_payload);
-                            setShowWebcamInterview(false);
-                            toast.success('Video preview closed. Final upload will occur on test submit.');
-                          }}
-                        />
-                      </div>
-                    ) : (
-
+                    // Show question and text field for answer
+                    return (
                       <div className="bg-white rounded-lg shadow-md p-6">
-                        <button
-                          onClick={() => setShowWebcamInterview(true)}
-                          className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                        >
-                          🎥 Start Final Webcam Interview
-                        </button>
+                        <div className="mb-4">
+                          <h3 className="text-lg font-semibold mb-3">Question {currentQuestionIndex + 1} of {totalQuestionsInSection}</h3>
+                          <p className="p-4 bg-gray-100 rounded text-gray-700">
+                            {currentQuestion.prompt_text || currentQuestion.question}
+                          </p>
+                        </div>
+
+                        {/* Answer text field */}
+                        <div className="mb-6">
+                          <label className="block font-semibold mb-2">Your Answer:</label>
+                          <textarea
+                            value={typeof allAnswers[currentQuestion.id] === 'string' ? allAnswers[currentQuestion.id] : ''}
+                            onChange={e => handleAnswerChange(e.target.value)}
+                            className="w-full p-3 border-2 border-gray-300 rounded-lg min-h-[150px] focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                            placeholder="Write your detailed answer here..."
+                          />
+                        </div>
+
+                        {/* Completion message for last question */}
+                        {currentQuestionIndex === totalQuestionsInSection - 1 && (
+                          <div className="p-4 bg-green-50 border-l-4 border-green-500 rounded">
+                            <p className="text-green-700 font-medium">
+                              ✓ Last question answered. You can now submit the test.
+                            </p>
+                          </div>
+                        )}
                       </div>
                     );
 
