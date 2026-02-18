@@ -411,7 +411,7 @@ function CreateJD() {
             )}
 
             <div className="">
-                <h1 className="text-3xl font-bold text-gray-900 mb-8">Create</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-8">Create Job Description</h1>
 
                 <form onSubmit={handleCreate}>
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
