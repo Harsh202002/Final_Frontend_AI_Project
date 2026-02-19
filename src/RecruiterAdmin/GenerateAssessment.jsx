@@ -15,16 +15,22 @@ function GenerateAssessment() {
 
   // Filter out candidates who have already received the test invite or completed the test
   const eligibleCandidates = filteredCandidates.filter(candidate => {
-    // Exclude if mailStatus is "sent" (already received invite)
-    if (candidate.mailStatus === 'sent') {
+    // Exclude if mailStatus is "sent" (already received invite for this JD)
+    const appliedCandidateRecord = candidate.appliedCandidates?.find(
+      ac => ac.candidate?._id === candidate._id || ac.candidate === candidate._id
+    );
+    
+    if (appliedCandidateRecord?.mailStatus === 'sent') {
       console.log(`Excluding candidate ${candidate._id} - already sent mail`);
       return false;
     }
-    // Exclude if test is already completed
-    if (candidate.testCompletedAt) {
+    
+    // Exclude if already completed test
+    if (appliedCandidateRecord?.testCompletedAt) {
       console.log(`Excluding candidate ${candidate._id} - already completed test`);
       return false;
     }
+    
     return true;
   });
 

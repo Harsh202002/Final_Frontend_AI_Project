@@ -49,6 +49,7 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
         input_spec: content.input_spec || '',
         output_spec: content.output_spec || '',
         examples: content.examples || [],
+        expected_answer: content.expected_answer || '',
         tags: [q.skill],
         skills: [q.skill],
         time: q.time_limit || 300,
@@ -64,6 +65,7 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
         question_id: q.question_id,
         text: content.prompt_text || content.question || '',
         expected_keywords: content.expected_keywords || [],
+        expected_answer: content.expected_answer || '',
         rubric: content.rubric || '',
         tags: [q.skill],
         skills: [q.skill],
@@ -79,6 +81,7 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
         id: idx + 1,
         question_id: q.question_id,
         text: content.prompt_text || content.question || '',
+        expected_answer: content.expected_answer || '',
         rubric: content.rubric || '',
         tags: [q.skill],
         skills: [q.skill],
@@ -572,16 +575,24 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
 
                     {/* Coding Question */}
                     {question.questionType === 'Coding' && (
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-3">
-                        {question.input_spec && (
-                          <p className="text-sm mb-2">
-                            <span className="font-semibold text-gray-700">Input:</span> {question.input_spec}
-                          </p>
-                        )}
-                        {question.output_spec && (
-                          <p className="text-sm">
-                            <span className="font-semibold text-gray-700">Output:</span> {question.output_spec}
-                          </p>
+                      <div className="space-y-2 mb-3">
+                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                          {question.input_spec && (
+                            <p className="text-sm mb-2">
+                              <span className="font-semibold text-gray-700">Input:</span> {question.input_spec}
+                            </p>
+                          )}
+                          {question.output_spec && (
+                            <p className="text-sm">
+                              <span className="font-semibold text-gray-700">Output:</span> {question.output_spec}
+                            </p>
+                          )}
+                        </div>
+                        {question.expected_answer && (
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                            <span className="text-sm font-semibold text-green-800">Correct Answer:</span>
+                            <p className="text-sm text-green-800 mt-2 whitespace-pre-wrap">{question.expected_answer}</p>
+                          </div>
                         )}
                       </div>
                     )}
@@ -601,6 +612,12 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
                             </div>
                           </div>
                         )}
+                        {question.expected_answer && (
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                            <span className="text-sm font-semibold text-green-800">Correct Answer:</span>
+                            <p className="text-sm text-green-800 mt-2 whitespace-pre-wrap">{question.expected_answer}</p>
+                          </div>
+                        )}
                         {question.rubric && (
                           <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
                             <p className="text-sm text-gray-700">
@@ -612,11 +629,21 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
                     )}
 
                     {/* Video Question */}
-                    {question.questionType === 'Video' && question.rubric && (
-                      <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-3">
-                        <p className="text-sm text-gray-700">
-                          <span className="font-semibold">Rubric:</span> {question.rubric}
-                        </p>
+                    {question.questionType === 'Video' && (
+                      <div className="space-y-2 mb-3">
+                        {question.expected_answer && (
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                            <span className="text-sm font-semibold text-green-800">Correct Answer:</span>
+                            <p className="text-sm text-green-800 mt-2 whitespace-pre-wrap">{question.expected_answer}</p>
+                          </div>
+                        )}
+                        {question.rubric && (
+                          <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                            <p className="text-sm text-gray-700">
+                              <span className="font-semibold">Rubric:</span> {question.rubric}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )}
 

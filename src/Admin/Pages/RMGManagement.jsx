@@ -396,9 +396,9 @@ function RMGManagement() {
                 <p>
                   <span className="font-medium text-gray-800">Register Date :</span> {selectedRecruiter.registerDate}
                 </p>
-                <p>
+                {/* <p>
                   <span className="font-medium text-gray-800">Last Login :</span> {selectedRecruiter.lastLogin}
-                </p>
+                </p> */}
                 <p>
                   <span className="font-medium text-gray-800">Role :</span> {selectedRecruiter.role}
                 </p>

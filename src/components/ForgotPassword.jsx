@@ -183,7 +183,7 @@ export default function ForgotPassword() {
                             <img src={logo} alt="logo" />
                         </div>
                         <span className="text-2xl font-bold tracking-tight text-[#6A2767]">
-                            AIRecruit
+                            RecruterAI
                         </span>
                     </div>
 

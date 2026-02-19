@@ -124,14 +124,14 @@ const RecruiterProfile = () => {
                 <div className="w-20 h-20 md:w-24 md:h-24 bg-purple-500 rounded-full flex items-center justify-center text-white text-2xl md:text-3xl font-bold mb-4 md:mb-0">
                     {getInitials(formData.name)}
                 </div>
-                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                {/* <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
                     <button className="flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
                         <span>Upload Image</span>
                     </button>
                     <button className="flex items-center justify-center space-x-2 px-4 py-2 border border-red-300 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
                         <span>Delete</span>
                     </button>
-                </div>
+                </div> */}
             </div>
 
             <form className="space-y-6">

@@ -127,7 +127,7 @@ function AdminDashboard() {
 
     return [
       { priority_level: "low", count: priorityCounts.low },
-      { priority_level: "model", count: priorityCounts.model },
+      { priority_level: "medium", count: priorityCounts.model },
       { priority_level: "high", count: priorityCounts.high },
       { priority_level: "critical", count: priorityCounts.critical },
     ];

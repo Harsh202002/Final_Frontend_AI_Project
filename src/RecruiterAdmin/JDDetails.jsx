@@ -496,7 +496,7 @@ function JDDetails() {
                                         Email
                                     </th>
                                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
-                                        AI Score
+                                        Fitbit Score
                                     </th>
                                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
                                         Phone

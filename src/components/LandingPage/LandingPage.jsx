@@ -8,7 +8,7 @@ import LP4 from "../../img/LP4.png";
 import LP5 from "../../img/LP5.png";
 import LP6 from "../../img/LP6.png";
 import LP7 from "../../img/LP7.png";
-import mainimg from "../../img/LP-Main.png";
+import MainImage from "../../img/MainImage.png";
 import footerbg from "../../img/footer.png";
 import contactimg from "../../img/contactimg.png";
 import Facebook from "../../img/Facebook.png";
@@ -451,7 +451,7 @@ export default function LandingPage() {
               <div className="w-full max-w-5xl">
                 <div className="rounded-2xl bg-white p-1 shadow-[0_18px_70px_rgba(149,0,168,0.18)] border-7 border-slate-200">
                   <img
-                    src={mainimg}
+                    src={MainImage}
                     alt="Hero preview"
                     className="w-full rounded-xl object-cover"
                   />

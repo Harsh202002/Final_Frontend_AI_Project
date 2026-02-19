@@ -40,6 +40,7 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                 input_spec: content.input_spec || '',
                 output_spec: content.output_spec || '',
                 examples: content.examples || [],
+                expected_answer: content.expected_answer || '',
                 tags: [q.skill],
                 skills: [q.skill],
                 time: q.time_limit || 300,
@@ -54,6 +55,7 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                 question_id: q.question_id,
                 text: content.prompt_text || content.question || '',
                 expected_keywords: content.expected_keywords || [],
+                expected_answer: content.expected_answer || '',
                 // rubric: content.rubric || '',
                 tags: [q.skill],
                 skills: [q.skill],
@@ -68,6 +70,7 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                 id: idx + 1,
                 question_id: q.question_id,
                 text: content.prompt_text || content.question || '',
+                expected_answer: content.expected_answer || '',
                 // rubric: content.rubric || '',
                 tags: [q.skill],
                 skills: [q.skill],
@@ -723,10 +726,24 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                                                         </pre>
                                                     </div>
                                                 )}
+                                                {question.expected_answer && (
+                                                    <div className="bg-green-50 border border-green-200 rounded p-2 mt-2">
+                                                        <span className="text-xs font-semibold text-green-800">Correct Answer:</span>
+                                                        <p className="text-xs text-green-800 mt-1 whitespace-pre-wrap">{question.expected_answer}</p>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
 
-                                        {/* Video Question Details - rubric display removed */}
+                                        {/* Video Question Details */}
+                                        {question.questionType === 'Video' && question.expected_answer && (
+                                            <div className="space-y-2 mb-4">
+                                                <div className="bg-green-50 border border-green-200 rounded p-2">
+                                                    <span className="text-xs font-semibold text-green-800">Correct Answer:</span>
+                                                    <p className="text-xs text-green-800 mt-1 whitespace-pre-wrap">{question.expected_answer}</p>
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {/* Audio Question Details */}
                                         {question.questionType === 'Audio' && (
@@ -741,6 +758,12 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                                                                 </span>
                                                             ))}
                                                         </div>
+                                                    </div>
+                                                )}
+                                                {question.expected_answer && (
+                                                    <div className="bg-green-50 border border-green-200 rounded p-2">
+                                                        <span className="text-xs font-semibold text-green-800">Correct Answer:</span>
+                                                        <p className="text-xs text-green-800 mt-1 whitespace-pre-wrap">{question.expected_answer}</p>
                                                     </div>
                                                 )}
                                                 {/* Rubric display removed intentionally */}

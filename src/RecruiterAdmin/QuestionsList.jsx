@@ -98,6 +98,46 @@ const QuestionsList = () => {
                     }
                 }
 
+                // Audio: Show expected keywords and rubric
+                if (q.type === "audio" && q.content?.expected_keywords) {
+                    const keywordsDiv = document.createElement('div');
+                    keywordsDiv.style.margin = '8px 0 0 0';
+                    keywordsDiv.innerHTML = `<strong>Expected Keywords:</strong> ${q.content.expected_keywords.join(", ")}`;
+                    qDiv.appendChild(keywordsDiv);
+                }
+
+                // Audio/Video: Show correct answer
+                if ((q.type === "audio" || q.type === "video") && q.content?.expected_answer) {
+                    const answerDiv = document.createElement('div');
+                    answerDiv.style.margin = '6px 0 0 0';
+                    answerDiv.innerHTML = `<strong>Correct Answer:</strong> ${q.content.expected_answer}`;
+                    qDiv.appendChild(answerDiv);
+                }
+
+                // Audio/Video: Show rubric
+                if ((q.type === "audio" || q.type === "video") && q.content?.rubric) {
+                    const rubricDiv = document.createElement('div');
+                    rubricDiv.style.margin = '6px 0 0 0';
+                    rubricDiv.innerHTML = `<strong>Rubric:</strong> ${q.content.rubric}`;
+                    qDiv.appendChild(rubricDiv);
+                }
+
+                // Coding: Show task description
+                if (q.type === "coding" && q.content?.prompt) {
+                    const taskDiv = document.createElement('div');
+                    taskDiv.style.margin = '6px 0 0 0';
+                    taskDiv.innerHTML = `<strong>Task:</strong> ${q.content.prompt}`;
+                    qDiv.appendChild(taskDiv);
+                }
+
+                // Coding: Show correct answer
+                if (q.type === "coding" && q.content?.expected_answer) {
+                    const answerDiv = document.createElement('div');
+                    answerDiv.style.margin = '6px 0 0 0';
+                    answerDiv.innerHTML = `<strong>Correct Answer:</strong> ${q.content.expected_answer}`;
+                    qDiv.appendChild(answerDiv);
+                }
+
                 container.appendChild(qDiv);
             });
 
@@ -193,6 +233,8 @@ const QuestionsList = () => {
                                                     ))}
                                                 </ul>
                                             )}
+                                            
+                                            {/* MCQ Correct Answer */}
                                             {Array.isArray(q.content?.options) && q.content.options.length > 0 && (
                                                 <div className="mt-3 inline-block px-2.5 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-semibold border border-green-200 shadow-sm">
                                                     Correct: {
@@ -201,6 +243,52 @@ const QuestionsList = () => {
                                                         q.content?.correct_answer ||
                                                         q.content?.answer_key
                                                     }
+                                                </div>
+                                            )}
+
+                                            {/* Audio Expected Keywords */}
+                                            {q.type === "audio" && q.content?.expected_keywords && q.content.expected_keywords.length > 0 && (
+                                                <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                                    <p className="text-xs font-semibold text-blue-900 mb-2">Expected Keywords:</p>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {q.content.expected_keywords.map((keyword, idx) => (
+                                                            <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
+                                                                {keyword}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Audio/Video Correct Answer */}
+                                            {(q.type === "audio" || q.type === "video") && q.content?.expected_answer && (
+                                                <div className="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                                                    <p className="text-xs font-semibold text-green-900 mb-1">Correct Answer:</p>
+                                                    <p className="text-sm text-green-800 whitespace-pre-line">{q.content.expected_answer}</p>
+                                                </div>
+                                            )}
+
+                                            {/* Audio/Video Rubric */}
+                                            {(q.type === "audio" || q.type === "video") && q.content?.rubric && (
+                                                <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                                                    <p className="text-xs font-semibold text-purple-900 mb-1">Evaluation Rubric:</p>
+                                                    <p className="text-sm text-purple-800 whitespace-pre-line">{q.content.rubric}</p>
+                                                </div>
+                                            )}
+
+                                            {/* Coding Prompt/Description */}
+                                            {q.type === "coding" && q.content?.prompt && (
+                                                <div className="mt-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                                                    <p className="text-xs font-semibold text-amber-900 mb-1">Task Description:</p>
+                                                    <p className="text-sm text-amber-800">{q.content.prompt}</p>
+                                                </div>
+                                            )}
+
+                                            {/* Coding Correct Answer */}
+                                            {q.type === "coding" && q.content?.expected_answer && (
+                                                <div className="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                                                    <p className="text-xs font-semibold text-green-900 mb-1">Correct Answer:</p>
+                                                    <p className="text-sm text-green-800 whitespace-pre-line">{q.content.expected_answer}</p>
                                                 </div>
                                             )}
                                         </div>
