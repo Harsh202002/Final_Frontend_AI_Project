@@ -181,13 +181,31 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
         } catch {}
       }
 
+      // Normalize candidateIds into an array (used in payload)
+      let candidateIdsArray = [];
+      if (typeof candidateIds === "string") {
+        candidateIdsArray = candidateIds
+          .split(",")
+          .map(id => id.trim())
+          .filter(Boolean);
+      } else if (Array.isArray(candidateIds)) {
+        candidateIdsArray = candidateIds;
+      }
+
+      // If there are no candidate IDs locally, abort early with an alert
+      if (!Array.isArray(candidateIdsArray) || candidateIdsArray.length === 0) {
+        alert('No candidates found to send. Either none selected or all have already received the exam.');
+        setLocalLoading(false);
+        return;
+      }
+
       const minimalPayload = {
         test_title: formData.test_title || `${formData.role_title || formData.title || formData.role_title || formData.roleTitle || ''} Assessment`,
         test_description: formData.test_description || `Assessment for ${formData.role_title || formData.title || ''} position requiring ${formData.experience || ''} experience`,
         job_id: jobIdFromLocal || formData.job_id || formData.jobId || null,
         role_title: formData.role_title || formData.title || null,
         skills: (formData.skills || (formData.skillLevels ? formData.skillLevels.map(s => s.skill) : [])).join(','),
-        candidate_ids: candidateIds.join(','),
+        candidate_ids: candidateIdsArray,
         company: formData.company || null,
         startDate: formData.startDate,
         startTime: formData.startTime,
@@ -207,22 +225,9 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
 
       console.log("aneesh", formData);
       console.log('Payload sent to finalize API:', JSON.stringify(minimalPayload, null, 2));
-      let candidateIdsArray = [];
-
-          // If candidateIds is a string → convert to array
-          if (typeof candidateIds === "string") {
-            candidateIdsArray = candidateIds
-              .split(",")
-              .map(id => id.trim())
-              .filter(Boolean);
-          }
-
-          // If already array → use as-is
-          if (Array.isArray(candidateIds)) {
-            candidateIdsArray = candidateIds;
-          }
+         
          const token = localStorage.getItem("token");
-         await axios.post(
+         const sendRes = await axios.post(
           `${baseUrl}/candidate/send-email-shortlisted/${jobIdFromLocal}`,
           {
             candidateIds: candidateIdsArray,
@@ -239,9 +244,20 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
           }
         );
 
+        // Prefer server-reported list of successfully emailed candidates
+        const sentCandidateIds = (sendRes?.data?.sentCandidateIds) || (sendRes?.data?.sentIds) || [];
+        console.log('Email send response:', sendRes?.data || {}, 'using sentCandidateIds:', sentCandidateIds);
+
+        if (!Array.isArray(sentCandidateIds) || sentCandidateIds.length === 0) {
+          alert('No candidates were emailed — either all selected candidates already received the exam or sending failed.');
+          setLocalLoading(false);
+          return;
+        }
+
       // Call backend API directly
-      // Finalize test using AssessmentAPI
-      const result = await AssessmentAPI.finalizeTest(minimalPayload);
+      // Finalize test using AssessmentAPI, but replace candidate_ids with sent list
+      const payloadToFinalize = { ...minimalPayload, candidate_ids: sentCandidateIds };
+      const result = await AssessmentAPI.finalizeTest(payloadToFinalize);
       console.log("-------------: ",result.status)
       if (result.status == 'success') {
         // Save to localStorage
