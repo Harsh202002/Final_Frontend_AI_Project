@@ -527,6 +527,9 @@ function JD() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {jd.priority || '-'}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {formatDate(jd.dueDate) || '-'}
+                      </td>
                       <td className="px-6 py-4 text-sm text-gray-900" style={{ minWidth: '250px' }}>
                         <div className="break-words whitespace-normal">
                           {jd.location?.length > 0 ? jd.location.join(", ") : '-'}

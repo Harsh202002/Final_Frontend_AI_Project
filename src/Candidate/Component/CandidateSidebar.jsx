@@ -32,8 +32,8 @@ const CandidateAdminSidebar = ({ isOpen, onToggle }) => {
 
   const handleLogout = () => {
     try {
-      localStorage.removeItem('token');
-      // preserve any other app-level data if needed
+      localStorage.removeItem('candidateToken');
+      localStorage.removeItem('candidate');
     } catch (e) {}
     if (onToggle) onToggle();
     navigate('/');
