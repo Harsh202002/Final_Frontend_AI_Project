@@ -301,7 +301,6 @@ function AdminDashboard() {
               <div key={index} className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5 shadow-sm flex flex-col justify-between">
                 <div className="flex justify-between items-center gap-2">
                   <p className="text-gray-700 text-xs sm:text-sm md:text-base lg:text-2xl leading-tight">{stat.title}</p>
-                  <img src={stat.img} alt="" className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 object-contain flex-shrink-0" />
                 </div>
                 <div className="flex justify-between items-center mt-2">
                   <h2 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold ${stat.text}`}>{stat.value}</h2>
