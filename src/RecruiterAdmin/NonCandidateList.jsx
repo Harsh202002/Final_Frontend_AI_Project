@@ -11,7 +11,7 @@ import {
     Eye,
 } from "lucide-react";
 import Pagination from "../components/LandingPage/Pagination";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import SpinLoader from "../components/SpinLoader"; 
 import { baseUrl } from "../utils/ApiConstants";
@@ -27,6 +27,7 @@ export default function NonCandidateList() {
     const [sendingInvites, setSendingInvites] = useState(false);
     const location = useLocation();
     const { jdId } = location.state || {};
+    const navigate = useNavigate();
     console.log(jdId);
 
     useEffect(() => {
@@ -143,7 +144,18 @@ export default function NonCandidateList() {
 
             if (res.data.success) {
                 alert("Invites sent successfully");
+                // Prepare candidate objects for GenerateAssessment: only those we just invited
+                const invitedCandidateIds = candidateIds;
+                const invitedCandidates = candidates.filter(c => invitedCandidateIds.includes(c._id));
                 setSelectedIds(new Set());
+
+                // Navigate to GenerateAssessment with only invited candidates
+                navigate("/RecruiterAdmin-Dashboard/JDDetails/GenerateAssessment", {
+                    state: {
+                        filteredCandidates: invitedCandidates,
+                        jdData: null
+                    }
+                });
             }
         } catch (error) {
             console.log(error);
