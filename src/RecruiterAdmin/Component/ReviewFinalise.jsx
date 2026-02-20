@@ -199,13 +199,18 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
         return;
       }
 
+      // Ensure candidate_ids is a comma-separated string (backend expects text)
+      const candidateIdsString = (candidateIdsArray && typeof candidateIdsArray.join === 'function')
+        ? candidateIdsArray.join(',')
+        : (typeof candidateIdsArray === 'string' && candidateIdsArray.length ? candidateIdsArray : '');
+
       const minimalPayload = {
         test_title: formData.test_title || `${formData.role_title || formData.title || formData.role_title || formData.roleTitle || ''} Assessment`,
         test_description: formData.test_description || `Assessment for ${formData.role_title || formData.title || ''} position requiring ${formData.experience || ''} experience`,
         job_id: jobIdFromLocal || formData.job_id || formData.jobId || null,
         role_title: formData.role_title || formData.title || null,
         skills: (formData.skills || (formData.skillLevels ? formData.skillLevels.map(s => s.skill) : [])).join(','),
-        candidate_ids: candidateIdsArray,
+        candidate_ids: candidateIdsString,
         company: formData.company || null,
         startDate: formData.startDate,
         startTime: formData.startTime,
@@ -256,7 +261,15 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
 
       // Call backend API directly
       // Finalize test using AssessmentAPI, but replace candidate_ids with sent list
-      const payloadToFinalize = { ...minimalPayload, candidate_ids: sentCandidateIds };
+      // Ensure candidate_ids is always a comma-separated string (backend expects text)
+      const sentIdsString = (sentCandidateIds && typeof sentCandidateIds.join === 'function')
+        ? sentCandidateIds.join(',')
+        : (typeof sentCandidateIds === 'string' && sentCandidateIds.length ? sentCandidateIds : minimalPayload.candidate_ids);
+
+      const payloadToFinalize = {
+        ...minimalPayload,
+        candidate_ids: sentIdsString
+      };
       const result = await AssessmentAPI.finalizeTest(payloadToFinalize);
       console.log("-------------: ",result.status)
       if (result.status == 'success') {

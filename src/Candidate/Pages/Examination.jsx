@@ -99,9 +99,12 @@ export default function Examination() {
               return true;
             });
 
-            setJobs(availableTests.map(test => {
-              const rawStart = test.exam_date ? test.exam_date.replace(regex, '') : test.startDate || '';
-              const rawEnd = test.end_date ? test.end_date.replace(regex, '') : test.endDate || '';
+            // build today's start (local) for date-only expiry comparison
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+
+            const processed = availableTests.map(test => {
+              const rawStart = test.exam_date || test.startDate || '';
+              const rawEnd = test.end_date || test.endDate || '';
               let startDT = parseDateTime(rawStart, test.test_start || test.startTime);
               let endDT = parseDateTime(rawEnd, test.test_end || test.endTime);
 
@@ -131,35 +134,48 @@ export default function Examination() {
               if (!startDT) startDT = tryDateOnlyAsStartOfDay(rawStart) || null;
               if (!endDT) endDT = tryDateOnlyAsEndOfDay(rawEnd) || null;
 
-              // Debug logging to help verify parsing (can be removed later)
-              // console.debug('Exam parse', { rawStart, rawEnd, startDT, endDT });
-
               const isActiveFlag = typeof test.isActive === 'boolean' ? test.isActive : true;
-              // isAvailable = within scheduled window (if provided) and active
-              const isWithinWindow = (startDT ? now >= startDT : true) && (endDT ? now <= endDT : true);
-              const isAvailable = isActiveFlag && isWithinWindow;
+              // isAvailable (for display) = not past end date
+              const isAvailable = isActiveFlag && (endDT ? now <= endDT : true);
+              // canGiveTest = start <= now <= end (for enabling Give Test button)
+              const canGiveTest = isActiveFlag && (startDT ? now >= startDT : true) && (endDT ? now <= endDT : true);
+
+              // Human-readable display
+              const dateOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+              const timeOptions = { hour: '2-digit', minute: '2-digit' };
+              const displayStartDate = startDT ? startDT.toLocaleDateString(undefined, dateOptions) : (rawStart || 'Today');
+              const displayStartTime = startDT ? startDT.toLocaleTimeString(undefined, timeOptions) : (test.test_start || test.startTime || '10:00 AM');
+              const displayEndDate = endDT ? endDT.toLocaleDateString(undefined, dateOptions) : (rawEnd || '—');
+              const displayEndTime = endDT ? endDT.toLocaleTimeString(undefined, timeOptions) : (test.test_end || test.endTime || '—');
+
+              // consider expired if endDT exists and is strictly before today start
+              const isExpiredByDateOnly = endDT ? (endDT < todayStart) : false;
 
               return {
                 title: test.title || "Assessment",
                 company: test.company,
-                // include job id from the API response so downstream pages can access it
                 jobId: test.jobId || test.job_id || test._id || test.id || null,
                 location: test.location || "API Response Check",
                 workType: test.workType || "API Response Check",
                 skills: Array.isArray(test.skills) ? test.skills : [],
                 description: test.description || "This is an assessment for your role.",
-                startDate: rawStart || "Today",
-                startTime: test.test_start || test.startTime || "10:00 AM",
-                endDate: rawEnd || "—",
-                endTime: test.test_end || test.endTime || "—",
+                startDate: displayStartDate,
+                startTime: displayStartTime,
+                endDate: displayEndDate,
+                endTime: displayEndTime,
                 isActive: isActiveFlag,
                 isAvailable,
+                canGiveTest,
+                isExpiredByDateOnly,
                 questionSetId: test.questionSetId || test.question_set_id || "assessment",
                 questions: Array.isArray(test.questions) ? test.questions : [],
                 aiScore: test.aiScore !== null && test.aiScore !== undefined ? test.aiScore : null,
                 aiExplanation: test.aiExplanation !== null && test.aiExplanation !== undefined ? test.aiExplanation : null
               };
-            }));
+            });
+
+            // Only include tests that are available and not expired by date
+            setJobs(processed.filter(j => j.isAvailable && !j.isExpiredByDateOnly).map(({isExpiredByDateOnly, ...rest}) => rest));
             return;
           }
         }
@@ -286,7 +302,7 @@ export default function Examination() {
             <hr />
 
             <div className="flex justify-end">
-              {job.isActive && job.isAvailable ? (
+              {job.isActive && job.canGiveTest ? (
                 <button
                   onClick={() => handleGiveTest(job)}
                   className={`mt-2 w-[100px] py-2 rounded-2xl font-medium text-sm sm:text-base transition-all duration-300 bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg`}
