@@ -251,9 +251,11 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
 
         // Prefer server-reported list of successfully emailed candidates
         const sentCandidateIds = (sendRes?.data?.sentCandidateIds) || (sendRes?.data?.sentIds) || [];
-        console.log('Email send response:', sendRes?.data || {}, 'using sentCandidateIds:', sentCandidateIds);
+        const sentCount = sendRes?.data?.sentCount || 0;
+        console.log('Email send response:', sendRes?.data || {}, 'using sentCandidateIds:', sentCandidateIds, 'sentCount:', sentCount);
 
-        if (!Array.isArray(sentCandidateIds) || sentCandidateIds.length === 0) {
+        // Check if any emails were actually sent (either by sentCandidateIds or sentCount)
+        if (sentCandidateIds.length === 0 && sentCount === 0) {
           alert('No candidates were emailed — either all selected candidates already received the exam or sending failed.');
           setLocalLoading(false);
           return;
@@ -581,9 +583,7 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
                                 key={idx} 
                                 className={`flex items-center gap-2 p-2 rounded text-sm ${isCorrect ? 'bg-green-50 border border-green-300' : 'bg-gray-50'}`}
                               >
-                                <span className={`font-medium ${isCorrect ? 'text-green-700' : 'text-gray-600'}`}>
-                                  {String.fromCharCode(65 + idx)}.
-                                </span>
+                                
                                 <span className={isCorrect ? 'text-green-800 font-semibold' : 'text-gray-700'}>
                                   {optionText}
                                   {isCorrect && <span className="ml-2">✅</span>}

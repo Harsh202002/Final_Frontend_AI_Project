@@ -679,7 +679,7 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                                                                     className="w-4 h-4 text-blue-600 mt-0.5 sm:mt-0 shrink-0"
                                                                 />
                                                                 <label className={`text-xs sm:text-sm break-words ${isCorrect ? 'text-green-800 font-semibold' : 'text-gray-700'}`}>
-                                                                    {String.fromCharCode(65 + idx)}. {optionText}
+                                                                     {optionText}
                                                                     {isCorrect && <span className="ml-2">✅</span>}
                                                                 </label>
                                                             </div>
