@@ -13,6 +13,13 @@ import NotificationPage from './components/NotificationBell.jsx';
 import CompaniesRegister from './SuperAdmin/CompaniesRegister';
 import SuperAdminProfile from './SuperAdmin/SuperAdminProfile';
 import SuperAdminLayout from './SuperAdmin/SuperAdminLayout';
+import MainLayout from './layouts/MainLayout';
+import Home from './views/Home/Home';
+import Features from './views/Features/Features';
+import Howworks from './views/How It Works/Howworks';
+import Industries from './views/Industries/Industries';
+import About from './views/About/About';
+import Contact from './views/Contact/Contact';
 import Companies from './SuperAdmin/Companies';
 import CompanyDetail from './SuperAdmin/CompanieDetail';
 import Tickets from './SuperAdmin/Tickets';
@@ -75,6 +82,7 @@ import RecruiterProfile from './RecruiterAdmin/RecruiterProfile';
 import LoadingScreen from '../src/components/MainLoader.jsx';
 import JDDetail from './components/JDDetail.jsx';
 import ApplyToJob from './Candidate/Pages/ApplyToJob.jsx';
+import ScrollToTop from './components/ScrollToTop.jsx';
 
 const App = () => {
 
@@ -87,11 +95,23 @@ const App = () => {
 
     <CompanyProvider>
       <Router>
+        <ScrollToTop />
         <Routes>
           {/* Notification Page for all roles */}
           <Route path="/notifications" element={<NotificationPage userId={localStorage.getItem('userId') || localStorage.getItem('adminId') || localStorage.getItem('candidateId') || localStorage.getItem('superAdminId')} />} />
 
-          <Route path="/" element={<LandingPage />} />
+          {/* <Route path="/" element={<LandingPage />} /> */}
+          
+          {/* Main Layout with nested routes for public pages */}
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="features" element={<Features />} />
+            <Route path="how-it-works" element={<Howworks />} />
+            <Route path="industries" element={<Industries />} />
+            <Route path="about" element={<About />} />
+            <Route path="contact" element={<Contact />} />
+          </Route>
+
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
           <Route path="/CandidateForgotPassword" element={<CandidateForgotPassword />} />
           <Route path="/SuperAdminLogin" element={<SuperAdminLogin />} />
