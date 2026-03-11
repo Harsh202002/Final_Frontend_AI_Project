@@ -487,7 +487,7 @@ function JDDetails() {
                     : "bg-[#5B4BFF] hover:bg-[#4A3CF0]"}`}
               >
                 <Filter size={16} className={isFiltering ? "animate-spin" : ""} />
-                {isFiltering ? "Filtering..." : "Not filtering"}
+                {isFiltering ? "Filtering..." : "Filter"}
               </button>
             </div>
           </div>

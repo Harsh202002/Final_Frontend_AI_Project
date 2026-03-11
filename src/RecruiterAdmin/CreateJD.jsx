@@ -104,7 +104,7 @@ function CreateJD() {
 
             if (response.data.success) {
                 setGeneratedJD(response.data.jd);
-                const generatedUrl = `http://103.192.198.240/JDDetail/${response.data.jd._id}`;
+                const generatedUrl = `https://recruterai.netfotech.in/JDDetail/${response.data.jd._id}`;
                 setJdUrl(generatedUrl);
                 setShowSuccessPopup(true);
             }
@@ -536,10 +536,10 @@ function CreateJD() {
                                         className="w-full h-11 px-4 pr-10 border border-gray-200 rounded-xl
                                             outline-none text-sm bg-gray-50 cursor-not-allowed"
                                     />
-                                    <ChevronDown
+                                    {/* <ChevronDown
                                         size={18}
                                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                                    />
+                                    /> */}
                                 </div>
                             </div>
 
@@ -933,7 +933,7 @@ function CreateJD() {
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4">
+                                    {/* <div className="space-y-4">
                                         <div className="rounded-2xl border border-gray-200 bg-white py-5 px-3">
                                             <div className="flex items-center gap-2 mb-4">
                                                 <div className="w-8 h-8 rounded-lg flex items-center justify-center">
@@ -1002,7 +1002,7 @@ function CreateJD() {
                                                 {formData.additionalNotes || '—'}
                                             </p>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             )}
                         </div>

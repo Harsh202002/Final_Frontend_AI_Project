@@ -3,6 +3,15 @@ import ViewInsightDetail from "./ViewInsightDetail";
 import { Calendar } from "lucide-react";
 
 function ReportModal({ selectedCandidate, setOpenModal, setSelectedCandidate }) {
+
+        // Calculate percentage for pass/fail note
+        const getPercentage = () => {
+            let marks = selectedCandidate.marks || '0/0';
+            let [obtained, total] = marks.split('/').map(Number);
+            if (!total || isNaN(obtained) || isNaN(total) || total === 0) return 0;
+            return (obtained / total) * 100;
+        };
+        const hasPassed = getPercentage() > 40;
     const [showInsight, setShowInsight] = useState(false);
 
     if (!selectedCandidate) return null;
@@ -58,6 +67,18 @@ function ReportModal({ selectedCandidate, setOpenModal, setSelectedCandidate }) 
                 </button>
 
                 <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100">
+                    {hasPassed && (
+                        <div className="mb-6 flex items-center gap-3 p-4 rounded-xl border border-green-200 bg-green-50 shadow-sm animate-fade-in">
+                            <svg className="w-7 h-7 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="#d1fae5" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12l2 2l4-4" stroke="#22c55e" />
+                            </svg>
+                            <div>
+                                <p className="text-green-700 font-semibold text-lg">Congratulations! You have passed this round.</p>
+                                <p className="text-green-600 text-sm">Our HR team will connect with you for further rounds. Please keep an eye on your email for updates.</p>
+                            </div>
+                        </div>
+                    )}
                     <div className="flex items-start justify-between mb-8 pb-6 border-b border-gray-100">
                         <div className="flex gap-4">
                             <div className="w-14 h-14 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xl uppercase">

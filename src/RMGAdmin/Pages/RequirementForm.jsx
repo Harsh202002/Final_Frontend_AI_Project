@@ -100,7 +100,7 @@ function RequirementForm() {
     country: '',
     employmentType: '',
     salary: '',
-    currency: '',
+    currency: 'INR',
     attachments: null
   });
 
@@ -283,9 +283,9 @@ function RequirementForm() {
                     required
                     className="h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 pr-10 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
                   />
-                  <svg className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  {/* <svg className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08z" clipRule="evenodd" />
-                  </svg>
+                  </svg> */}
                 </div>
               </div>
 
@@ -606,27 +606,15 @@ function RequirementForm() {
 
               <div className="flex w-full">
                 <div className="relative w-[110px]">
-                  <select
-                    name="currency"
-                    value={formData.currency}
-                    onChange={handleChange}
-                    required
-                    className="h-11 w-full appearance-none rounded-l-xl border border-[#E5E7EB] bg-white pl-10 pr-8 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="">—</option>
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                    <option value="GBP">GBP</option>
-                    <option value="INR">INR</option>
-                  </select>
-
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 inline-flex h-6 w-6 items-center justify-center rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 text-xs font-semibold">
-                    {currencySymbol}
-                  </span>
-
-                  <svg className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" viewBox="0 0 20 20" fill="currentColor">
+                  <div className="h-11 w-full rounded-l-xl border border-[#E5E7EB] bg-white pl-10 pr-8 text-sm flex items-center">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 inline-flex h-6 w-6 items-center justify-center rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 text-xs font-semibold">
+                      ₹
+                    </span>
+                    <span className="ml-8">INR</span>
+                  </div>
+                  {/* <svg className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08z" clipRule="evenodd" />
-                  </svg>
+                  </svg> */}
                 </div>
 
                 <input
