@@ -251,12 +251,12 @@ export default function Examination() {
   };
 
   return (
-    <div className="min-h-screen px-4 md:px-8 py-6">
+    <div className="min-h-screen px-4 sm:px-6 py-6">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
         Available Examinations
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(300px,100%),1fr))] gap-5">
         {jobs.map((job, index) => (
           <ExaminationCard
             key={index}

@@ -140,7 +140,7 @@ function AppliedJD() {
     const currentData = filteredCandidates.slice(startIndex, startIndex + itemsPerPage);
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+        <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
             <AppliedJobsHeader 
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}

@@ -163,7 +163,7 @@ const AllJDs = () => {
     const currentCandidates = filteredCandidates.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
-        <div className="min-h-screen bg-gray-50/50 p-4 md:p-8">
+        <div className="min-h-screen bg-gray-50/50 p-4 sm:p-6">
             <AllJDsHeader
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
@@ -184,7 +184,7 @@ const AllJDs = () => {
                         No job descriptions found matching your criteria.
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(min(300px,100%),1fr))] gap-5">
                         {currentCandidates.map((candidate) => (
                             <AllJDsCard
                                 key={candidate.id}

@@ -49,32 +49,32 @@ function AllJDsCard({ candidate, handleApplyClick }) {
 
     return (
         <>
-        <div className="bg-white rounded-[20px] md:rounded-[24px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-5 md:p-6 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all relative flex flex-col justify-between">
-            <div className=" bg-[#FFF0FD] absolute top-1 md:top-4 right-1 text-fuchsia-600 text-[10px] md:text-[11px] font-semibold px-1 md:px-3 py-1 rounded-full uppercase tracking-wider z-10">
+        <div className="bg-white rounded-[20px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-2 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all relative flex flex-col justify-between">
+            <div className="bg-[#FFF0FD] absolute top-0 right-3 text-fuchsia-600 text-[10px] font-semibold px-3 rounded-full uppercase tracking-wider z-10">
                 {candidate.appliedCandidates?.length || 0}+ Applicants
             </div>
 
-            <div className="pr-20 md:pr-24">
+            <div>
                 <div className="flex gap-3 md:gap-4 mb-4">
-                    <div className="w-12 h-12 md:w-14 md:h-14 bg-indigo-50 rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <span className="text-indigo-600 font-bold text-lg md:text-xl">
+                    <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span className="text-indigo-600 font-bold text-lg">
                             {candidate.company.substring(0, 2).toUpperCase()}
                         </span>
                     </div>
-                    <div className="pt-1 min-w-0">
-                        <h2 className="text-lg md:text-xl font-bold text-gray-900 leading-tight mb-1 line-clamp-2">{candidate.title}</h2>
-                        <div className="flex items-center text-gray-500 text-xs md:text-sm gap-1 flex-wrap">
-                            <span className="line-clamp-1">{candidate.company}</span>
+                    <div className="pt-1 min-w-0 ">
+                        <h2 className="text-lg font-bold text-gray-900 leading-tight mb-1 line-clamp-2">{candidate.title}</h2>
+                        <div className="flex items-center text-gray-500 text-xs md:text-sm gap-1 flex-wrap ">
+                            <span className="line-clamp-1 text-xs">{candidate.company}</span>
                           
-                            <span className="flex items-center gap-0.5 capitalize line-clamp-1">
+                            <span className="  text-xs flex items-center gap-0.5 capitalize line-clamp-1">
                                   <span>•</span>
-                                  <MapPin className="w-3 h-3 text-indigo-400" />
+                                  
                                 {firstLoc}
                             </span>
                             {extraLocCount > 0 && !showAllLocations && (
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setShowAllLocations(true); }}
-                                    className="text-indigo-500 font-medium hover:underline"
+                                    className=" text-xs text-indigo-500 font-medium hover:underline"
                                 >
                                     +{extraLocCount}
                                 </button>
@@ -125,7 +125,7 @@ function AllJDsCard({ candidate, handleApplyClick }) {
 
                 <div className="mb-5 md:mb-6">
                     <h3 className="text-[11px] md:text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 md:mb-3">Requirements</h3>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1">
                         {candidate.skillsArray?.slice(0, 3).map((skill, idx) => (
                             <span key={idx} className="px-3 md:px-4 py-1 md:py-1.5 bg-gray-100 text-gray-700 text-[11px] md:text-xs font-medium rounded-full">
                                 {skill.length > 20 ? skill.substring(0,6) + ".." : skill}
@@ -134,7 +134,7 @@ function AllJDsCard({ candidate, handleApplyClick }) {
                         {candidate.skillsArray?.length > 3 && (
                             <button
                                 onClick={() => setShowSkillsPopup(true)}
-                                className="px-2 md:px-4 py-1 md:py-1.5 bg-indigo-50 text-indigo-600 text-[8px] md:text-xs rounded-full hover:bg-indigo-100 transition-colors cursor-pointer border border-indigo-100"
+                                className="px-1  py-1 md:py-1.5 bg-indigo-50 text-indigo-600 text-[4 px] md:text-xs rounded-full hover:bg-indigo-100 transition-colors cursor-pointer border border-indigo-100"
                             >
                                 +{candidate.skillsArray.length - 3} 
                             </button>

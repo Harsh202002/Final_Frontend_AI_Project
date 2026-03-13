@@ -15,34 +15,34 @@ const ViewInsightDetail = ({ candidate }) => {
   return (
     <div className="max-w-4xl mx-auto bg-white min-h-screen shadow-sm font-sans text-slate-800">
       
-      <header className="flex flex-col sm:flex-row sm:items-center p-2 sm:p-5 border-b gap-4 bg-gradient-to-r from-indigo-50 to-purple-50/30">
-        <div className="flex items-center gap-1">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 bg-indigo-100 text-indigo-700 rounded-lg flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
+      <header className="flex flex-col sm:flex-row sm:items-center p-4 sm:p-6 border-b gap-4 sm:gap-6 bg-gradient-to-r from-indigo-50 to-purple-50/30">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center font-bold text-sm sm:text-base shrink-0">
             {candidate?.name?.substring(0, 2)?.toUpperCase() || "NS"}
           </div>
           <div className="min-w-0">
-            <h1 className="font-bold text-base sm:text-lg leading-tight truncate">{candidate?.jobTitle || "Developer"}</h1>
-            <p className="text-gray-500 text-xs sm:text-sm truncate">{candidate?.company || "—"}</p>
+            <h1 className="font-bold text-lg sm:text-xl leading-tight truncate">{candidate?.jobTitle || "Developer"}</h1>
+            <p className="text-gray-500 text-sm sm:text-base truncate">{candidate?.company || "—"}</p>
           </div>
         </div>
-        <div className=" sm:ml-auto flex flex-wrap items-center gap-1 sm:gap-3">
-          <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-white text-xs sm:text-sm font-semibold text-indigo-600 rounded-full border border-indigo-100">
+        <div className="sm:ml-auto flex flex-wrap items-center gap-2 sm:gap-3 mt-2 sm:mt-0">
+          <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-xs sm:text-sm font-semibold text-indigo-600 rounded-full border border-indigo-100 shadow-sm">
             {results.length} Questions
           </span>
-          <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-white text-xs sm:text-sm font-semibold text-green-600 rounded-full border border-green-100">
+          <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-xs sm:text-sm font-semibold text-green-600 rounded-full border border-green-100 shadow-sm">
             {correctCount} Correct
           </span>
-          <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-white text-xs sm:text-sm font-semibold text-red-500 rounded-full border border-red-100">
+          <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-xs sm:text-sm font-semibold text-red-500 rounded-full border border-red-100 shadow-sm">
             {incorrectCount} Wrong
           </span>
-          <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-white text-xs sm:text-sm font-semibold text-gray-500 rounded-full border border-gray-200">
+          <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-xs sm:text-sm font-semibold text-gray-500 rounded-full border border-gray-200 shadow-sm">
             {unattemptedCount} Un-Attempted
           </span>
         </div>
       </header>
 
-      <main className="p-6">
-        <h2 className="text-2xl font-bold mb-6">Questions & Answers</h2>
+      <main className="p-4 sm:p-6 lg:p-8">
+        <h2 className="text-xl sm:text-2xl font-bold mb-6 text-gray-800">Questions & Answers</h2>
 
         {results.length === 0 ? (
           <div className="text-center py-16">
@@ -67,13 +67,15 @@ const ViewInsightDetail = ({ candidate }) => {
 
               return (
                 <div key={idx} className="space-y-4">
-                  <div className="bg-pink-50 p-3 rounded-xl flex items-center gap-2 sm:gap-3 flex-wrap">
-                    <span className="font-semibold px-2 text-sm sm:text-base">Question {idx + 1}</span>
-                    <span className={`px-3 sm:px-4 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium border ${isCorrect ? 'bg-white text-green-600 border-green-100' : 'bg-white text-red-500 border-red-100'}`}>
-                      {isCorrect ? 'Correct' : (!candidateAnswer ? 'Un-Attempted' : 'Incorrect')}
-                    </span>
-                    <div className="ml-auto flex items-center">
-                      <span className="bg-indigo-200 text-indigo-800 px-3 sm:px-5 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-bold uppercase truncate max-w-[120px] sm:max-w-none">
+                  <div className="bg-pink-50 p-3 sm:p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 flex-wrap">
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <span className="font-bold px-3 py-1 bg-white rounded-lg text-sm sm:text-base text-pink-700 shadow-sm">Q {idx + 1}</span>
+                        <span className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold border shadow-sm ${isCorrect ? 'bg-white text-green-600 border-green-100' : 'bg-white text-red-500 border-red-100'}`}>
+                        {isCorrect ? 'Correct' : (!candidateAnswer ? 'Un-Attempted' : 'Incorrect')}
+                        </span>
+                    </div>
+                    <div className="sm:ml-auto flex items-center self-end sm:self-auto w-full sm:w-auto justify-end">
+                      <span className="bg-indigo-200 text-indigo-800 px-4 sm:px-5 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wide truncate max-w-[150px] sm:max-w-none shadow-sm">
                         {sectionName}
                       </span>
                     </div>

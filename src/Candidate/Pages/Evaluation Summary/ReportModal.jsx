@@ -4,7 +4,6 @@ import { Calendar } from "lucide-react";
 
 function ReportModal({ selectedCandidate, setOpenModal, setSelectedCandidate }) {
 
-        // Calculate percentage for pass/fail note
         const getPercentage = () => {
             let marks = selectedCandidate.marks || '0/0';
             let [obtained, total] = marks.split('/').map(Number);
@@ -68,13 +67,13 @@ function ReportModal({ selectedCandidate, setOpenModal, setSelectedCandidate }) 
 
                 <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100">
                     {hasPassed && (
-                        <div className="mb-6 flex items-center gap-3 p-4 rounded-xl border border-green-200 bg-green-50 shadow-sm animate-fade-in">
-                            <svg className="w-7 h-7 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 rounded-xl border border-green-200 bg-green-50 shadow-sm animate-fade-in">
+                            <svg className="w-7 h-7 text-green-500 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                 <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="#d1fae5" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12l2 2l4-4" stroke="#22c55e" />
                             </svg>
                             <div>
-                                <p className="text-green-700 font-semibold text-lg">Congratulations! You have passed this round.</p>
+                                <p className="text-green-700 font-semibold text-lg leading-tight mb-1 sm:mb-0">Congratulations! You have passed this round.</p>
                                 <p className="text-green-600 text-sm">Our HR team will connect with you for further rounds. Please keep an eye on your email for updates.</p>
                             </div>
                         </div>
@@ -91,32 +90,32 @@ function ReportModal({ selectedCandidate, setOpenModal, setSelectedCandidate }) 
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div className="space-y-5">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center">
+                        <div className="space-y-4 sm:space-y-5">
                             {[
                                 { label: "Name", value: selectedCandidate.name },
                                 { label: "Job Title", value: selectedCandidate.jobTitle },
                                 { label: "Email", value: selectedCandidate.email || "—" },
                             ].map((item, idx) => (
-                                <div key={idx} className="flex items-center">
-                                    <span className="w-32 text-gray-900 font-bold text-base">{item.label} :</span>
-                                    <span className="text-gray-500 font-medium">{item.value || "—"}</span>
+                                <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0">
+                                    <span className="w-full sm:w-32 text-gray-900 font-bold text-base">{item.label} :</span>
+                                    <span className="text-gray-500 font-medium break-all sm:break-normal">{item.value || "—"}</span>
                                 </div>
                             ))}
 
-                            <div className="flex items-center">
-                                <span className="w-32 text-gray-900 font-bold text-base">Exam Date :</span>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0">
+                                <span className="w-full sm:w-32 text-gray-900 font-bold text-base">Exam Date :</span>
                                 <div className="flex items-center gap-2">
-                                    <Calendar className="w-4 h-4 text-gray-500" />
+                                    <Calendar className="w-4 h-4 text-gray-500 shrink-0" />
                                     <span className={`font-medium ${examDate !== '—' ? 'text-gray-500' : 'text-gray-400'}`}>
                                         {examDate}
                                     </span>
                                 </div>
                             </div>
 
-                            <div className="flex items-start">
-                                <span className="w-32 text-gray-900 font-bold text-base pt-1">Skills :</span>
-                                 <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-0">
+                                <span className="w-full sm:w-32 text-gray-900 font-bold text-base pt-1">Skills :</span>
+                                 <div className="flex flex-wrap gap-2 flex-1">
                         {(Array.isArray(selectedCandidate.skills) && selectedCandidate.skills.length ? selectedCandidate.skills : ['Wireframing', 'Prototyping', 'User Research']).map((s, i) => (
                           <span key={`${s}-${i}`} className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
                             {s}
@@ -125,8 +124,8 @@ function ReportModal({ selectedCandidate, setOpenModal, setSelectedCandidate }) 
                       </div>
                             </div>
 
-                            <div className="flex items-center">
-                                <span className="w-32 text-gray-900 font-bold text-base">Marks :</span>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0">
+                                <span className="w-full sm:w-32 text-gray-900 font-bold text-base">Marks :</span>
                                 <span className="text-gray-500 font-medium">{selectedCandidate.marks || "—"}</span>
                             </div>
 
@@ -140,8 +139,8 @@ function ReportModal({ selectedCandidate, setOpenModal, setSelectedCandidate }) 
                             </div>
                         </div>
 
-                        <div className="bg-gray-50/50 rounded-3xl p-8 flex items-center justify-between border border-gray-50">
-                            <div className="relative flex items-center justify-center">
+                        <div className="bg-gray-50/50 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-center sm:justify-between border border-gray-50 gap-8 sm:gap-4">
+                            <div className="relative flex items-center justify-center shrink-0">
                                 {(() => {
                                     const marksArray = (selectedCandidate.marks || '0/0').split('/');
                                     const obtained = parseFloat(marksArray[0]) || 0;
@@ -154,17 +153,58 @@ function ReportModal({ selectedCandidate, setOpenModal, setSelectedCandidate }) 
                                     const incorrectPercent = totalQuestions > 0 ? (incorrect / totalQuestions) * 100 : 0;
                                     
                                     return (
-                                        <div 
-                                            className="w-48 h-48 rounded-full flex items-center justify-center"
-                                            style={{
-                                                background: `conic-gradient(
-                                                    #00ff73 0% ${correctPercent}%, 
-                                                    #ff9898 ${correctPercent}% ${correctPercent + incorrectPercent}%, 
-                                                    #ffe08a ${correctPercent + incorrectPercent}% 100%
-                                                )`
-                                            }}
-                                        >
-                                            <div className="w-36 h-36 bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
+                                        <div className="relative w-48 h-48 flex items-center justify-center">
+                                            <svg className="absolute inset-0 w-full h-full transform -rotate-90">
+                                                {(() => {
+                                                    const radius = 84;
+                                                    const strokeWidth = 25;
+                                                    const circumference = 2 * Math.PI * radius;
+                                                    const R = strokeWidth / 8;
+                                                    
+                                                    const unattemptedPercent = Math.max(0, 100 - correctPercent - incorrectPercent);
+                                                    const rawSegments = [
+                                                        { value: correctPercent, color: "#23FF68" },
+                                                        { value: incorrectPercent, color: "#F39E9E" },
+                                                        { value: unattemptedPercent, color: "#FFDE85" }
+                                                    ].filter(s => s.value > 0);
+                                                    
+                                                    const gapPercent = rawSegments.length > 1 ? 0 : 0; 
+                                                    const totalGapPercent = gapPercent * rawSegments.length;
+                                                    const scale = (100 - totalGapPercent) / 100;
+                                                    
+                                                    let currentOffsetPercent = 0;
+                                                    
+                                                    return rawSegments.map((seg, idx) => {
+                                                        const segPercent = seg.value * scale;
+                                                        const dashLength = (segPercent / 100) * circumference;
+                                                        const dashOffset = (currentOffsetPercent / 100) * circumference;
+                                                        
+                                                        currentOffsetPercent += segPercent + gapPercent;
+                                                        
+                                                        const isFullCircle = rawSegments.length === 1;
+                                                        
+                                                        const adjustedLength = Math.max(0.01, dashLength - 2 * R);
+                                                        const adjustedOffset = dashOffset + R;
+                                                        
+                                                        return (
+                                                            <circle
+                                                                key={idx}
+                                                                cx="96"
+                                                                cy="96"
+                                                                r={radius}
+                                                                fill="none"
+                                                                stroke={seg.color}
+                                                                strokeWidth={strokeWidth}
+                                                                strokeLinecap={isFullCircle ? "butt" : "semiround"}
+                                                                strokeDasharray={isFullCircle ? "none" : `${adjustedLength} ${circumference}`}
+                                                                strokeDashoffset={isFullCircle ? 0 : -adjustedOffset}
+                                                                className="transition-all duration-1000 ease-out"
+                                                            />
+                                                        );
+                                                    });
+                                                })()}
+                                            </svg>
+                                            <div className="relative z-10 w-36 h-36 bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
                                                 <div className="flex items-baseline">
                                                     <span className="text-5xl font-black text-indigo-700">
                                                         {obtained.toFixed(0)}
@@ -179,16 +219,16 @@ function ReportModal({ selectedCandidate, setOpenModal, setSelectedCandidate }) 
                                 })()}
                             </div>
 
-                            <div className="space-y-6">
+                            <div className="space-y-4 sm:space-y-6 flex flex-col items-center sm:items-end w-full sm:w-auto">
                                 {[
-                                    { color: "bg-[#00ff73]", label: "Correct", sub: "Answers" },
-                                    { color: "bg-[#ff9898]", label: "Wrong", sub: "Answers" },
-                                    { color: "bg-[#ffe08a]", label: "Un-Attempted", sub: "Questions" },
+                                    { color: "bg-[#23FF68]", label: "Correct", sub: "Answers" },
+                                    { color: "bg-[#F39E9E]", label: "Wrong", sub: "Answers" },
+                                    { color: "bg-[#FFDE85]", label: "Un-Attempted", sub: "Questions" },
                                 ].map((legend, i) => (
-                                    <div key={i} className="text-right">
-                                        <div className={`w-12 h-3.5 ${legend.color} rounded-full ml-auto mb-1`}></div>
+                                    <div key={i} className="text-center sm:text-right flex flex-col items-center sm:items-end">
+                                        <div className={`w-12 h-3.5 ${legend.color} rounded-full mb-1 sm:mb-2`}></div>
                                         <p className="text-[11px] font-bold text-gray-500 leading-tight uppercase tracking-wider">
-                                            {legend.label}<br/>{legend.sub}
+                                            {legend.label}<br className="hidden sm:block"/>{legend.sub}
                                         </p>
                                     </div>
                                 ))}

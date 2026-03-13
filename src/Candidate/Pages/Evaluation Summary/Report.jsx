@@ -23,7 +23,6 @@ function Report() {
   const itemsPerPage = 5;
   const CAND_API_BASE = baseUrl;
 
-  // Close filter dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
@@ -53,11 +52,10 @@ function Report() {
     }
   };
 
-  // Fetch attempts from backend and map to UI shape
   const loadAttempts = async () => {
     setError(null);
     setLoading(true);
-    // determine if a candidate is logged in and get their canonical id (cid)
+    
     const candidateRaw = sessionStorage.getItem('candidateData') || localStorage.getItem('candidateData') || localStorage.getItem('candidate');
     let loggedCid = null;
     if (candidateRaw) {
@@ -79,17 +77,17 @@ function Report() {
       console.log("DATA:",data)
       let mapped = (data.attempts || []).map(a => ({
           id: a.id || a.candidate_id || '—',
-          // store candidate id so we can lookup canonical name from backend
+          
           candidateId: a.candidate_id || a.details?.candidate_id || null,
-          // preserve cid from attempt row for public lookup
+         
           cid: a.cid ?? a.details?.cid ?? null,
-          // will be replaced by server lookup below when possible
+         
           name: 'Candidate',
           email: '',
           company: a.details?.company || '-',
           jobTitle: a.details?.role_title || '-',
           totalQuestion: Array.isArray(a.results_data) ? a.results_data.length : '-',
-          // compute marks from results_data.score when available
+         
           marks: (Array.isArray(a.results_data) && a.results_data.length) ? (() => {
             try {
               let obtained = 0;
@@ -104,14 +102,14 @@ function Report() {
                 if (scoreVal !== null) {
                   obtained += scoreVal;
                 } else if (posMark !== null) {
-                  // derive from raw_score/is_correct when score absent
+                  
                   if (q.is_correct) {
                     obtained += posMark;
                   } else if (negMark !== null) {
                     obtained -= Math.abs(negMark);
                   }
                 } else if (q.raw_score !== undefined && q.raw_score !== null) {
-                  // best-effort: assume raw_score in [0,1]
+                 
                   const raw = Number(q.raw_score) || 0;
                   obtained += raw;
                 }
@@ -129,7 +127,7 @@ function Report() {
           incorrect: '-',
           raw: a,
         }));
-      // If a candidate is logged in, restrict visible attempts to that candidate's cid only
+      
       if (restrictToLoggedCandidate) {
         const before = mapped.length;
         mapped = mapped.filter(m => {
@@ -298,7 +296,7 @@ function Report() {
         uniqueJobTitles={uniqueJobTitles}
       />
 
-      <div className="  justify-between items-stretch gap-6 mb-8">
+      <div className="flex flex-col gap-4 mb-8">
         <ReportTable
           currentData={currentData}
           startIndex={startIndex}

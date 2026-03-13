@@ -14,16 +14,16 @@ function AppliedJobsTable({
     return (
         <div className="bg-[#F9F8FF] rounded-2xl border border-purple-100 overflow-hidden shadow-sm">
             <div className="overflow-x-auto min-w-full">
-                <table className="w-full text-left border-collapse">
+                <table className="w-full min-w-[750px] text-left border-collapse">
                     <thead>
                         <tr className="text-gray-600 text-sm font-semibold">
-                            <th className="px-6 py-5">Serial No.</th>
-                            <th className="px-4 py-5">Job Title <span className="text-[10px]">↕</span></th>
-                            <th className="px-4 py-5">Company <span className="text-[10px]">↕</span></th>
-                            <th className="px-4 py-5">Location</th>
-                            <th className="px-4 py-5">Applied on</th>
-                            <th className="px-4 py-5">Skills</th>
-                            <th className="px-6 py-5 text-right">Status <span className="text-[10px]">↕</span></th>
+                            <th className="px-4 py-4 whitespace-nowrap">Serial No.</th>
+                            <th className="px-4 py-4 whitespace-nowrap">Job Title <span className="text-[10px]">↕</span></th>
+                            <th className="px-4 py-4 whitespace-nowrap">Company <span className="text-[10px]">↕</span></th>
+                            <th className="px-4 py-4">Location</th>
+                            <th className="px-4 py-4 whitespace-nowrap">Applied on</th>
+                            <th className="px-4 py-4">Skills</th>
+                            <th className="px-4 py-4 text-right whitespace-nowrap">Status <span className="text-[10px]">↕</span></th>
                         </tr>
                     </thead>
 
@@ -43,21 +43,21 @@ function AppliedJobsTable({
 
                                 return (
                                     <tr key={job._id || index} className="border-t border-gray-50 hover:bg-gray-50/80 transition-colors duration-200">
-                                        <td className="px-8 py-4 text-gray-700 text-sm">
+                                        <td className="px-4 py-3 text-gray-700 text-sm whitespace-nowrap">
                                             {rowIndex + 1}
                                         </td>
-                                        <td className="px-2 py-2">
+                                        <td className="px-4 py-3">
                                             <span className="text-gray-700 text-sm font-medium">
                                                 {job.jobTitle || job?.offerId?.jobTitle || '—'}
                                             </span>
                                         </td>
-                                        <td className="px-2 py-2">
+                                        <td className="px-4 py-3">
                                             <div className="flex items-center gap-1">
                                                 <Building2 className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
                                                 <span className="text-gray-600 text-sm">{job.companyName || '—'}</span>
                                             </div>
                                         </td>
-                                        <td className="px-2 py-2">
+                                        <td className="px-4 py-3">
                                             <div className="flex items-center gap-1 flex-wrap">
                                                 <span className="flex items-center gap-1 px-3 py-1 bg-[#F6F6FF] text-[#654CB7] rounded-full text-xs border border-purple-100">
                                                     <MapPin className="w-3 h-3" />
@@ -87,7 +87,7 @@ function AppliedJobsTable({
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-4 py-4">
+                                        <td className="px-4 py-3 whitespace-nowrap">
                                             <div className="flex items-center gap-1">
                                                 <Calendar className="w-3.5 h-3.5 text-[#654CB7] flex-shrink-0" />
                                                 <span className="text-[#654CB7] font-medium text-sm">
@@ -95,7 +95,7 @@ function AppliedJobsTable({
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-4">
+                                        <td className="px-4 py-3">
                                             <div className="flex gap-0.2 flex-wrap">
                                                 {job.requirements?.slice(0, 3).map((skill, idx) => (
                                                     <span key={idx} className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs uppercase">
@@ -115,7 +115,7 @@ function AppliedJobsTable({
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-4 py-3 text-right whitespace-nowrap">
                                             <span className={`px-4 py-1.5 rounded-full text-xs font-semibold capitalize border border-purple-100 ${getStatusBadgeClass(status)}`}>
                                                 {status === 'link_sent' ? 'Invited' : status}
                                             </span>
