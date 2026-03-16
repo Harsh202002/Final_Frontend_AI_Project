@@ -28,18 +28,25 @@ export default function ContactForm() {
     setSubmitStatus({ type: '', message: '' });
 
     try {
-      const response = await axios.post(`${superAdminBaseUrl}/enquiry/submit`, {
-        companyName: formData.companyName || `${formData.firstName} ${formData.lastName}`,
+// construct payload matching backend schema
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        companyName: formData.companyName,
         emailid: formData.email,
         phone: formData.phoneNumber,
-        message: `Type: ${activeTab} | Size: ${formData.companySize} | Msg: ${formData.message}`
-      });
+        companySize: formData.companySize,
+        enquiryType: activeTab, 
+        message: formData.message
+      };
+      console.debug('Submitting enquiry payload', payload);
+      const response = await axios.post(`${superAdminBaseUrl}/enquiry/submit`, payload);
 
       if (response.data.status === 'success') {
         setSubmitStatus({ type: 'success', message: 'Request sent successfully!' });
-        setFormData({ 
-          firstName: '', lastName: '', email: '', phoneNumber: '', 
-          companyName: '', companySize: '', message: '' 
+        setFormData({
+          firstName: '', lastName: '', email: '', phoneNumber: '',
+          companyName: '', companySize: '', message: ''
         });
       }
     } catch (error) {
@@ -100,16 +107,14 @@ export default function ContactForm() {
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="lastName" className="text-xs md:text-sm font-semibold text-gray-700">Last Name *</label>
+            <label htmlFor="lastName" className="text-xs md:text-sm font-semibold text-gray-700">Last Name</label>
             <input 
               id="lastName"
               name="lastName" 
               type="text"
-              required 
               value={formData.lastName} 
               onChange={handleChange} 
               placeholder="Doe" 
-              aria-required="true"
               className="w-full bg-gray-50 border-none rounded-xl px-4 py-2.5 md:py-3 focus:ring-2 focus:ring-indigo-500 transition-all text-sm md:text-base" 
             />
           </div>
@@ -129,11 +134,12 @@ export default function ContactForm() {
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="phoneNumber" className="text-xs md:text-sm font-semibold text-gray-700">Phone Number</label>
+            <label htmlFor="phoneNumber" className="text-xs md:text-sm font-semibold text-gray-700">Phone Number *</label>
             <input 
               id="phoneNumber"
               name="phoneNumber" 
               type="tel"
+              required
               value={formData.phoneNumber} 
               onChange={handleChange} 
               placeholder="+1 (555) 000-0000" 
