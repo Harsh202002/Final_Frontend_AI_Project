@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import img from "../img/login.png";
+import img from "../img/sublogin.png";
 import logo from "../img/loginlogo.png";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
@@ -99,7 +99,7 @@ export default function UniversalLogin() {
 
     return (
         <div className="min-h-screen">
-            <div className="mx-auto flex min-h-screen max-w-[1100px] items-stretch gap-6 p-6">
+            <div className="mx-auto flex min-h-screen max-w-[1200px] items-stretch  p-6">
                 <div className="flex w-full flex-col rounded-md bg-white px-10 pb-8 md:w-1/2">
                     <div className="flex items-center gap-2">
                         <div className="flex h-8 w-8 items-center justify-center">
@@ -128,7 +128,7 @@ export default function UniversalLogin() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="Enter your email"
-                                    className="h-11 w-full rounded-lg border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-200"
+                                    className=" h-11 w-full rounded-lg border border-gray-200  px-4 text-sm text-gray-900 outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-200"
                                     required
                                 />
                             </div>
@@ -185,7 +185,7 @@ export default function UniversalLogin() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="h-11 w-full rounded-lg bg-gradient-to-r from-[#8f2ad1] to-[#4b135d] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:opacity-60 disabled:cursor-not-allowed"
+                                className="h-11 w-full rounded-lg bg-gradient-to-r from-[#322071] to-[#1B1138] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                                 {loading ? (
                                     <span className="flex items-center justify-center gap-2">
@@ -225,7 +225,7 @@ export default function UniversalLogin() {
                             <img
                                 src={img}
                                 alt="Dashboard preview"
-                                className="h-full w-full object-contain drop-shadow-[0_18px_40px_rgba(0,0,0,0.35)]"
+                                className="h-170 w-full object-contain"
                             />
                         </div>
                     </div>
