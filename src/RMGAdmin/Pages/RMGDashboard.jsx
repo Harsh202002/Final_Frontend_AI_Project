@@ -1,4 +1,4 @@
-import heroImage from "../../img/RMG-banner.png";
+import heroImage from "../../assets/Frame.png";
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     BarChart, Bar
@@ -309,76 +309,209 @@ function RMGDashboard() {
     };
 
     return (
-        <div className="min-h-screen text-slate-800 space-y-6">
-            <div className="grid gap-4 sm:gap-6 lg:grid-cols-4">
-                <div className="relative h-48 sm:h-56 lg:h-full w-full overflow-hidden rounded-xl sm:rounded-2xl lg:col-span-2">
+        <div className="min-h-screen text-black space-y-6">
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-5">
+
+                {/* Banner */}
+                <div className="relative h-40 sm:h-48 lg:h-60 w-full overflow-hidden rounded-xl sm:rounded-2xl lg:col-span-3">
                     <img src={heroImage} alt="Dashboard Banner" className="h-full w-full object-cover" />
-                    <div className="absolute inset-0 flex flex-col items-end p-4 sm:p-6 md:p-8">
-                        <p className="mb-1 text-[10px] sm:text-xl text-white/90">{formatDate(now)}</p>
-                        <h1 className="text-right text-xl font-bold text-white sm:text-4xl lg:text-5xl">
+                    <div className="absolute inset-0 flex flex-col p-4 sm:p-6 md:p-8">
+                        <p className="mb-1 text-[10px] sm:text-xl text-black">{formatDate(now)}</p>
+                        <h1 className=" text-xl font-bold text-black sm:text-4xl lg:text-5xl">
                             {getGreeting()}, {user?.name}!
                         </h1>
-                        <p className="mt-1 max-w-[200px] text-right text-[10px] text-white/90 sm:max-w-xs sm:text-sm">
+                        <p className="mt-1 max-w-[200px] text-[10px] text-black sm:max-w-xs sm:text-sm">
                             Run the show effortlessly with smarter controls and happy workflows
                         </p>
+
+                        <button className=" m-2 px-2 w-52 py-2 bg-[#59459F] rounded-sm"> See All Job Requisitions</button>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 min-[480px]:grid-cols-2 gap-2 sm:gap-3 md:gap-4 lg:col-span-2">
-                    {stats.map((stat, index) => (
-                        <div key={index} className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5 shadow-sm flex flex-col justify-between">
-                            <div className="flex justify-between items-center gap-2">
-                                <p className="text-gray-700 text-xs sm:text-sm md:text-base lg:text-xl leading-tight">{stat.title}</p>
-                                <img src={stat.img} alt="" className="h-8 w-8 sm:h-8 sm:w-8 md:h-10 md:w-10 object-contain flex-shrink-0" />
-                            </div>
-                            <div className="flex justify-between items-center mt-2">
-                                <h2 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold ${stat.text}`}>{stat.value}</h2>
-                                <img src={stat.line} alt="" className="sm:h-6 md:h-6 lg:h-8 w-auto object-contain flex-shrink-0" />
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-bold text-gray-800">JD Priority</h3>
+                {/* JD */}
+                <div className="lg:col-span-2 bg-white rounded-xl sm:rounded-2xl p-2 sm:p-2 shadow-sm border border-gray-100 h-full flex flex-col">
+                    <div className="flex flex-row justify-between items-center mb-8">
+                        <h3 className="text-xl font-bold text-gray-900">JD Priority</h3>
                         <MonthDropdown value={priorityMonthFilter} onChange={setPriorityMonthFilter} />
                     </div>
 
-                    <div className="overflow-x-auto">
-                        <div className="h-64 flex gap-4 min-w-[280px]">
-                            <div className="flex flex-col justify-between text-xs text-gray-400 py-2">
-                                <span>100</span>
-                                <span>75</span>
-                                <span>50</span>
-                                <span>25</span>
-                                <span>0</span>
-                            </div>
+                    <div className="flex-1 flex gap-4 h-64">
+                        {/* Y-Axis Labels */}
+                        <div className="flex flex-col justify-between text-gray-400 text-xs sm:text-sm pb-8 pt-2">
+                            <span>100</span>
+                            <span>80</span>
+                            <span>60</span>
+                            <span>40</span>
+                            <span>20</span>
+                            <span>0</span>
+                        </div>
 
-                            <div className="flex-1 flex items-end justify-around gap-4 border-l border-b border-gray-200 pl-2">
-                                {priorityData.map((item, index) => {
-                                    const height = (item.count / 100) * 100;
-                                    return (
-                                        <div key={index} className="flex-1 flex flex-col items-center gap-3 h-full group">
-                                            <div className="w-full flex-1 flex items-end justify-center relative">
-                                                <div className="absolute -top-6 text-xs font-semibold text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    {item.count}
-                                                </div>
+                        {/* Bars Container */}
+                        <div className="flex-1 flex items-end justify-around gap-2 sm:gap-6 px-2">
+                            {priorityData.map((item, index) => {
+                                const maxCount = Math.max(...priorityData.map((d) => d.count), 1);
+                                const heightPercentage = maxCount > 0 ? (item.count / maxCount) * 100 : 0;
+
+                                // Color mapping based on design gradients
+                                const gradients = {
+                                    low: "bg-gradient-to-t from-[#B6A1FF] to-[#9D85FF]",
+                                    medium: "bg-gradient-to-t from-[#A6D9FF] to-[#7DB9FF]",
+                                    high: "bg-gradient-to-t from-[#FF9ECB] to-[#FF7EB3]",
+                                    critical: "bg-gradient-to-t from-[#FFE1A8] to-[#FFAC6B]",
+                                };
+
+                                const level = item.priority_level.toLowerCase();
+
+                                return (
+                                    <div key={index} className="flex-1 flex flex-col items-center gap-4 h-full">
+                                        <div className="w-full flex-1 flex items-end justify-center group pt-6">
+                                            <div className="relative w-full h-full flex items-end justify-center" style={{ maxWidth: "50px" }}>
+                                                {/* Background Striped Bar (The 'Track') */}
                                                 <div
-                                                    className={`w-12 rounded-xl transition-all duration-500 ${item.color}`}
-                                                    style={{ height: `${Math.max(height, 2)}%` }}
-                                                ></div>
+                                                    className="absolute inset-0 w-full h-full rounded-2xl opacity-[0.05]"
+                                                    style={{
+                                                        backgroundColor: '#000',
+                                                        backgroundImage: 'linear-gradient(45deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%, transparent)',
+                                                        backgroundSize: '10px 10px',
+                                                    }}
+                                                />
+
+                                                {/* Actual Progress Bar */}
+                                                <div
+                                                    className={`w-full ${gradients[level] || gradients.low} rounded-2xl transition-all duration-500 relative z-10`}
+                                                    style={{
+                                                        height: `${heightPercentage}%`,
+                                                    }}
+                                                >
+                                                    {/* Hover Tooltip */}
+                                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] px-2 py-1 rounded opacity-0 flex group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
+                                                        {item.count} Jobs
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <span className="text-xs text-gray-500 font-medium text-center leading-tight capitalize">{item.priority_level}</span>
                                         </div>
-                                    );
-                                })}
-                            </div>
+
+                                        {/* Label */}
+                                        <span className="text-xs sm:text-sm text-gray-500 font-medium h-6 text-center capitalize">
+                                            {item.priority_level}
+                                        </span>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
+
+
+            </div>
+
+
+            {/* //middle banners */}
+            <div className="grid grid-cols-1 min-[480px]:grid-cols-4 gap-4 lg:col-span-2">
+                {stats.map((stat, index) => (
+                    <div
+                        key={index}
+                        className="bg-white rounded-[1rem] p-5 md:p-6 shadow-sm border border-gray-50 flex flex-col justify-between min-h-[140px] transition-all hover:shadow-md"
+                    >
+                        {/* Top Row: Title */}
+                        <div className="flex justify-between items-start">
+                            <p className="text-gray-500 text-sm md:text-base lg:text-lg font-medium leading-tight">
+                                {stat.title}
+                            </p>
+                            {stat.img && (
+                                <img src={stat.img} alt="" className="h-8 w-8 object-contain flex-shrink-0" />
+                            )}
+                        </div>
+
+                        {/* Bottom Row: Value and Trend Line */}
+                        <div className="flex justify-between items-end mt-4">
+                            <h2 className={`text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight ${stat.text}`}>
+                                {stat.value}
+                            </h2>
+
+                            {/* Trend Line / Graph Area */}
+                            <div className="flex-shrink-0">
+                                <img
+                                    src={stat.line}
+                                    alt=""
+                                    className="h-8 md:h-10 w-auto object-contain opacity-80"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+
+
+
+
+                <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
+                    <div className="flex justify-between items-center mb-6 flex-wrap gap-3 max-lg:flex-col">
+                        <h3 className="text-lg font-bold text-gray-800">Create Job Description</h3>
+                        <div className="flex items-center gap-3 max-lg:flex-col max-lg:items-start">
+                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                <span>0</span>
+                                <div className="w-12 h-1.5 bg-gradient-to-r from-cyan-100 to-cyan-600 rounded-full"></div>
+                                <span>10+</span>
+                            </div>
+                            <MonthDropdown value={jdGenerationMonthFilter} onChange={setJdGenerationMonthFilter} />
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        {jdGenerationData.roles.length > 0 ? (
+                            <div className="grid grid-cols-[140px_1fr] gap-2 min-w-[500px]">
+                                <div></div>
+                                <div className="grid grid-cols-12 gap-1">
+                                    {months.map((m, i) => (
+                                        <div key={i} className="text-center text-[10px] text-gray-400 font-medium">
+                                            {m}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {jdGenerationData.data.map((roleRow, i) => (
+                                    <React.Fragment key={i}>
+                                        <div className="pr-3 flex items-center">
+                                            <span
+                                                className="text-[11px] text-gray-600 font-medium truncate block"
+                                                title={jdGenerationData.roles[i]}
+                                            >
+                                                {jdGenerationData.roles[i]}
+                                            </span>
+                                        </div>
+
+                                        <div className="grid grid-cols-12 gap-1">
+                                            {roleRow.monthlyData.map((m, j) => (
+                                                <div
+                                                    key={j}
+                                                    className={`h-8 rounded-md transition-all duration-200 hover:scale-105 cursor-pointer ${getColor(m.count)} relative group flex items-center justify-center`}
+                                                    title={`${m.count} JDs`}
+                                                >
+                                                    <span className="text-[10px] text-gray-600 opacity-0 group-hover:opacity-100 font-bold transition-opacity">
+                                                        {m.count > 0 ? m.count : ''}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </React.Fragment>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+                                No JD data available for 2026
+                            </div>
+                        )}
+                    </div>
+
+
+                </div>
+
+
 
                 <div className="lg:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                     <div className="flex flex-wrap justify-between items-center mb-8 gap-4">
@@ -443,7 +576,7 @@ function RMGDashboard() {
                     <h3 className="text-xl font-bold text-[#05004E]">Current Job Openings</h3>
                     <a href="#" className="text-sm text-blue-600 underline hover:text-blue-700">View All</a>
                 </div>
-                <div className="overflow-x-auto w-full">
+                <div className="overflow-x-auto w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     <table className="w-full min-w-[900px] text-sm text-left">
                         <thead className="text-xs text-gray-900 font-bold uppercase bg-[#F5F5F5]">
                             <tr>
@@ -503,7 +636,7 @@ function RMGDashboard() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                <div className="lg:col-span-3 bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm">
+                <div className="lg:col-span-5 bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm h-[400px] flex flex-col">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 sm:mb-6">
                         <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Monthly Trends 2026</h2>
                         <div className="flex flex-wrap items-center gap-4">
@@ -526,8 +659,8 @@ function RMGDashboard() {
                             </div>
                         </div>
                     </div>
-                    <div className="overflow-x-auto">
-                        <div className="min-w-[700px] h-[250px] sm:h-[280px]">
+                    <div className="flex-1 w-full overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        <div className="min-w-[700px] h-full min-h-[250px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={trendData} margin={{ top: 5, right: 30, left: 0, bottom: 0 }}>
                                     <defs>
@@ -564,65 +697,7 @@ function RMGDashboard() {
                     </div>
                 </div>
 
-                <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-                    <div className="flex justify-between items-center mb-6 flex-wrap gap-3 max-lg:flex-col max-lg:items-start">
-                        <h3 className="text-lg font-bold text-gray-800">Create Job Description</h3>
-                        <div className="flex items-center gap-3 max-lg:flex-col max-lg:items-start">
-                            <div className="flex items-center gap-2 text-xs text-gray-500">
-                                <span>0</span>
-                                <div className="w-12 h-1.5 bg-gradient-to-r from-cyan-100 to-cyan-600 rounded-full"></div>
-                                <span>10+</span>
-                            </div>
-                            <MonthDropdown value={jdGenerationMonthFilter} onChange={setJdGenerationMonthFilter} />
-                        </div>
-                    </div>
 
-                    <div className="flex-1 overflow-x-auto">
-                        {jdGenerationData.roles.length > 0 ? (
-                            <div className="grid grid-cols-[140px_1fr] gap-2 min-w-[500px]">
-                                <div></div>
-                                <div className="grid grid-cols-12 gap-1">
-                                    {months.map((m, i) => (
-                                        <div key={i} className="text-center text-[10px] text-gray-400 font-medium">
-                                            {m}
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {jdGenerationData.data.map((roleRow, i) => (
-                                    <React.Fragment key={i}>
-                                        <div className="pr-3 flex items-center">
-                                            <span
-                                                className="text-[11px] text-gray-600 font-medium truncate block"
-                                                title={jdGenerationData.roles[i]}
-                                            >
-                                                {jdGenerationData.roles[i]}
-                                            </span>
-                                        </div>
-
-                                        <div className="grid grid-cols-12 gap-1">
-                                            {roleRow.monthlyData.map((m, j) => (
-                                                <div
-                                                    key={j}
-                                                    className={`h-8 rounded-md transition-all duration-200 hover:scale-105 cursor-pointer ${getColor(m.count)} relative group flex items-center justify-center`}
-                                                    title={`${m.count} JDs`}
-                                                >
-                                                    <span className="text-[10px] text-gray-600 opacity-0 group-hover:opacity-100 font-bold transition-opacity">
-                                                        {m.count > 0 ? m.count : ''}
-                                                    </span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </React.Fragment>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-                                No JD data available for 2026
-                            </div>
-                        )}
-                    </div>
-                </div>
             </div>
         </div>
     );

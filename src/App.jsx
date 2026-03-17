@@ -8,6 +8,9 @@ import {
   Link,
 } from "react-router-dom";
 
+
+
+
 import LandingPage from './components/LandingPage/LandingPage';
 import NotificationPage from './components/NotificationBell.jsx';
 import CompaniesRegister from './SuperAdmin/CompaniesRegister';
@@ -84,6 +87,7 @@ import JDDetail from './components/JDDetail.jsx';
 import ApplyToJob from './Candidate/Pages/ApplyToJob.jsx';
 import ScrollToTop from './components/ScrollToTop.jsx';
 
+
 const App = () => {
 
   const [isLoading, setIsLoading] = useState(true);
@@ -132,6 +136,8 @@ const App = () => {
             </Route>
           </Route>
 
+
+
           <Route element={<ProtectedRoute />}>
             <Route path="/RMGAdmin-Dashboard" element={<RMGLayout />}>
               <Route index element={<RMGDashboard />} />
@@ -146,6 +152,8 @@ const App = () => {
               <Route path="RMGRaiseTickets" element={<RMGRaiseTickets />} />
             </Route>
           </Route>
+
+          
 
           <Route element={<ProtectedRoute />}>
             <Route path="/Candidate-Dashboard" element={<CandidateLayout />}>

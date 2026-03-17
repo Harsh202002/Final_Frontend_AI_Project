@@ -223,7 +223,7 @@ export default function CandidateForgotPassword() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="mt-6 h-11 w-full rounded-lg bg-gradient-to-r from-[#8F2AD1] to-[#4B135D] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:cursor-not-allowed disabled:opacity-70"
+                                    className="mt-6 h-11 w-full rounded-lg bg-gradient-to-r from-[#322071] to-[#1B1138] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:cursor-not-allowed disabled:opacity-70"
                                 >
                                     {loading ? "Please wait..." : "Send OTP"}
                                 </button>
@@ -396,7 +396,7 @@ export default function CandidateForgotPassword() {
                             <img
                                 src={img}
                                 alt="Dashboard preview"
-                                className="h-full w-full object-contain drop-shadow-[0_18px_40px_rgba(0,0,0,0.35)]"
+                                className="h-160 w-full object-contain"
                             />
                         </div>
                     </div>

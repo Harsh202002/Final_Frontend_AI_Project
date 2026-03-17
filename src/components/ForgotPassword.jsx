@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import img from "../img/login.png";
+import img from "../img/sublogin.png";
 import logo from "../img/loginlogo.png";
 import { baseUrl } from "../utils/ApiConstants";
 
@@ -219,7 +219,7 @@ export default function ForgotPassword() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="mt-6 h-11 w-full rounded-lg bg-gradient-to-r from-[#8F2AD1] to-[#4B135D] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:cursor-not-allowed disabled:opacity-70"
+                                    className="mt-6 h-11 w-full rounded-lg bg-gradient-to-r from-[#322071] to-[#1B1138] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:cursor-not-allowed disabled:opacity-70"
                                 >
                                     {loading ? "Please wait..." : "Enter"}
                                 </button>
@@ -269,7 +269,7 @@ export default function ForgotPassword() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="mt-8 h-11 w-full rounded-lg bg-gradient-to-r from-[#8F2AD1] to-[#4B135D] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:cursor-not-allowed disabled:opacity-70"
+                                    className="mt-8 h-11 w-full rounded-lg bg-gradient-to-r from-[#322071] to-[#1B1138] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:cursor-not-allowed disabled:opacity-70"
                                 >
                                     {loading ? "Verifying..." : "Enter"}
                                 </button>
@@ -342,7 +342,7 @@ export default function ForgotPassword() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="mt-7 h-11 w-full rounded-lg bg-gradient-to-r from-[#8F2AD1] to-[#4B135D] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:cursor-not-allowed disabled:opacity-70"
+                                    className="mt-7 h-11 w-full rounded-lg bg-gradient-to-r from-[#322071] to-[#1B1138] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:cursor-not-allowed disabled:opacity-70"
                                 >
                                     {loading ? "Changing..." : "Change Password"}
                                 </button>

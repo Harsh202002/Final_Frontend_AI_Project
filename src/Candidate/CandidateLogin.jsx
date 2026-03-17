@@ -155,7 +155,7 @@ export default function CandidateLogin() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="h-11 w-full rounded-lg bg-gradient-to-r from-[#8f2ad1] to-[#4b135d] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:opacity-60 disabled:cursor-not-allowed"
+                                className="h-11 w-full rounded-lg bg-gradient-to-r from-[#1B1138] to-[#322071] text-sm font-semibold text-white shadow-[0_10px_25px_rgba(143,42,209,0.25)] disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                                 {loading ? (
                                     <span className="flex items-center justify-center gap-2">
