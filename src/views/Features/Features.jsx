@@ -4,6 +4,7 @@ import {
   Search, ShieldCheck, Globe, Zap, Cpu, Code2, 
   Clock, ClipboardList, Sparkles 
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Ai_JD from '../../assets/Ai_Jd.jpg';
 import Smart_Screening from '../../assets/Screening.png';
 
@@ -58,6 +59,7 @@ const secondaryFeatures = [
 ];
 
 export default function Features() {
+  const navigate = useNavigate();
   return (
     <main className="bg-white overflow-x-hidden">
      
@@ -171,12 +173,14 @@ export default function Features() {
             <button 
               type="button"
               className="px-6 md:px-8 py-3 md:py-4 bg-white text-[#1E1B4B] rounded-full font-bold shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2"
+              onClick={() => navigate('/contact#contact-form')}
             >
               Start Free Trial <Zap size={18} fill="currentColor" />
             </button>
             <button 
               type="button"
               className="px-6 md:px-8 py-3 md:py-4 bg-white/20 backdrop-blur-md text-white border border-white/30 rounded-full font-bold hover:bg-white/30 transition-all"
+              onClick={() => navigate('/contact#contact-form')}
             >
               Schedule Demo
             </button>

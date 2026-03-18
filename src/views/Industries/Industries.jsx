@@ -5,6 +5,7 @@ import {
   Database, Star, Users, Sparkles,
   TrendingUp, BarChart3, MessageSquare
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
  import Built from './Built';
  import AIPowered from './AIPowered';
@@ -64,6 +65,8 @@ const testimonials = [
 ];
 
 export default function Industries() {
+
+  const navigate = useNavigate();
   return (
     <main className="">
       {/* 1. Header Section */}
@@ -173,8 +176,16 @@ export default function Industries() {
           <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-6 md:mb-8 lg:mb-12">Ready to Transform Hiring in Your Industry?</h2>
           <h3 className="text-white text-base md:text-lg lg:text-xl mx-auto max-w-2xl mb-8 md:mb-10 leading-relaxed">Get a personalized demo showing how RecruterAI works for your specific industry needs.</h3>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 md:px-10 py-3 md:py-4 bg-[#6338D9] text-white rounded-full font-bold text-sm md:text-base shadow-xl hover:bg-[#522cb8] hover:scale-105 transition-all">Start Free Trial</button>
-            <button className="px-8 md:px-10 py-3 md:py-4 border-2 border-white text-white rounded-full font-bold text-sm md:text-base hover:bg-white/10 hover:scale-105 transition-all">Schedule a Demo</button>
+            <button
+             className="px-8 md:px-10 py-3 md:py-4 bg-[#6338D9] text-white rounded-full font-bold text-sm md:text-base shadow-xl hover:bg-[#522cb8] hover:scale-105 transition-all"
+              onClick={() => navigate('/contact#contact-form')}
+             >Start Free Trial</button>
+            <button 
+              className="px-8 md:px-10 py-3 md:py-4 border-2 border-white text-white rounded-full font-bold text-sm md:text-base hover:bg-white/10 hover:scale-105 transition-all"
+              onClick={() => navigate('/contact#contact-form')}
+            >
+              Schedule a Demo
+            </button>
           </div>
         </div>
       </section>

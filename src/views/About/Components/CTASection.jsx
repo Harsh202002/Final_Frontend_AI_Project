@@ -1,6 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 //about
 export default function CTASection() {
+  const navigate = useNavigate();
+
   return (
     <section className="bg-gradient-to-br from-[#2a45b0] to-[#26bba7] py-16 md:py-20 lg:py-24 text-white text-center overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,10 +16,14 @@ export default function CTASection() {
             Whether you're looking to transform your hiring or join our team, we'd love to connect.
           </p>
           <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4">
-            <button className="bg-white text-[#1A1140] px-10 py-4 rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+            <button className="bg-white text-[#1A1140] px-10 py-4 rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+              onClick={() => navigate('/contact#contact-form')}
+            
+            >
               Get Started →
             </button>
-            <button className="bg-white/10 backdrop-blur-md px-10 py-4 rounded-full font-bold border border-white/20 hover:bg-white/20 hover:scale-105 transition-all">
+            <button className="bg-white/10 backdrop-blur-md px-10 py-4 rounded-full font-bold border border-white/20 hover:bg-white/20 hover:scale-105 transition-all"
+            onClick={() => navigate('/contact#contact-form')}>
               View Careers
             </button>
           </div>

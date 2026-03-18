@@ -1,7 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Play, Sparkles, Brain, CheckCircle } from 'lucide-react';
 
 export default function HomeBanner() {
+  const navigate = useNavigate();
+
+  const handleDemoClick = () => {
+    navigate('/contact#contact-form');
+  };
+  
   return (
     <section className="relative min-h-[80vh] bg-[rgb(11,15,25)] overflow-hidden flex flex-col justify-center  md:py-0">
       
@@ -35,14 +42,20 @@ export default function HomeBanner() {
             </p>
 
             <div className="mt-8 md:mt-12 flex flex-col sm:flex-row gap-4 md:gap-5">
-              <button className="group flex items-center justify-center gap-2 bg-[#6338D9] text-white px-6 md:px-8 py-3.5 md:py-4 rounded-full font-bold text-base md:text-lg transition-all hover:bg-[#522cb8] hover:shadow-[0_0_20px_rgba(99,56,217,0.4)] w-full sm:w-auto">
+              <button
+                className="group flex items-center justify-center gap-2 bg-[#6338D9] text-white px-6 md:px-8 py-3.5 md:py-4 rounded-full font-bold text-base md:text-lg transition-all hover:bg-[#522cb8] hover:shadow-[0_0_20px_rgba(99,56,217,0.4)] w-full sm:w-auto"
+                onClick={handleDemoClick}
+              >
                 Book a Free Demo
                 <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
               </button>
-              
-              <button className="flex items-center justify-center gap-2 px-6 md:px-8 py-3.5 md:py-4 rounded-full font-bold text-base md:text-lg text-white border border-white/10 bg-white/5 backdrop-blur-sm transition-all hover:bg-white/10 w-full sm:w-auto">
+
+              <button
+                className="flex items-center justify-center gap-2 px-6 md:px-8 py-3.5 md:py-4 rounded-full font-bold text-base md:text-lg text-white border border-white/10 bg-white/5 backdrop-blur-sm transition-all hover:bg-white/10 w-full sm:w-auto"
+                onClick={handleDemoClick}
+              >
                 <Play size={18} fill="currentColor" />
-                Watch How It Works
+                Schedule a Demo
               </button>
             </div>
 

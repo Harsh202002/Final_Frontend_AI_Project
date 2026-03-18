@@ -21,9 +21,9 @@ export default function HeroSection() {
         <p className="text-slate-400 text-base md:text-lg lg:text-xl leading-relaxed mb-8 md:mb-10 px-4">
           From setup to hire, our AI-powered platform streamlines every step of your recruitment process. See how easy it is to transform your hiring.
         </p>
-        <button className="inline-flex items-center gap-2 bg-[#6338D9] text-white px-6 md:px-8 py-3 rounded-full font-bold hover:bg-[#522cb8] transition-all">
+        {/* <button className="inline-flex items-center gap-2 bg-[#6338D9] text-white px-6 md:px-8 py-3 rounded-full font-bold hover:bg-[#522cb8] transition-all">
           Watch Demo Video <Play size={16} fill="currentColor" />
-        </button>
+        </button> */}
       </div>
     </section>
   );
