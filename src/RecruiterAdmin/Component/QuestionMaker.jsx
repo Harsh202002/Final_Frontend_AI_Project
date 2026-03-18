@@ -1,4 +1,6 @@
 import { useState } from 'react';
+
+
 import { Info, Edit, Copy, Trash2, Clock, RefreshCcw, Check, X } from 'lucide-react';
 
 export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loading }) {
@@ -18,11 +20,11 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
             return {
                 id: idx + 1,
                 question_id: q.question_id,
-                text: content.prompt || content.question || '',
-                options: content.options || [],
-                correctAnswer: correctAnswerRaw || '',
-                correctOptionText: correctOptionText,
-                explanation: content.explanation || 'No explanation provided',
+                text: q.question || content.prompt || content.question || '',
+                options: (q.options || content.options || (typeof content.options === 'string' ? JSON.parse(content.options) : [])),
+                correctAnswer: q.correct_answer || content.correct_answer || content.answer || q.correctAnswer || null,
+                correctOptionText: q.correct_option_text || null,
+                explanation: q.explanation || content.explanation || 'No explanation provided',
                 tags: [q.skill],
                 skills: [q.skill],
                 time: q.time_limit || 60,
@@ -36,11 +38,11 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
             return {
                 id: idx + 1,
                 question_id: q.question_id,
-                text: content.prompt || content.question || '',
-                input_spec: content.input_spec || '',
-                output_spec: content.output_spec || '',
-                examples: content.examples || [],
-                expected_answer: content.expected_answer || '',
+                text: q.question || content.prompt || content.question || '',
+                input_spec: q.content?.input_spec || content.input_spec || '',
+                output_spec: q.content?.output_spec || content.output_spec || '',
+                examples: q.content?.examples || content.examples || [],
+                expected_answer: q.correct_answer || content.expected_answer || '',
                 tags: [q.skill],
                 skills: [q.skill],
                 time: q.time_limit || 300,
@@ -53,9 +55,9 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
             return {
                 id: idx + 1,
                 question_id: q.question_id,
-                text: content.prompt_text || content.question || '',
-                expected_keywords: content.expected_keywords || [],
-                expected_answer: content.expected_answer || '',
+                text: q.question || content.prompt_text || content.question || '',
+                expected_keywords: q.content?.expected_keywords || content.expected_keywords || [],
+                expected_answer: q.correct_answer || content.expected_answer || '',
                 // rubric: content.rubric || '',
                 tags: [q.skill],
                 skills: [q.skill],
@@ -69,8 +71,8 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
             return {
                 id: idx + 1,
                 question_id: q.question_id,
-                text: content.prompt_text || content.question || '',
-                expected_answer: content.expected_answer || '',
+                text: q.question || content.prompt_text || content.question || '',
+                expected_answer: q.correct_answer || content.expected_answer || '',
                 // rubric: content.rubric || '',
                 tags: [q.skill],
                 skills: [q.skill],
@@ -128,8 +130,8 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                 level: question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1) || 'Medium',
                 skills: question.skills || question.tags || [],
                 questionText: question.text,
-                options: Array.isArray(question.options) ? question.options.map((opt, idx) => {
-                    const optionText = typeof opt === 'string' ? opt : opt.text || opt;
+                options: (Array.isArray(question.options) ? question.options : []).map((opt, idx) => {
+                    const optionText = typeof opt === 'string' ? opt : (opt.text || opt);
                     const isCorrect = question.correctAnswer === String.fromCharCode(65 + idx) ||
                                     question.correctAnswer === optionText ||
                                     question.correctAnswer === (idx + 1).toString();
@@ -139,7 +141,7 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                         text: optionText.replace(/^[A-D]\.\s*/, ''),
                         isCorrect
                     };
-                }) : []
+                })
             });
         } else if (question.questionType === 'Coding') {
             setEditedData({
@@ -388,7 +390,7 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                 level: 'Medium',
                 skills: [],
                 questionText: '',
-                options: (display.options || []).map((opt, idx) => ({ id: String.fromCharCode(65 + idx), text: opt || '', isCorrect: idx === 0 }))
+                options: (Array.isArray(display.options) ? display.options : []).map((opt, idx) => ({ id: String.fromCharCode(65 + idx), text: opt || '', isCorrect: idx === 0 }))
             };
         } else if (display.questionType === 'Coding') {
             edited = {
@@ -650,7 +652,7 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                                         <p className="text-sm sm:text-base text-gray-900 font-medium mb-4">{question.text}</p>
 
                                         {/* MCQ Options */}
-                                        {question.questionType === 'MCQ' && question.options && (
+                                        {question.questionType === 'MCQ' && Array.isArray(question.options) && question.options.length > 0 && (
                                             <>
                                                 <div className="space-y-2 mb-4">
                                                     {question.options.map((option, idx) => {
@@ -701,6 +703,11 @@ export default function QuestionMaker({ questions, onUpdate, onNext, onBack, loa
                                                     </div>
                                                 )}
                                             </>
+                                        )}
+                                        {question.questionType === 'MCQ' && (typeof question.options === 'undefined' || !Array.isArray(question.options) || question.options.length === 0) && (
+                                            <div className="bg-yellow-50 border border-yellow-200 rounded p-2 mb-4 text-xs sm:text-sm text-yellow-700">
+                                                <p>Warning: This multiple choice question does not have any options defined. Please edit the question to add options.</p>
+                                            </div>
                                         )}
 
                                         {/* Coding Question Details */}

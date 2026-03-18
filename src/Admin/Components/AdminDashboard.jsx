@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { useNavigate } from 'react-router-dom';
 import heroImage from "../../assets/Frame.png";
 import { RadialBarChart, PieChart, Pie, Cell, RadialBar, ResponsiveContainer, Tooltip, CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts';
 import axios from "axios";
@@ -236,6 +237,7 @@ function AdminDashboard() {
       }));
   }, [dashboardData.candidates]);
 
+  const navigate = useNavigate();
   const user = { name: "Admin", role: "Administrator" };
   const now = new Date();
 
@@ -345,8 +347,11 @@ function AdminDashboard() {
               </p>
 
               <div className="mt-4 sm:mt-6">
-                <button className="w-fit rounded-lg bg-[#59459F] px-4 py-2 text-xs font-semibold text-white transition-all hover:bg-[#483885] active:scale-95 sm:px-6 sm:py-3 sm:text-sm">
-                  Manage Recruiters
+                <button
+                  onClick={() => navigate('/Admin-Dashboard/RecruiterManagement')}
+                  className="w-fit rounded-lg bg-[#59459F] px-4 py-2 text-xs font-semibold text-white transition-all hover:bg-[#483885] active:scale-95 sm:px-6 sm:py-3 sm:text-sm"
+                >
+                  Manage Recruiter
                 </button>
               </div>
             </div>

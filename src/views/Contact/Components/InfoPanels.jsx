@@ -9,8 +9,8 @@ const expectationItems = [
 ];
 
 const offices = [
-  { city: "San Francisco, USA", addr: "123 Innovation Drive", label: "Headquarters" },
-  { city: "London, UK", addr: "45 Tech Lane", label: "EMEA Office" },
+  { city: "Pimpri,Pune", addr: "Mithila Hsg Road", label: "Headquarters" },
+  { city: "Kolkata, West Bengal", addr: "Sector V", label: "EMEA Office" },
   { city: "Singapore, Singapore", addr: "78 Digital Road", label: "APAC Office" },
 ];
 

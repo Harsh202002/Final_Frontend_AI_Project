@@ -494,11 +494,11 @@ function RecruiterManagement() {
                 </div>
 
                 <div className="pt-5">
-                  <div className="text-base font-semibold text-gray-900 mb-3">
+                  {/* <div className="text-base font-semibold text-gray-900 mb-3">
                     Associate Recruiters:
-                  </div>
+                  </div> */}
 
-                  {selectedRecruiter.associates && selectedRecruiter.associates.length > 0 ? (
+                  {/* {selectedRecruiter.associates && selectedRecruiter.associates.length > 0 ? (
                     <div className="space-y-1">
                       {selectedRecruiter.associates.map((a, idx) => (
                         <div key={idx} className="text-sm text-gray-700">
@@ -508,7 +508,7 @@ function RecruiterManagement() {
                     </div>
                   ) : (
                     <div className="text-sm text-gray-500">No Associates</div>
-                  )}
+                  )} */}
                 </div>
               </div>
 

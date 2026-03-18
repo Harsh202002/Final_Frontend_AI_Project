@@ -368,9 +368,9 @@ const SeeHistory = () => {
                     Job Title: <span className="font-bold">{currentJob?.title}</span>
                 </div>
 
-                <button className="px-4 py-2 rounded-md bg-gradient-to-r from-[#7058C5] to-[#A9A9FB] text-white text-sm font-semibold hover:bg-indigo-700">
+                {/* <button className="px-4 py-2 rounded-md bg-gradient-to-r from-[#7058C5] to-[#A9A9FB] text-white text-sm font-semibold hover:bg-indigo-700">
                     View Job Description
-                </button>
+                </button> */}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

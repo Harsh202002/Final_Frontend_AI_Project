@@ -5,19 +5,19 @@ const contactMethods = [
   { 
     icon: <Mail className="text-indigo-500" />, 
     title: "Email Us", 
-    detail: "hello@recruiterai.com", 
+    detail: "airecruit@gmail.com", 
     sub: "Get a response within 24 hours" 
   },
   { 
     icon: <Phone className="text-indigo-500" />, 
     title: "Call Us", 
-    detail: "+1 (555) 123-4567", 
+    detail: "+9876543210", 
     sub: "Mon-Fri, 9am-6pm EST" 
   },
   { 
     icon: <MapPin className="text-indigo-500" />, 
     title: "Visit Us", 
-    detail: "123 Innovation Drive, Tech City", 
+    detail: "123 Newtown Kolkata-700156", 
     sub: "Our headquarters" 
   },
   { 

@@ -301,7 +301,7 @@ function JD() {
   const getFilteredCount = (jd) => {
     const appliedCandidates = jd.appliedCandidates || [];
     const fromApplied = appliedCandidates.filter((c) => c.status === "filtered").length;
-    return fromApplied || (jd.filteredCandidates?.length || 0);
+    return(jd.filteredCandidates?.length || 0);
   };
 
   const getUnfilteredCount = (jd) => {
@@ -576,13 +576,13 @@ function JD() {
                   className="w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-[#D8C7FF]"
                 />
               </div>
-              <button
+              {/* <button
                 type="button"
                 className="inline-flex items-center gap-2 rounded-lg border border-[#D8C7FF] bg-white px-3 py-2 text-sm font-medium text-[#5B4CCB] hover:bg-[#F2EEFF] transition"
               >
                 <Download className="h-4 w-4" />
                 Export
-              </button>
+              </button> */}
             </div>
           </div>
 
@@ -705,13 +705,13 @@ function JD() {
                   className="w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-[#D8C7FF]"
                 />
               </div>
-              <button
+              {/* <button
                 type="button"
                 className="inline-flex items-center gap-2 rounded-lg border border-[#D8C7FF] bg-white px-3 py-2 text-sm font-medium text-[#5B4CCB] hover:bg-[#F2EEFF] transition"
               >
                 <Download className="h-4 w-4" />
                 Export
-              </button>
+              </button> */}
             </div>
           </div>
 

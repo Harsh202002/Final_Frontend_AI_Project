@@ -165,7 +165,7 @@ const RecruiterAdminSidebar = ({ isOpen = true }) => {
 
         {/* Search */}
         <div className="mt-4">
-          <div className="relative">
+          {/* <div className="relative">
             <Search
               size={14}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60"
@@ -180,7 +180,7 @@ const RecruiterAdminSidebar = ({ isOpen = true }) => {
                 "ring-1 ring-white/40 focus:ring-white/40",
               ].join(" ")}
             />
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -213,7 +213,7 @@ const RecruiterAdminSidebar = ({ isOpen = true }) => {
                 Get in touch with our agents
               </div>
 
-              <button
+              {/* <button
                 className={[
                   "mt-3 w-full h-9 rounded-md",
                   "bg-[#332173] hover:bg-[#3a2580]",
@@ -223,7 +223,7 @@ const RecruiterAdminSidebar = ({ isOpen = true }) => {
                 onClick={() => navigate("/support")}
               >
                 Contact Us
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -241,7 +241,7 @@ const RecruiterAdminSidebar = ({ isOpen = true }) => {
               'overflow-hidden',
             ].join(' ')}
           >
-            <button
+            {/* <button
               onClick={() => {
                 setIsProfileMenuOpen(false);
                 navigate('/RecruiterAdmin-Dashboard/RecruiterProfile');
@@ -258,7 +258,7 @@ const RecruiterAdminSidebar = ({ isOpen = true }) => {
                 <img src={user} alt="User" className="h-[10] w-[10] rounded-full" />
               </div>
               <span className="text-[16px] font-medium">Profile</span>
-            </button>
+            </button> */}
 
             <button
               onClick={() => {
