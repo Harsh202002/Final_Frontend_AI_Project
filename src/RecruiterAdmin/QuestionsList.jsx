@@ -412,7 +412,9 @@ const QuestionsList = () => {
                               <div className="flex items-start gap-2">
                                 <span className="text-xs text-gray-500 mt-[2px]">{letter(i)}.</span>
                                 <span className={isCorrect ? "text-green-800" : "text-gray-700"}>
-                                  {opt}
+                                  {typeof opt === "string"
+                                    ? opt.trim().replace(/^([a-zA-Z0-9]+)\s*[.)-]\s*/, "")
+                                    : opt}
                                 </span>
                               </div>
 

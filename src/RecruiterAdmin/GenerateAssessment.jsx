@@ -106,11 +106,29 @@ function GenerateAssessment() {
           correctOptionText = q.content.options[idx];
         } else {
           // fallback: try to find an option that starts with the letter (e.g., "C.")
-          const found = q.content.options.find(opt => typeof opt === 'string' && opt.trim().startsWith(letter + '.'));
+          const found = q.content.options.find(opt => typeof opt === 'string' && opt.trim().replace(/^([a-zA-Z0-9]+)\s*[.)-]\s*/i, '').toLowerCase() === letter.toLowerCase());
           if (found) correctOptionText = found;
+
+          // Final fallback: try to find an option that starts with the letter (e.g., "C.")
+          if (!correctOptionText) {
+            const startsWithLetter = q.content.options.find(opt => typeof opt === 'string' && opt.trim().startsWith(letter + '.'));
+            if (startsWithLetter) correctOptionText = startsWithLetter;
+          }
         }
       }
     } catch (e) {}
+
+    // Clean all options from "A. " prefixes for better UI display
+    if (q.content?.options && Array.isArray(q.content.options)) {
+      q.content.options = q.content.options.map(opt => 
+        typeof opt === 'string' ? opt.trim().replace(/^([a-zA-Z0-9]+)\s*[.)-]\s*/i, '') : opt
+      );
+    }
+    
+    // Also clean the correctOptionText if it was derived from options
+    if (correctOptionText && typeof correctOptionText === 'string') {
+        correctOptionText = correctOptionText.trim().replace(/^([a-zA-Z0-9]+)\s*[.)-]\s*/i, '');
+    }
 
     return {
       ...q,

@@ -337,9 +337,10 @@ export default function ReviewFinalise({ formData, questions, onFinalize, onBack
         optionsHtml = '<div style="margin-bottom:8px"><ol style="padding-left:18px;color:#0f172a">';
         q.options.forEach((opt, idx) => {
           const label = String.fromCharCode(65 + idx);
-          const optText = escapeHtml(typeof opt === 'string' ? opt : String(opt));
-          const isCorrect = q.correctAnswer === label || q.correctAnswer === optText || q.correctOptionText === optText;
-          optionsHtml += `<li style="margin-bottom:6px;">${optText}${isCorrect ? ' <span style=\"color:#059669;font-weight:700\">✓</span>' : ''}</li>`;
+          const rawOptText = typeof opt === 'string' ? opt : String(opt);
+          const cleanOptText = rawOptText.trim().replace(/^([a-zA-Z0-9]+)\s*[.)-]\s*/, '');
+          const isCorrect = q.correctAnswer === label || q.correctAnswer === rawOptText || q.correctAnswer === cleanOptText || q.correctOptionText === rawOptText || q.correctOptionText === cleanOptText;
+          optionsHtml += `<li style="margin-bottom:6px;">${escapeHtml(cleanOptText)}${isCorrect ? ' <span style=\"color:#059669;font-weight:700\">✓</span>' : ''}</li>`;
         });
         optionsHtml += '</ol></div>';
         if (q.explanation) optionsHtml += `<div style="background:#f1f5f9;padding:10px;border-radius:6px;color:#0f172a;margin-bottom:8px">Explanation: ${escapeHtml(q.explanation)}</div>`;
