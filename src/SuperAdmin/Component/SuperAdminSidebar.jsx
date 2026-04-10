@@ -10,6 +10,7 @@ import {
   Headphones,
   ChevronsUpDown,
   Shield,
+  Calendar,
 } from "lucide-react";
 
 const AdminSidebar = ({ isOpen = true, onToggle }) => {
@@ -38,11 +39,24 @@ const AdminSidebar = ({ isOpen = true, onToggle }) => {
         label: "Register Companies",
       },
       {
-        name: "RejisteredRecruiters",
-        path: "/SuperAdmin-Dashboard/RejisteredRecruiters",
+          name: "Profile",
+           path: "/SuperAdmin-Dashboard/RejisteredRecruiters",
         icon: Building2,
         label: "Recently Applied",
       },
+      {
+        name: "RejisteredRecruiters",
+        path: "/SuperAdmin-Dashboard/BookADemo",
+        icon: MessageSquare,
+        label: "Book a Demo",
+      },
+      {
+        name: "GeneralInquiry",
+        path: "/SuperAdmin-Dashboard/GeneralInquiry",
+        icon: Calendar,
+        label: "General Inquiry",
+      },
+      
     ],
     []
   );
@@ -53,8 +67,12 @@ const AdminSidebar = ({ isOpen = true, onToggle }) => {
     if (path.includes("/EnquiryMessages")) setActiveNav("EnquiryMessages");
     else if (path.includes("/CompaniesRegister"))
       setActiveNav("RegisteredCompanies");
-    else if (path.includes("/RejisteredRecruiters"))
-      setActiveNav("RejisteredRecruiters");
+    else if (path.includes("/RecentlyApplied"))
+      setActiveNav("RecentlyApplied");
+    else if (path.includes("/BookADemo"))
+      setActiveNav("BookADemo");
+    else if (path.includes("/GeneralInquiry"))
+      setActiveNav("GeneralInquiry");
     else if (path.includes("/Profile")) setActiveNav("Profile");
     else setActiveNav("Dashboard");
   }, [location.pathname]);

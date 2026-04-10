@@ -90,6 +90,9 @@ import LoadingScreen from '../src/components/MainLoader.jsx';
 import JDDetail from './components/JDDetail.jsx';
 import ApplyToJob from './Candidate/Pages/ApplyToJob.jsx';
 import ScrollToTop from './components/ScrollToTop.jsx';
+import RecentlyApplied from './SuperAdmin/RecentlyApplied';
+import BookADemo from './SuperAdmin/BookADemo';
+import GeneralInquiry from './SuperAdmin/GeneralInquiry';
 
 
 
@@ -193,6 +196,9 @@ const App = () => {
               <Route path="Tickets" element={<Tickets />} />
               <Route path="RejisteredRecruiters" element={<RejisteredRecruiters />} />
               <Route path="EnquiryMessages" element={<EnquiryMessages />} />
+              <Route path="RecentlyApplied" element={<RecentlyApplied />} />
+              <Route path="BookADemo" element={<BookADemo />} />
+              <Route path="GeneralInquiry" element={<GeneralInquiry />} />
             </Route>
           </Route>
 
